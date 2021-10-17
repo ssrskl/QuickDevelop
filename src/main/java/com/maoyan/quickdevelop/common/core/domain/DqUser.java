@@ -33,43 +33,44 @@ public class DqUser extends DqStatusDispose implements Serializable {
     /** 用户ID */
     /**
      * 主键使用TableId注解，否则MybatisPlus默认使用id来查询
+     * (不可修改)
      */
     @TableId(value = "user_id")
     private Long userId;
 
-    /** 用户账号 */
+    /** 用户账号（可修改，不能重复） */
     @TableField(value = "user_name")
     @MapperQuery(queryType = QueryType.EQ)
     private String userName;
 
-    /** 用户昵称 */
+    /** 用户昵称 （可修改，能重复）*/
     @TableField(value = "nick_name")
     @MapperQuery(queryType = QueryType.NE)
     private String nickName;
 
-    /** 用户邮箱 */
+    /** 用户邮箱 （可修改，不能重复）*/
     @Email(message = "邮箱格式不正确")
     @TableField(value = "email")
     private String email;
 
-    /** 手机号码 */
+    /** 手机号码 （可修改，不能重复）*/
     @Size(min = 0, max = 11, message = "手机号码长度不能超过11个字符")
     @TableField(value = "phone_number")
     private String phoneNumber;
 
-    /** 用户性别 0=男,1=女,2=未知*/
+    /** 用户性别 0=男,1=女,2=未知（可修改）*/
     @TableField(value = "sex")
     private String sex;
 
-    /** 用户头像 */
+    /** 用户头像 （可修改）*/
     @TableField(value = "avatar")
     private String avatar;
 
-    /** 密码 */
+    /** 密码（可修改） */
     @TableField(value = "password")
     private String passWord;
 
-    /** 帐号状态（0正常 1停用） */
+    /** 帐号状态（0正常 1停用）（管理员可修改） */
     @TableField(value = "status")
     private String status;
 
@@ -85,11 +86,11 @@ public class DqUser extends DqStatusDispose implements Serializable {
     @TableField(value = "loginDate")
     private Date loginDate;
 
-    /** 用户角色ID */
+    /** 用户角色ID （管理员可修改）*/
     @TableField(value = "role")
     private String role;
 
-    /** 个性签名 **/
+    /** 个性签名（可修改） **/
     @TableField(value = "signature")
     private String signature;
 

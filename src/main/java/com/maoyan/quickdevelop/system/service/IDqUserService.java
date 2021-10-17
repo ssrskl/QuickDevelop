@@ -21,7 +21,14 @@ public interface IDqUserService {
      * @param dqUser 用户类
      * @return java.util.List<com.maoyan.quickdevelop.common.core.domain.DqUser>
      */
-    public List<DqUser> selectAllDqUsers(int pageNum,int pageSize,DqUser dqUser) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
+    public List<DqUser> selectAllDqUsers(int pageNum,int pageSize,DqUser dqUser);
+
+    /**
+     * 实用型
+     * @param dqUserId
+     * @return
+     */
+    public DqUser getDqUserById_Server(Long dqUserId);
 
     /**
      * 根据ID查询用户
@@ -65,13 +72,13 @@ public interface IDqUserService {
      * @param
      * @return
      */
-    public int deleteDqUser();
+    public int deleteDqUserMySelf();
 
     /**
      * 根据ID更改用户
      * @return
      */
-    public int updateDqUserById(DqUser dqUser);
+    public int updateDqUserSelf(DqUser dqUser);
 
 
 

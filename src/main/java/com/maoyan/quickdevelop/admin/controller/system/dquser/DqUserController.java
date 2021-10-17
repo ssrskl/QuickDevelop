@@ -32,93 +32,89 @@ import java.util.List;
 @RequestMapping("/dquser")
 public class DqUserController extends BaseController {
 
-    @Autowired
-    private IDqUserService iUserService;
+  @Autowired
+  private IDqUserService iUserService;
 
-    /**
-     * @param pageNum
-     * @param pageSize
-     * @param dqUser
-     * @return com.maoyan.quickdevelop.common.core.AjaxResult
-     * @author 猫颜
-     * @date 上午11:33
-     */
-    @ApiOperation(value = "查询所有用户")
-    @GetMapping("/list")
-    public AjaxResult list(@RequestParam(defaultValue = "1") int pageNum,
-                           @RequestParam(defaultValue = "10") int pageSize,
-                           DqUser dqUser) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        List<DqUser> dqUsers = iUserService.selectAllDqUsers(pageNum, pageSize, dqUser);
-        if (dqUsers.isEmpty()) {
-            return AjaxResult.error(HttpStatus.NOT_FOUND, "未查询到用户");
-        }
-        PageInfo<DqUser> pageInfo = new PageInfo<>(dqUsers);
-        return AjaxResult.success("查询成功", pageInfo);
-    }
+  /**
+   * @param pageNum
+   * @param pageSize
+   * @param dqUser
+   * @return com.maoyan.quickdevelop.common.core.AjaxResult
+   * @author 猫颜
+   * @date 上午11:33
+   */
+  @ApiOperation(value = "查询所有用户")
+  @GetMapping("/list")
+  public AjaxResult list(@RequestParam(defaultValue = "1") int pageNum,
+                         @RequestParam(defaultValue = "10") int pageSize,
+                         DqUser dqUser) {
+    List<DqUser> dqUsers = iUserService.selectAllDqUsers(pageNum, pageSize, dqUser);
+    PageInfo<DqUser> pageInfo = new PageInfo<>(dqUsers);
+    return AjaxResult.success("查询成功", pageInfo);
+  }
 
-    /**
-     * 更新用户
-     *
-     * @param newDqUser
-     * @return
-     */
-    @SaCheckLogin
-    @SaCheckPermission(value = "user-update")
-    @ApiOperation(value = "更新用户")
-    @Log(title = "用户操作",businessType = BusinessType.UPDATE)
-    @PostMapping("/update")
-    public AjaxResult update(@RequestBody DqUser newDqUser) {
-        //Assert.isTrue(StpUtil.hasRole("管理员") || StpUtil.getLoginId() == dqUserId, "只能更新自己的账号，坏东西");
-        //获取用户（后面可以从redis中获取）
+  /**
+   * 更新用户
+   *
+   * @param newDqUser
+   * @return
+   */
+  @SaCheckLogin
+  @SaCheckPermission(value = "user-update")
+  @ApiOperation(value = "更新用户自己")
+  @Log(title = "用户操作", businessType = BusinessType.UPDATE)
+  @PostMapping("/update")
+  public AjaxResult update(@RequestBody DqUser newDqUser) {
+    //Assert.isTrue(StpUtil.hasRole("管理员") || StpUtil.getLoginId() == dqUserId, "只能更新自己的账号，坏东西");
+    //获取用户（后面可以从redis中获取）
 //        DqUser dqUser = iUserService.selectDqUserById(newDqUser.getDquserid());
-        DqUser dqUser = new DqUser();
-        //更新用户
-        dqUser.setUserId(newDqUser.getUserId());
-        dqUser.setUserName(newDqUser.getUserName());
-        dqUser.setNickName(newDqUser.getNickName());
-        dqUser.setEmail(newDqUser.getEmail());
-        dqUser.setPhoneNumber(newDqUser.getPhoneNumber());
-        dqUser.setSex(newDqUser.getSex());
-        dqUser.setAvatar(newDqUser.getAvatar());
-        //加密密码
-        dqUser.setPassWord(newDqUser.getPassWord());
-        dqUser.setSignature(newDqUser.getSignature());
-        //更新完成用户后要刷新redis缓存
-        int i = iUserService.updateDqUserById(dqUser);
-        return AjaxResult.success("更新成功", i);
-    }
+    DqUser dqUser = new DqUser();
+    //更新用户
+    dqUser.setUserId(newDqUser.getUserId());
+    dqUser.setUserName(newDqUser.getUserName());
+    dqUser.setNickName(newDqUser.getNickName());
+    dqUser.setEmail(newDqUser.getEmail());
+    dqUser.setPhoneNumber(newDqUser.getPhoneNumber());
+    dqUser.setSex(newDqUser.getSex());
+    dqUser.setAvatar(newDqUser.getAvatar());
+    //加密密码
+    dqUser.setPassWord(newDqUser.getPassWord());
+    dqUser.setSignature(newDqUser.getSignature());
+    //更新完成用户后要刷新redis缓存
+    int i = iUserService.updateDqUserSelf(newDqUser);
+    return AjaxResult.success("更新成功", i);
+  }
 
-    /**
-     * 通过ID查询用户
-     *
-     * @param dqUserId
-     * @return
-     */
-    @ApiOperation(value = "通过ID查询用户")
-    @GetMapping("/{dqUserId}")
-    public AjaxResult getInfo(@PathVariable Long dqUserId) {
-        //后面可以根据缓存中先查询
-        DqUser dqUser = iUserService.selectDqUserById(dqUserId);
-        Assert.notNull(dqUser, "用户不存在");
-        return AjaxResult.success("查询成功", dqUser);
-    }
+  /**
+   * 通过ID查询用户
+   *
+   * @param dqUserId
+   * @return
+   */
+  @ApiOperation(value = "通过ID查询用户")
+  @GetMapping("/{dqUserId}")
+  public AjaxResult getInfo(@PathVariable Long dqUserId) {
+    //后面可以根据缓存中先查询
+    DqUser dqUser = iUserService.getDqUserById_Server(dqUserId);
+    return AjaxResult.success("查询成功", dqUser);
+  }
 
-    /**
-     * 登出
-     *
-     * @return
-     */
-    @SaCheckLogin
-    @ApiOperation(value = "登出账号")
-    @GetMapping("/logout")
-    public AjaxResult logout() {
-        if (StpUtil.isLogin()) {
-            StpUtil.logout();
-            return AjaxResult.success("登出账号成功!");
-        } else {
-            return AjaxResult.error("您还未登陆!");
-        }
+  /**
+   * 登出
+   *
+   * @return
+   */
+  @SaCheckLogin
+  @ApiOperation(value = "登出账号")
+  @GetMapping("/logout")
+  public AjaxResult logout() {
+    if (StpUtil.isLogin()) {
+      StpUtil.logout();
+      return AjaxResult.success("登出账号成功!");
+    } else {
+      return AjaxResult.error("您还未登陆!");
     }
+  }
 
 //    @GetMapping("/test")
 //    public AjaxResult testMapper() {
@@ -127,32 +123,32 @@ public class DqUserController extends BaseController {
 //    }
 
 
-    /**
-     * 获取当前登陆的用户的信息
-     *
-     * @return com.maoyan.quickdevelop.common.core.AjaxResult
-     * @author 猫颜
-     * @date 下午7:06
-     */
-    @SaCheckLogin
-    @GetMapping("/getnowuser")
-    @ApiOperation(value = "获取当前登陆的用户")
-    public AjaxResult getNowUser() {
-        long nowUserId = StpUtil.getLoginIdAsLong();
-        DqUser dqUser = iUserService.selectDqUserById(nowUserId);
-        return AjaxResult.success("查询成功", dqUser);
-    }
+  /**
+   * 获取当前登陆的用户的信息
+   *
+   * @return com.maoyan.quickdevelop.common.core.AjaxResult
+   * @author 猫颜
+   * @date 下午7:06
+   */
+  @SaCheckLogin
+  @GetMapping("/getnowuser")
+  @ApiOperation(value = "获取当前登陆的用户")
+  public AjaxResult getNowUser() {
+    long nowUserId = StpUtil.getLoginIdAsLong();
+    DqUser dqUser = iUserService.getDqUserById_Server(nowUserId);
+    return AjaxResult.success("查询成功", dqUser);
+  }
 
-    @SaCheckLogin
-    @SaCheckPermission(value = "user-delete")
-    @GetMapping("/delete")
-    @ApiOperation(value = "注销自己的用户（删除自己）")
-    public AjaxResult deleteDqUser() {
-        int i = iUserService.deleteDqUser();
-        if (i > 0) {
-            return AjaxResult.success("注销成功", i);
-        } else {
-            return AjaxResult.error("注销失败", i);
-        }
+  @SaCheckLogin
+  @SaCheckPermission(value = "user-delete")
+  @GetMapping("/delete")
+  @ApiOperation(value = "注销自己的用户（删除自己）")
+  public AjaxResult deleteDqUser() {
+    int i = iUserService.deleteDqUserMySelf();
+    if (i > 0) {
+      return AjaxResult.success("注销成功", i);
+    } else {
+      return AjaxResult.error("注销失败", i);
     }
+  }
 }
