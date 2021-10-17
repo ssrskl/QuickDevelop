@@ -1,0 +1,41 @@
+package com.maoyan.quickdevelop.common.core.domain;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName(value = "dq_message")
+public class DqMessage implements Serializable {
+  private static final long serialVersionUID = 1L;
+  @TableId(value = "message_id")
+  private Long messageId;
+  /** 消息接收者 **/
+  @TableField(value = "re_user_id")
+  private Long reUserId;
+  @TableField(value = "message_type")
+  private String messageType;
+  /** 消息发送者 **/
+  @TableField(value = "se_user_id")
+  private Long seUserId;
+  @TableField(value = "message_article_id")
+  private Long messageArticleId;
+  @TableField(value = "message_comment_id")
+  private Long messageCommentId;
+  @TableField(value = "message_is_read")
+  private String messageIsRead;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private Date createTime;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private Date updateTime;
+
+}

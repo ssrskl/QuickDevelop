@@ -1,0 +1,24 @@
+用户文章权限
+用户查询文章权限：user-query
+用户添加文章权限：user-add
+用户更新文章权限：user-update
+用户删除文章权限：user-delete
+
+用户评论权限
+用户发表评论权限：user-comment-add
+用户删除评论权限：user-comment-delete
+
+用户通用权限：user-ordinary(user*)
+
+管理员权限
+管理员对文章的权限（就不再细化了）：admin-article
+管理员对类型的权限：admin-type
+管理员对去权限的控制：admin-power
+管理员对用户的权限：admin-user
+管理员对评论的权限：admin-comment
+管理员对日志的权限：admin-log
+文章管理员权限：user* admin-article
+...
+副超级管理员权限：admin-ordinary(admin*)(user*)
+
+超级管理员权限：super-admin(*权限)

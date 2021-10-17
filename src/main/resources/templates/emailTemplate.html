@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>
+    尊敬的<span style="color: dodgerblue;" th:text="${toDqUser}"></span>：
+</h3>
+<br/>
+<div th:text="${username}"></div>回复您：
+<div th:text="${replyContent}"></div>
+<div style="width: max-content;width: --moz-max-content;margin: auto;margin-bottom:50px;">
+    <a th:href="@{http://www.codeman.ink:8848/article/{articleId}(articleId=${articleId})}" style="color: #fff;background-color: #5e72e4;border-color: #5e72e4;box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);padding: 15px 25px;font-size: 18px;border-radius: 4px;text-decoration: none;">前往查看</a>
+</div>
+</body>
+</html>

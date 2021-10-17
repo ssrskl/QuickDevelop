@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqArticlePostProcessorMapper">
+    <resultMap id="DqArticleResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser">
+        <id property="articleId" column="article_id" jdbcType="BIGINT"/>
+        <result property="articleTitle" column="article_title" jdbcType="VARCHAR"/>
+        <result property="articleContent" column="article_content" jdbcType="LONGVARCHAR"/>
+        <result property="articleImage" column="article_image" jdbcType="VARCHAR"/>
+        <!--        类型-->
+        <result property="typeId" column="type_id" jdbcType="BIGINT"/>
+        <result property="typeName" column="type_name" jdbcType="VARCHAR"/>
+        <result property="typeImage" column="type_image" jdbcType="VARCHAR"/>
+        <!--        作者信息-->
+        <result property="authorId" column="author_id" jdbcType="BIGINT"/>
+        <result property="authorNickname" column="author_nickname" jdbcType="VARCHAR"/>
+        <result property="authorUsername" column="author_username" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="commentNum" column="comment_num" jdbcType="INTEGER"/>
+        <result property="articleSort" column="article_sort" jdbcType="BIGINT"/>
+        <collection property="articleTags" javaType="java.util.List" ofType="com.maoyan.quickdevelop.common.core.domain.DqTag" resultMap="TagsResult"/>
+    </resultMap>
+
+    <resultMap id="TagsResult" type="com.maoyan.quickdevelop.common.core.domain.DqTag">
+        <id property="tagId" column="tag_id" jdbcType="BIGINT"/>
+        <result property="tagName" column="tag_name" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="selectDqArticlePostProcessorVO">
+        --         select *, (select count(*) from dq_comment where article_id = dq_article.article_id) as comment_num
+--         from dq_article
+--                  inner join dq_user du on dq_article.author_id = du.user_id
+--                  inner join dq_type dt on dq_article.type_id = dt.type_id
+
+        select *, (select count(*) from dq_comment where article_id = dq_article.article_id) as comment_num
+        from dq_article
+                 inner join dq_user du on dq_article.author_id = du.user_id
+                 inner join dq_type dt on dq_article.type_id = dt.type_id
+                 left join dq_article_tag dag on dq_article.article_id = dag.article_id
+                 left join dq_tag d on dag.tag_id = d.tag_id
+    </sql>
+    <select id="selectAllDqArticlePostProcesser"
+            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser"
+            resultMap="DqArticleResult">
+        <include refid="selectDqArticlePostProcessorVO"></include>
+        <where>
+            dq_article.status=0 and dt.status=0 and du.status=0
+            <if test="dqArticlePostProcesser.articleId != null and dqArticlePostProcesser.articleId != ''">
+                AND dq_article.article_Id = #{dqArticlePostProcesser.articleId}
+            </if>
+            <if test="dqArticlePostProcesser.articleTitle != null and dqArticlePostProcesser.articleTitle != ''">
+                AND article_title like concat('%',#{dqArticlePostProcesser.articleTitle},'%')
+            </if>
+            <if test="dqArticlePostProcesser.articleContent != null and dqArticlePostProcesser.articleContent != ''">
+                AND article_content like concat('%',#{dqArticlePostProcesser.articleContent},'%')
+            </if>
+            <if test="dqArticlePostProcesser.typeId != null and dqArticlePostProcesser.typeId != ''">
+                AND dq_article.type_id = #{dqArticlePostProcesser.typeId}
+            </if>
+            <if test="dqArticlePostProcesser.authorId != null and dqArticlePostProcesser.authorId != ''">
+                AND author_id = #{dqArticlePostProcesser.authorId}
+            </if>
+            <if test="dqArticlePostProcesser.authorNickname != null and dqArticlePostProcesser.authorNickname != ''">
+                AND author_nickname like concat('%',#{dqArticlePostProcesser.authorNickname},'%')
+            </if>
+            <if test="dqArticlePostProcesser.authorUsername != null and dqArticlePostProcesser.authorUsername != ''">
+                AND author_username like concat('%',#{dqArticlePostProcesser.authorUsername},'%')
+            </if>
+            <if test="dqArticlePostProcesser.articleSort != null and dqArticlePostProcesser.articleSort != ''">
+                AND article_sort = #{dqArticlePostProcesser.articleSort}
+            </if>
+            <if test="dqArticlePostProcesser.createTime != null and dqArticlePostProcesser.createTime != ''">
+                AND data_format(create_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.createTime},'%y%m%d')
+            </if>
+            <if test="dqArticlePostProcesser.updateTime != null and dqArticlePostProcesser.updateTime != ''">
+                AND data_format(update_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.updateTime},'%y%m%d')
+            </if>
+            <if test="true">
+                order by dq_article.article_sort desc ,dq_article.article_id desc
+            </if>
+        </where>
+    </select>
+</mapper>

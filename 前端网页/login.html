@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登陆</title>
+</head>
+<body>
+用户名：<input id="in_username" type="text" name="username" placeholder="用户名"/>
+<br/>
+密码：<input id="in_password" type="password" name="password" placeholder="用户名"/>
+<br/>
+<button type="button" id="btn">登陆</button>
+<br/>
+<a href="Register.html">注册</a>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    // 页面加载的事件
+    $(function(){
+        // 根据id获取按钮,添加点击事件
+        $("#btn").click(function(){
+            var username = $("#in_username").val();
+            var password = $("#in_password").val();
+            var data = {
+                username: username,
+                password: password
+            };
+            if (username == null||username==undefined||username==""){
+                alert("请输入用户名");
+            }else if (password == null||password==undefined||password==""){
+                alert("请输入密码");
+            }else {
+                $.ajax({
+                    url: 'http://localhost:8080/login',
+                    async: true,
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    dataType: "json",
+                    crossDomain:true,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (result){
+                        if (result.code == 200){
+                            alert("欢迎来到这里");
+                            //将tokenInfo缓存到本地
+                            localStorage.setItem('tokenName',result.data.tokenName);
+                            localStorage.setItem('tokenValue',result.data.tokenValue);
+                            window.location.href="index.html";
+                        }else {
+                            alert("登陆失败");
+                        }
+                    }
+                });
+            }
+            console.log('哈哈,真的好帅');
+        });
+    });
+</script>
+</html>

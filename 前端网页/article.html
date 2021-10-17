@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章</title>
+    <h1 id="articleTitle">文章标题</h1>
+    <br/>
+    <textarea id="articleContent">
+        文章内容
+    </textarea>
+    <br/>
+    文章图片：<img id="articleImage" src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png" width='80' height='60'/>
+    <br/>
+    作者：<p id="authorUsername">作者昵称</p>
+    作者昵称：<p id="authorNickname">作者昵称</p>
+    作者邮箱：<p id="authorEmail">作者昵称</p>
+    作者电话：<p id="authorPhonenumber">作者昵称</p>
+    作者性别：<p id="authorSex">作者昵称</p>
+    作者头像：<img id="authorAvatar" width="60px" height="60px"></img>
+    <br/>
+    作者角色：<p id="authorRole">作者昵称</p>
+    <br/>
+    分类：<p id="typeName">作品分类</p>
+
+    <h2>评论</h2>
+    <table  border="2" cellpadding="30">
+        <tr>
+            <td>
+                <ul id="comments">
+<!--                    <li>Food</li>-->
+<!--                    <ol>-->
+<!--                        <li>薯片</li>-->
+<!--                        <li>棒棒糖</li>-->
+<!--                        <li>果冻</li>-->
+<!--                        <li>巧克力</li>-->
+<!--                        <li>辣条</li>-->
+<!--                    </ol>-->
+<!--                    <li>Fruits</li>-->
+<!--                    <ol type="A">-->
+<!--                        <li>西瓜</li>-->
+<!--                        <li>桔子</li>-->
+<!--                        <li>哈蜜瓜</li>-->
+<!--                        <li>草莓</li>-->
+<!--                        <li>葡萄</li>-->
+<!--                        <li>香蕉</li>-->
+<!--                        <li>苹果</li>-->
+<!--                    </ol>-->
+<!--                    <li>Meat</li>-->
+<!--                    <ol type="I">-->
+<!--                        <li>羊肉</li>-->
+<!--                        <li>牛肉</li>-->
+<!--                        <li>猪肉</li>-->
+<!--                        <li>鸡肉</li>-->
+<!--                        <li>涮羊肉</li>-->
+<!--                        <li>生鱼片</li>-->
+                    </ol>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</head>
+<body>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    // 页面加载的事件
+    $(function(){
+        function getParams(key) {
+            var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        };
+        //拿到文章ID
+        var articleId = getParams("articleId")
+        console.log("参数为："+articleId);
+
+        //变量初始化
+        var articleTitle = "";
+        var articleContent = "";
+        var articleImage = "";
+        var typeId = 0;
+        var autorId = 0;
+        var autorNickname = "";
+        var authorUsername = "";
+        var createTime = "";
+        var updateTime = "";
+        //类型信息
+        var typeName = "";
+        //作者信息
+        var authorName = "";
+        var authorNick = "";
+        var authorEmail = "";
+        var authorPhonenumber = "";
+        var authorSex = "";
+        var authorAvatar = "";
+        var authorRole = "";
+
+        //根据文章ID获取文章
+        $.ajax({
+            url: "http://localhost:8080/dqarticle/"+articleId,
+            async: true,
+            type: "GET",
+            dataType: "json",
+            crossDomain:true,
+            xhrFields: {
+                withCredentials: true
+            },
+            beforeSend: function (request) {
+                request.setRequestHeader("MaoyanToken",localStorage.getItem("tokenValue"));
+                request.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            },
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                if (result.code == 200){
+                    articleTitle = result.data.articleTitle;
+                    articleContent = result.data.articleContent;
+                    articleImage = result.data.articleImage;
+                    typeId = result.data.typeId;
+                    autorId = result.data.autorId;
+                    autorNickname = result.data.autorNickname;
+                    authorUsername = result.data.authorUsername;
+                    createTime = result.data.createTime;
+                    updateTime = result.data.updateTime;
+                    //数据渲染
+                    $("#articleTitle").text(articleTitle);
+                    $("#articleContent").text(articleContent);
+                    $("#authorUsername").text(authorUsername);
+                    $("#articleImage").attr("src",articleImage);
+                    //    查询所属分类
+                    $.ajax({
+                        url: "http://localhost:8080/dqtype/"+typeId,
+                        async: true,
+                        type: "GET",
+                        dataType: "json",
+                        crossDomain:true,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        beforeSend: function (request) {
+                            request.setRequestHeader("MaoyanToken",localStorage.getItem("tokenValue"));
+                            request.setRequestHeader("content-type","application/x-www-form-urlencoded");
+                        },
+                        contentType: "application/json;charset=UTF-8",
+                        success: function (result) {
+                            if (result.code == 200){
+                                typeName = result.data.typeName;
+                                $("#typeName").text(typeName);
+                            }
+                        }
+                    });
+                //    获取作者信息
+                    $.ajax({
+                        url: "http://localhost:8080/dquser/"+autorId,
+                        async: true,
+                        type: "GET",
+                        dataType: "json",
+                        crossDomain:true,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        beforeSend: function (request) {
+                            request.setRequestHeader("MaoyanToken",localStorage.getItem("tokenValue"));
+                            request.setRequestHeader("content-type","application/x-www-form-urlencoded");
+                        },
+                        contentType: "application/json;charset=UTF-8",
+                        success: function (result) {
+                            if (result.code == 200){
+                                authorName = result.data.userName;
+                                authorNick = result.data.nickName;
+                                authorEmail = result.data.email;
+                                authorPhonenumber = result.data.phonenumber;
+                                authorSex = result.data.sex;
+                                authorAvatar = result.data.avatar;
+                                authorRole = result.data.role;
+
+                                if (authorSex == "1"){
+                                    authorSex = "男";
+                                }else {
+                                    authorSex = "女";
+                                }
+
+                                $("#authorUsername").text(authorName);
+                                $("#authorNickname").text(authorNick);
+                                $("#authorEmail").text(authorEmail);
+                                $("#authorPhonenumber").text(authorPhonenumber);
+                                $("#authorSex").text(authorSex);
+                                $("#authorAvatar").attr("src",authorAvatar);
+                                if (authorRole=="管理员"){
+                                    $("#authorRole").text(authorRole);
+                                    $("#authorRole").css("color","#ad1111");
+                                }else{
+                                    $("#authorRole").text(authorRole);
+                                }
+                            }
+                        }
+                    });
+
+                    //    获取评论信息
+                    $.ajax({
+                        url: "http://localhost:8080/dqcomment/article/"+articleId,
+                        async: true,
+                        type: "GET",
+                        dataType: "json",
+                        crossDomain:true,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        beforeSend: function (request) {
+                            request.setRequestHeader("MaoyanToken",localStorage.getItem("tokenValue"));
+                            request.setRequestHeader("content-type","application/x-www-form-urlencoded");
+                        },
+                        contentType: "application/json;charset=UTF-8",
+                        success: function (result) {
+                            if (result.code == 200){
+                                //先加载一级评论
+                                $.each(result.data.list,function (index,item) {
+                                    if(item.replyId == 0){
+                                        $("#comments").append(
+                                            "<li hidden>" + item.commentId + "</li>"+
+                                            "<li id='"+item.commentId+"'>" + item.content + "</li>"
+                                        );
+                                    }
+
+                                });
+                                //加载二级评论
+                                $.each(result.data.list,function (index,item) {
+                                    if (item.replyId != 0){
+                                        $("#"+item.replyId).append("<ol>" +
+                                            "<li hidden>" + item.commentId + "</li>"+
+                                            "<li id='"+item.commentId+"'>" + item.content + "</li>" +
+                                            "</ol>"
+                                        )
+                                    }
+                                })
+                            }
+                        }
+
+                    });
+                }
+            }
+        });
+
+    });
+</script>
+</html>

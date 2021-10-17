@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+<h1>文章列表</h1>
+<p>用户昵称：</p>
+<p id="username">您还未登陆</p>
+<br/>
+
+<table id="imgList" width="450" border="0" cellspacing="0">
+    <tr id="title">
+        <td width="100" bgcolor="lightblue"><div align="center">
+            <div align="left">文章标题</div>
+        </div></td>
+        <td width="200" bgcolor="lightblue"><div align="center">
+            <div align="left">文章内容</div>
+        </div></td>
+        <td width="80" bgcolor="lightblue"><div align="center">
+            <div align="left">文章图片</div>
+        </div></td>
+    </tr>
+</table>
+
+文章标题: <input id="in_articleTitle" type="text"/>
+<br/>
+
+<h4>文章内容</h4>
+<textarea id="in_articleContext">
+
+</textarea>
+<br/>
+<p>选择分类</p>
+<form id="in_type">
+</form>
+<br/>
+<button type="button" id="btn">发表</button>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    // 页面加载的事件
+    $(function(){
+
+        //获取当前登陆的用户
+        $.ajax({
+            url: "http://localhost:8080/dquser/getnowuser",
+            async: true,
+            type: "GET",
+            dataType: "json",
+            crossDomain:true,
+            xhrFields: {
+                withCredentials: true
+            },
+            beforeSend: function (request) {
+                request.setRequestHeader("MaoyanToken",localStorage.getItem("tokenValue"));
+                request.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            },
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                if (result.code == 200){
+                    $("#username").text(result.data.nickName);
+                }
+            }
+        });
+        //查询所有的文章
+        $.ajax({
+            url: 'http://localhost:8080/dqarticle/list',
+            async: true,
+            type: "GET",
+            dataType: "json",
+            beforeSend: function (request) {
+                request.setRequestHeader("MaoyanToken",localStorage.getItem("tokenValue"));
+                request.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            },
+            contentType: "application/json;charset=UTF-8",
+            success: function (result){
+                $.each(result.data.list,function (index,item) {
+                    $("#imgList").append("<tr>"
+                        + "<td hidden bgcolor='#FFFFCC' class='first'>" + item.articleId + "</td>"
+                        + "<td bgcolor='#FFFFCC'>" + item.articleTitle + "</td>"
+                        + "<td bgcolor='#FFFFCC'>" + item.articleContent + "</td>"
+                        // + "<td bgcolor='#FFFFCC'>" + "<a href='" + item.url + "'>" + item.url + "</a>" + "</td>"
+                        + "<td>" + "<img src='" + item.articleImage + "' width='80' height='60'>" + "</td>"
+                        + "</tr>")
+                })
+                var btn = $("#imgList tr");
+                $("#imgList tr").each(function () {
+                    var _this = $(this);
+                    _this.on('click',btn,function(e){
+                        //将文章ID传过去
+                        window.location.href="article.html?articleId="+_this.children(".first").text()
+                    });
+                })
+            }
+        });
+    //    获取所有的分类
+        $.ajax({
+            url: 'http://localhost:8080/dqtype/list',
+            async: true,
+            type: "GET",
+            dataType: "json",
+            beforeSend: function (request) {
+                request.setRequestHeader("MaoyanToken",localStorage.getItem("tokenValue"));
+                request.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            },
+            contentType: "application/json;charset=UTF-8",
+            success: function (result){
+                $.each(result.data.list,function (index,item) {
+                    $("#in_type").append(
+                        "<input type='radio'>" + item.typeName + "</input>")
+                })
+            }
+        });
+    });
+</script>
+</html>

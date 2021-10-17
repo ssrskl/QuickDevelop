@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqCommentPostProcessorMapper">
+
+    <resultMap id="DqCommentResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCommentPostProcesser">
+        <id property="commentId" column="comment_id" jdbcType="BIGINT"/>
+        <result property="articleId" column="article_id" jdbcType="BIGINT"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="commentUserId" column="comment_userid" jdbcType="BIGINT"/>
+        <result property="commentUserNickName" column="comment_usernickname" jdbcType="VARCHAR"/>
+        <result property="commentUsername" column="comment_username" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="commentUserAvatar" column="comment_user_avatar" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="commentType" column="comment_type" jdbcType="CHAR"/>
+        <result property="toUserId" column="to_user_id" jdbcType="BIGINT"/>
+        <result property="toUsername" column="to_username" jdbcType="VARCHAR"/>
+        <result property="toNickname" column="to_nickname" jdbcType="VARCHAR"/>
+        <result property="toUserAvatar" column="to_user_avatar" jdbcType="VARCHAR"/>
+        <result property="replyId" column="reply_id" jdbcType="BIGINT"/>
+        <result property="rootId" column="root_id" jdbcType="BIGINT"/>
+        <result property="childCommentNum" column="child_commentnum" jdbcType="BIGINT"/>
+<!--        <collection property="childComments" javaType="java.util.List" ofType="com.maoyan.quickdevelop.common.core.domain.DqComment" resultMap="ChildCommentResult"/>-->
+    </resultMap>
+
+<!--    <resultMap id="ChildCommentResult" type="com.maoyan.quickdevelop.common.core.domain.DqComment">-->
+<!--        <id property="commentId" column="comment_id" jdbcType="BIGINT"/>-->
+<!--        <result property="articleId" column="article_id" jdbcType="BIGINT"/>-->
+<!--        <result property="content" column="content" jdbcType="VARCHAR"/>-->
+<!--        <result property="commentUserId" column="comment_userid" jdbcType="BIGINT"/>-->
+<!--        <result property="commentUserNickName" column="comment_usernickname" jdbcType="VARCHAR"/>-->
+<!--        <result property="commentUsername" column="comment_username" jdbcType="VARCHAR"/>-->
+<!--        <result property="status" column="status" jdbcType="CHAR"/>-->
+<!--        <result property="commentUserAvatar" column="comment_user_avatar" jdbcType="VARCHAR"/>-->
+<!--        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>-->
+<!--        <result property="commentType" column="comment_type" jdbcType="CHAR"/>-->
+<!--        <result property="toUserId" column="to_user_id" jdbcType="BIGINT"/>-->
+<!--        <result property="toUsername" column="to_username" jdbcType="VARCHAR"/>-->
+<!--        <result property="toNickname" column="to_nickname" jdbcType="VARCHAR"/>-->
+<!--        <result property="toUserAvatar" column="to_user_avatar" jdbcType="VARCHAR"/>-->
+<!--        <result property="replyId" column="reply_id" jdbcType="BIGINT"/>-->
+<!--        <result property="rootId" column="root_id" jdbcType="BIGINT"/>-->
+<!--    </resultMap>-->
+
+
+    <sql id="selectDqCommentPostProcessorVO">
+        select *, (select count(*) from dq_comment dq where dq_comment.comment_id = dq.root_id) as child_commentnum
+        from dq_comment
+    </sql>
+
+    <select id="selectAllDqCommentPostProcesser"
+            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCommentPostProcesser"
+            resultMap="DqCommentResult">
+        <include refid="selectDqCommentPostProcessorVO"></include>
+        <where>
+            status = 0
+            <if test="dqCommentPostProcesser.commentId != null and dqCommentPostProcesser.commentId != ''">
+                AND comment_id = #{dqCommentPostProcesser.commentId}
+            </if>
+            <if test="dqCommentPostProcesser.articleId != null and dqCommentPostProcesser.articleId != ''">
+                AND article_id = #{dqCommentPostProcesser.articleId}
+            </if>
+            <if test="dqCommentPostProcesser.content != null and dqCommentPostProcesser.content != ''">
+                AND content like concat('%',#{dqCommentPostProcesser.content},'%')
+            </if>
+            <if test="dqCommentPostProcesser.commentUserId != null and dqCommentPostProcesser.commentUserId != ''">
+                AND comment_userid = #{dqCommentPostProcesser.commentUserId}
+            </if>
+            <if test="dqCommentPostProcesser.toUserId != null and dqCommentPostProcesser.toUserId != ''">
+                AND to_user_id = #{dqCommentPostProcesser.toUserId}
+            </if>
+            <if test="dqCommentPostProcesser.replyId != null and dqCommentPostProcesser.replyId != ''">
+                AND reply_id = #{dqCommentPostProcesser.replyId}
+            </if>
+            <if test="dqCommentPostProcesser.rootId != null and dqCommentPostProcesser.rootId != ''">
+                AND root_id = #{dqCommentPostProcesser.rootId}
+            </if>
+        </where>
+    </select>
+</mapper>

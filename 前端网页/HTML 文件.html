@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<ul class="ul_box">
+</ul>
+<script>
+    $(function(){
+        var ulbox;
+        var _data;
+        $.ajax({
+            type: "get",
+            url: "./package01.json",
+            data: {
+                'data': 'data',
+            },
+            dataType: "json",
+            success: function(data){
+                 _data = data.employees;
+
+                console.log(_data);
+                for(var i = 0; i < _data.length; i++){
+                    ulbox += '<li><span>' + _data[i].firstName +
+                            '</span><span>' + _data[i].lastName
+                            '</span></li>'
+                }
+                $('.ul_box').html(ulbox);
+
+                var btn = $('.ul_box li');
+
+
+                $('.ul_box li').each(function(){
+                var _this = $(this);
+
+
+                    _this.on('click',btn,function(e){
+                        alert( _this.children().text());
+
+                    })
+                })
+
+            }
+        });
+    })
+</script>
+</body>
+</html>

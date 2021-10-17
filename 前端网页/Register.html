@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+</head>
+<body>
+用户名：<input id="in_username" type="text" name="username" placeholder="用户名"/>
+<br/>
+密码：<input id="in_password" type="password" name="password" placeholder="用户名"/>
+<br/>
+邮箱：<input id="in_email" type="text" name="email" placeholder="邮箱"/>
+<br/>
+头像：<input id="in_avatar" type="text" name="avatar" placeholder="头像"/>
+<br/>
+手机号：<input id="in_phonenumber" type="text" name="phonenumber" placeholder="手机号"/>
+<br/>
+<button type="button" id="btn">注册</button>
+<br/>
+<a href="login.html">已有帐号？登陆</a>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  // 页面加载的事件
+  $(function(){
+    // 根据id获取按钮,添加点击事件
+    $("#btn").click(function(){
+      var username = $("#in_username").val();
+      var password = $("#in_password").val();
+      var email = $("#in_email").val();
+      var avatar = $("#in_avatar").val();
+      var phonenumber = $("#in_phonenumber").val();
+
+      var data = {
+        username: username,
+        password: password,
+        email: email,
+        avatar: avatar,
+        phonenumber: phonenumber
+      };
+
+      if (username == null||username==undefined||username==""){
+        alert("请输入用户名");
+      }else if (password == null||password==undefined||password==""){
+        alert("请输入密码");
+      }else if (email == null||email==undefined||email==""){
+        alert("请输入邮箱");
+      }
+      else {
+        $.ajax({
+          url: 'http://localhost:8080/register',
+          async: true,
+          type: "POST",
+          data: JSON.stringify(data),
+          dataType: "json",
+            crossDomain:true,
+            xhrFields: {
+                withCredentials: true
+            },
+          contentType: "application/json;charset=UTF-8",
+          success: function (result){
+            if (result.code == 200){
+              alert(result.msg);
+              window.location.href="index.html";
+            }else {
+              alert(result.msg);
+            }
+          }
+        });
+      }
+
+      console.log('哈哈,真的好帅');
+    });
+  });
+</script>
+</html>

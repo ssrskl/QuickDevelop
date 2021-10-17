@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqTypePostProcessorMapper">
+
+    <resultMap id="DqTypeResult" type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqTypePostProcesser">
+        <id property="typeId" column="type_id" jdbcType="BIGINT"/>
+        <result property="typeName" column="type_name" jdbcType="VARCHAR"/>
+        <result property="typeImage" column="type_image" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="createManId" column="create_mainid" jdbcType="BIGINT"/>
+        <result property="updateManId" column="update_manId" jdbcType="BIGINT"/>
+        <result property="introduce" column="introduce" jdbcType="VARCHAR"/>
+        <result property="articleNum" column="article_num" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="selectDqTypePostProcessorVO">
+        select *, (select count(*) from dq_article where dq_article.type_id = dq_type.type_id) as article_num
+        from dq_type
+    </sql>
+
+    <select id="selectAllDqTypePostProcesser"
+            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqTypePostProcesser"
+            resultMap="DqTypeResult">
+        <include refid="selectDqTypePostProcessorVO"></include>
+        <where>
+            status = 0
+            <if test="dqTypePostProcesser.typeId != null and dqTypePostProcesser.typeId != ''">
+                AND type_id = #{dqTypePostProcesser.typeId}
+            </if>
+            <if test="dqTypePostProcesser.typeName != null and dqTypePostProcesser.typeName != ''">
+                AND type_name like concat('%',#{dqTypePostProcesser.typeName},'%')
+            </if>
+            <if test="dqTypePostProcesser.createManId != null and dqTypePostProcesser.createManId != ''">
+                AND create_manid = #{dqTypePostProcesser.createManId}
+            </if>
+            <if test="dqTypePostProcesser.updateManId != null and dqTypePostProcesser.updateManId != ''">
+                AND update_manid = #{dqTypePostProcesser.updateManId}
+            </if>
+            <if test="dqTypePostProcesser.introduce != null and dqTypePostProcesser.introduce != ''">
+                AND introduce like concat ('%',#{dqTypePostProcesser.introduce},'%')
+            </if>
+            <if test="dqTypePostProcesser.createTime != null and dqTypePostProcesser.createTime != ''">
+                AND data_format(create_time,'%y%m%d') >= data_format(#{dqTypePostProcesser.createTime},'%y%m%d')
+            </if>
+            <if test="dqTypePostProcesser.updateTime != null and dqTypePostProcesser.updateTime != ''">
+                AND data_format(update_time,'%y%m%d') >= data_format(#{dqTypePostProcesser.updateTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+</mapper>
