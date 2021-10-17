@@ -44,6 +44,7 @@ public interface IDqUserService {
      */
     public DqUser selectDqUserByUserName(String userName);
 
+
     /**
      * 根据账号密码查询用户（登陆功能）
      * @param userName

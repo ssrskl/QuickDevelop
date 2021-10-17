@@ -128,16 +128,23 @@ public class IDqUserServiceImpl implements IDqUserService {
 
   @Override
   public DqUser selectDqUserByUserNameAndPassword(String userName, String password) {
-    QueryWrapper<DqUser> queryWrapper = new QueryWrapper<>();
-    //判断是否是第三方注册
-    queryWrapper.eq("user_name", userName);
-    if (StringUtils.equals("系统设定的密码", dqUserMapper.selectOne(queryWrapper).getPassWord())) {
-      throw new CustomException("此用户只能使用第三方登陆", HttpStatus.ERROR);
-    }
-    queryWrapper.clear();
-    queryWrapper.eq("user_name", userName).eq("password", password);
-    DqUser dqUser = dqUserMapper.selectOne(queryWrapper);
-    queryWrapper.clear();
+    // 校验是否为空
+    // 有注解校验
+    // 对密码加密
+    password = SaSecureUtil.md5(SaSecureUtil.sha1(password));
+
+//    QueryWrapper<DqUser> queryWrapper = new QueryWrapper<>();
+//    //判断是否是第三方注册
+//    queryWrapper.eq("user_name", userName);
+//    if (StringUtils.equals("系统设定的密码", dqUserMapper.selectOne(queryWrapper).getPassWord())) {
+//      throw new CustomException("此用户只能使用第三方登陆", HttpStatus.ERROR);
+//    }
+//    queryWrapper.clear();
+    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqUserLambdaQueryWrapper.eq(DqUser::getUserName,userName)
+                    .eq(DqUser::getPassWord,password);
+    DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
+    dqUserLambdaQueryWrapper.clear();
     if (StringUtils.isNull(dqUser)) {
       throw new CustomException("密码错误", HttpStatus.FORBIDDEN);
     }

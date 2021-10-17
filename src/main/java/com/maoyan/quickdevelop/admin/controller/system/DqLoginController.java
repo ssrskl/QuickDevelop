@@ -8,6 +8,7 @@ import com.maoyan.quickdevelop.system.domain.vo.LoginVO;
 import com.maoyan.quickdevelop.system.service.IDqLoginService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,7 +27,7 @@ public class DqLoginController {
 
     @ApiOperation(value = "用户登陆")
     @PostMapping("")
-    public AjaxResult login(@RequestBody LoginVO loginVO) {
+    public AjaxResult login(@Validated @RequestBody LoginVO loginVO) {
         SaTokenInfo saTokenInfo = iDqLoginService.dqUserLogin(loginVO);
         return AjaxResult.success("登陆成功", saTokenInfo);
     }

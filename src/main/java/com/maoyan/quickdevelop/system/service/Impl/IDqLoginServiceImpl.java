@@ -34,7 +34,7 @@ public class IDqLoginServiceImpl implements IDqLoginService {
   public SaTokenInfo dqUserLogin(LoginVO loginVO) {
     //登陆方法
     DqUser dqUser = iUserService.selectDqUserByUserNameAndPassword(loginVO.getUserName()
-            , SaSecureUtil.md5(SaSecureUtil.sha1(loginVO.getPassWord())));
+            , loginVO.getPassWord());
     //去掉用户的password
     dqUser.setPassWord("000000");
     /** 断言适合做测试开发，不适合实际生产 **/
