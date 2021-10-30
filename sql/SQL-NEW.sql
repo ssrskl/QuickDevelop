@@ -7,9 +7,9 @@ drop table if exists dq_user;
 create table dq_user
 (
     user_id      bigint(255)  not null auto_increment comment '用户ID',
-    user_name    varchar(255) not null unique comment '用户账户',
-    email        varchar(255) default 'email@xx.com' unique comment '邮箱',
-    phone_number varchar(255) default '133333333' unique comment '手机号',
+    user_name    varchar(255) not null unique comment '用户名',
+    email        varchar(255) not null unique comment '邮箱',
+    phone_number varchar(255) unique comment '手机号',
     sex          char(2)      default '0' comment '性别（0为男，1为女，2为未知）',
     avatar       varchar(255) default '' comment '头像地址',
     password     varchar(255) not null comment '密码',

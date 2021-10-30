@@ -2,6 +2,7 @@ package com.maoyan.quickdevelop.admin.controller.system;
 
 import com.maoyan.quickdevelop.common.annotation.Log;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
+import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.enums.BusinessType;
 import com.maoyan.quickdevelop.system.domain.vo.RegisterVO;
 import com.maoyan.quickdevelop.system.service.IDqRegisterService;
@@ -27,8 +28,8 @@ public class DqRegisterController {
   @ApiOperation(value = "用户注册")
   @PostMapping("/register")
   @Log(title = "用户注册", businessType = BusinessType.INSERT)
-  public AjaxResult login(@Validated @RequestBody RegisterVO registerVO) {
-    int i = iDqRegisterService.dqUserRegister(registerVO);
+  public AjaxResult login(@Validated @RequestBody DqUser dqUser) {
+    int i = iDqRegisterService.dqUserRegister(dqUser);
     //注册成功返回值为1，失败为0
     if (i > 0) {
       return AjaxResult.success("注册成功", i);

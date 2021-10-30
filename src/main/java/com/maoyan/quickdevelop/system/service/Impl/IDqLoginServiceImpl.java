@@ -31,12 +31,12 @@ public class IDqLoginServiceImpl implements IDqLoginService {
   private DqUserMapper dqUserMapper;
 
   @Override
-  public SaTokenInfo dqUserLogin(LoginVO loginVO) {
+  public SaTokenInfo dqUserLogin(DqUser dqUser) {
+
     //登陆方法
-    DqUser dqUser = iUserService.selectDqUserByUserNameAndPassword(loginVO.getUserName()
-            , loginVO.getPassWord());
+    DqUser dqUser = iUserService.selectDqUserByEmailAndPassword(dqUser.getEmail(), SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassword())));
     //去掉用户的password
-    dqUser.setPassWord("000000");
+    dqUser.setPassword("000000");
     /** 断言适合做测试开发，不适合实际生产 **/
     //Assert.notNull(dqUser,"用户名密码错误");
     //Sa-Token登陆
@@ -65,7 +65,7 @@ public class IDqLoginServiceImpl implements IDqLoginService {
 
   @Override
   public SaTokenInfo dqUserGiteeLogin(String code) {
-    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper  = new LambdaQueryWrapper<>();
+    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
     JSONObject userInfo = ThirdLoginUtils.getUserInfo(code);
     //格式化userInfo
     DqUser dqUser = new DqUser();
@@ -79,17 +79,16 @@ public class IDqLoginServiceImpl implements IDqLoginService {
     String dqSignature = userInfo.getString("bio");
     //5. 获取邮箱
     String dqEmail = userInfo.getString("email");
-    dqUser.setUserName(dqUsername);
-    dqUser.setNickName(dqUserNickName);
+    dqUser.setUserName(dqUserNickName);
     dqUser.setAvatar(dqAvatar);
     dqUser.setSignature(dqSignature);
     dqUser.setEmail(dqEmail);
-    dqUser.setPassWord("系统设定的密码");
+    dqUser.setPassword("系统设定的密码");
     dqUser.setCreateTime(DateUtils.getNowDate());
     dqUser.setUpdateTime(DateUtils.getNowDate());
     dqUser.setLoginDate(DateUtils.getNowDate());
     //从数据库查询是否有这个用户
-    dqUserLambdaQueryWrapper.eq(DqUser::getUserName,dqUsername);
+    dqUserLambdaQueryWrapper.eq(DqUser::getUserName, dqUsername);
     DqUser dqUserByUserName = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
     if (StringUtils.isNull(dqUserByUserName)) {
       //为空则注册一个

@@ -1,5 +1,6 @@
 package com.maoyan.quickdevelop.system.service;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,8 +13,13 @@ import java.util.List;
 
 public interface IDqUserService {
 
-
-
+    /**
+     * 通过邮箱和密码查询用户
+     * @param email
+     * @param password
+     * @return
+     */
+    public DqUser selectDqUserByEmailAndPassword(String email,String password);
     /**
      * new 查询所有的用户
      * @author 猫颜

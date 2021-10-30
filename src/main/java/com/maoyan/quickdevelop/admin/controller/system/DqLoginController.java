@@ -3,6 +3,7 @@ package com.maoyan.quickdevelop.admin.controller.system;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import com.maoyan.quickdevelop.common.annotation.Log;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
+import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.enums.BusinessType;
 import com.maoyan.quickdevelop.system.domain.vo.LoginVO;
 import com.maoyan.quickdevelop.system.service.IDqLoginService;
@@ -27,8 +28,8 @@ public class DqLoginController {
 
     @ApiOperation(value = "用户登陆")
     @PostMapping("")
-    public AjaxResult login(@Validated @RequestBody LoginVO loginVO) {
-        SaTokenInfo saTokenInfo = iDqLoginService.dqUserLogin(loginVO);
+    public AjaxResult login(@Validated @RequestBody DqUser dqUser) {
+        SaTokenInfo saTokenInfo = iDqLoginService.dqUserLogin(dqUser);
         return AjaxResult.success("登陆成功", saTokenInfo);
     }
     /**

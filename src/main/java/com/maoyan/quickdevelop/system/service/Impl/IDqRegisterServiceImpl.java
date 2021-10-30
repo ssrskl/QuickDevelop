@@ -21,14 +21,18 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
   private IDqUserService iUserService;
 
   @Override
-  public int dqUserRegister(RegisterVO registerVO) {
-    DqUser dqUser = new DqUser();
-    dqUser.setUserName(registerVO.getUserName());
+  public int dqUserRegister(DqUser dqUser) {
+    dqUser.setUserName(dqUser.getUserName());
     //将密码md5加密
-    dqUser.setPassWord(SaSecureUtil.md5(SaSecureUtil.sha1(registerVO.getPassWord())));
-    dqUser.setEmail(registerVO.getEmail());
-    dqUser.setAvatar(registerVO.getAvatar());
-    dqUser.setPhoneNumber(registerVO.getPhoneNumber());
+    dqUser.setPassword(SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassword())));
+    dqUser.setEmail(dqUser.getEmail());
+    dqUser.setPhoneNumber(dqUser.getPhoneNumber());
+    dqUser.setSex("2");
+    dqUser.setAvatar("avatar");
+    dqUser.setStatus("1");
+    dqUser.setSignature("无");
+    dqUser.setGrade(1L);
+    dqUser.setExperience(0L);
     dqUser.setCreateTime(DateUtils.getNowDate());
     dqUser.setUpdateTime(DateUtils.getNowDate());
     dqUser.setLoginDate(DateUtils.getNowDate());

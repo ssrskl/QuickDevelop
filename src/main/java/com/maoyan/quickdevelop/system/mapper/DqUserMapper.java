@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 @Mapper
 public interface DqUserMapper extends BaseMapper<DqUser> {
 
-
+  @Select("")
+  DqUser selectDqUserByEmailAndPassword(String email,String password);
 
 //    DqUser selectDquserById(@Param("dqUserId")Long dqUserId);
 

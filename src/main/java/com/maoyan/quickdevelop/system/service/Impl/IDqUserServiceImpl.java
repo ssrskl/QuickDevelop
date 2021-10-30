@@ -1,6 +1,7 @@
 package com.maoyan.quickdevelop.system.service.Impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -43,6 +44,21 @@ public class IDqUserServiceImpl implements IDqUserService {
   private IDqRolePermissionService idqRolePermissionService;
 
   QueryWrapper<DqUser> queryWrapper = new QueryWrapper<>();
+
+  /**
+   * 工具型，不抛出异常
+   * @param email
+   * @param password
+   * @return
+   */
+  @Override
+  public DqUser selectDqUserByEmailAndPassword(String email, String password) {
+    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqUserLambdaQueryWrapper.eq(StringUtils.isNotEmpty(email),DqUser::getEmail,email)
+            .eq(StringUtils.isNotEmpty(password),DqUser::getPassword,password);
+    DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
+    return dqUser;
+  }
 
   @Override
   public List<DqUser> selectAllDqUsers(int pageNum, int pageSize, DqUser dqUser){

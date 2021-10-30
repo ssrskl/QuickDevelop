@@ -28,8 +28,8 @@ public class DqRolePermission implements Serializable {
     /**
      * 主键使用TableId注解，否则MybatisPlus默认使用id来查询
      */
-    @TableId(value = "role_id")
-    private Long roleId;
+    @TableId(value = "role_permission_id")
+    private Long rolePermissionId;
 
     /** 角色名称 */
     @TableField(value = "role_name")
