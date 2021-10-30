@@ -1,10 +1,10 @@
 package com.maoyan.quickdevelop.admin.controller.system.dquser;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.github.pagehelper.PageInfo;
 import com.maoyan.quickdevelop.admin.controller.system.BaseController;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
-import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.system.service.IDqFollowUserService;
 import io.swagger.annotations.ApiOperation;
@@ -23,7 +23,7 @@ public class DqFollowUserController extends BaseController {
   private IDqFollowUserService iDqFollowUserService;
 
   @ApiOperation(value = "查询指定用户关注的用户")
-  @GetMapping("/follow")
+  @GetMapping("/followed")
   public AjaxResult follow(@RequestParam(defaultValue = "1") int pageNum,
                            @RequestParam(defaultValue = "10") int pageSize,
                            Long dqUserId) {
@@ -39,5 +39,19 @@ public class DqFollowUserController extends BaseController {
     List<DqUserPostProcessor> dqUserPostProcessors = iDqFollowUserService.selectFansByUserId(pageNum, pageSize, dqUserId);
     PageInfo<DqUserPostProcessor> pageInfo = new PageInfo<>(dqUserPostProcessors);
     return AjaxResult.success("查询成功", pageInfo);
+  }
+  @SaCheckLogin
+  @ApiOperation(value = "关注指定用户")
+  @GetMapping("/follow")
+  public AjaxResult followDqUser(Long dqUserId){
+    int i = iDqFollowUserService.followDqUserByUserId(dqUserId);
+    return AjaxResult.success("关注成功",HttpStatus.SUCCESS);
+  }
+  @SaCheckLogin
+  @ApiOperation(value = "取消关注指定用户")
+  @GetMapping("/cancelfollow")
+  public AjaxResult cancelFollowDqUser(Long dqUserId){
+    int i = iDqFollowUserService.cancelFollowDqUserByUserId(dqUserId);
+    return AjaxResult.success("取消关注成功",HttpStatus.SUCCESS);
   }
 }
