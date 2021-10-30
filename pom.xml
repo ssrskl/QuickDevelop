@@ -35,6 +35,7 @@
     </properties>
 
     <dependencies>
+
         <!-- 模板-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,7 +52,7 @@
         <!--            <version>2021.1</version>-->
         <!--        </dependency>-->
         <!-- 阿里JSON解析器 -->
-        <dependency>
+        <dependency>RandomUtils.
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>

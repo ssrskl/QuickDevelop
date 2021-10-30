@@ -5,7 +5,6 @@ import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
-import com.maoyan.quickdevelop.system.domain.vo.RegisterVO;
 import com.maoyan.quickdevelop.system.service.IDqRegisterService;
 import com.maoyan.quickdevelop.system.service.IDqUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +35,10 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
     dqUser.setCreateTime(DateUtils.getNowDate());
     dqUser.setUpdateTime(DateUtils.getNowDate());
     dqUser.setLoginDate(DateUtils.getNowDate());
+    // 生成邮箱校验码
+    dqUser.setCheckParam("maoyan");
+    dqUser.setCheckStatus("0");
+    // 发送到邮箱认证邮箱
     //注册
     int i = iUserService.insertDqUser(dqUser);
     //注册成功返回值为1，失败为0

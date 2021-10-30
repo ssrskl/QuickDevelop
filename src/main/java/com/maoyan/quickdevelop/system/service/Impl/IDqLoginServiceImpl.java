@@ -34,14 +34,18 @@ public class IDqLoginServiceImpl implements IDqLoginService {
   public SaTokenInfo dqUserLogin(DqUser dqUser) {
 
     //登陆方法
-    DqUser dqUser = iUserService.selectDqUserByEmailAndPassword(dqUser.getEmail(), SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassword())));
+    DqUser dqUserFromDatabase = iUserService.selectDqUserByEmailAndPassword(dqUser.getEmail(), SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassword())));
     //去掉用户的password
     dqUser.setPassword("000000");
+    // 校验用户邮箱验证
+    if (!StringUtils.equals("1", dqUserFromDatabase.getCheckStatus())) {
+      throw new CustomException("邮箱验证未通过", HttpStatus.ERROR);
+    }
     /** 断言适合做测试开发，不适合实际生产 **/
     //Assert.notNull(dqUser,"用户名密码错误");
     //Sa-Token登陆
     //TODO 登陆并使用数据库用户ID来作为Satoken的用户ID
-    StpUtil.setLoginId(dqUser.getUserId(), true);
+    StpUtil.setLoginId(dqUserFromDatabase.getUserId(), true);
 //        StpUtil.setLoginId(dqUser.getUserName(),true);
     SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
     System.out.println(tokenInfo.tokenName);

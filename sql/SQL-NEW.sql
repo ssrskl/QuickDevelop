@@ -19,6 +19,8 @@ create table dq_user
     signature    varchar(255) default '无' comment '个性签名',
     grade        bigint(255)  default 1 comment '用户等级',
     experience   bigint(255)  default 0 comment '用户经验值',
+    check_param  varchar(255) unique comment '邮箱校验的参数（也可以当作盐值加密的参数）',
+    check_status char(1) comment '邮箱校验的状态(1-通过，0-未通过)',
     create_time  datetime comment '创建时间',
     update_time  datetime comment '更新时间',
     primary key (user_id)
@@ -31,7 +33,8 @@ create table dq_user
 insert into dq_user
 values (1, '猫颜', '1071352028@qq.com', '17104344673', '0',
         'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, sysdate(), sysdate());
+        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 'maoyan', 1, sysdate(),
+        sysdate());
 -- ----------------------------
 -- 2、用户关注表
 -- ----------------------------
@@ -161,6 +164,7 @@ create table dq_follow_interdqsection
 -- ----------------------------
 insert into dq_follow_interdqsection
 values (1, 1, 1, sysdate(), sysdate());
+maoyanscsvr
 
 -- ----------------------------
 -- 2、学校表
