@@ -53,6 +53,142 @@ create table dq_follow_interdquser
 insert into dq_follow_interdquser
 values (1, 1, 1, sysdate(), sysdate());
 
+-- ----------------------------
+-- 3、用户-角色表(多对多)
+-- ----------------------------
+drop table if exists dq_user_role;
+create table dq_user_role
+(
+    user_role_id bigint(255)  not null auto_increment comment '主键',
+    role_name    varchar(255) not null default '普通用户' comment '角色名称',
+    user_id      bigint(255)  not null default 1 comment '所拥有该角色的用户ID',
+    role_status  char(1)      not null default 0 comment '当前角色是否激活（0-否，1-是）',
+    create_time  datetime comment '创建时间',
+    update_time  datetime comment '更新时间',
+    primary key (user_role_id)
+) engine = innodb
+  auto_increment = 1
+  CHARACTER SET = utf8mb4 comment = '用户-角色表(多对多)';
+-- ----------------------------
+-- 初始化-用户-角色表(多对多)
+-- ----------------------------
+insert into dq_user_role
+values (1, '超级管理员', 1, 1, sysdate(), sysdate());
+
+-- ----------------------------
+-- 4、角色-权限对应表（多对多）
+-- ----------------------------
+drop table if exists dq_role_permission;
+create table dq_role_permission
+(
+    role_permission_id bigint(255)  not null auto_increment comment '主键',
+    role_name          varchar(255) not null default '普通用户' comment '角色名称',
+    permission_name    varchar(255) not null default 'user-ordinary' comment '权限名称（逗号分割）',
+    create_time        datetime comment '创建时间',
+    update_time        datetime comment '更新时间',
+    primary key (role_permission_id)
+) engine = innodb
+  auto_increment = 1
+  CHARACTER SET = utf8mb4 comment = '角色-权限对应表（多对多）';
+-- ----------------------------
+-- 初始化-角色-权限对应表（多对多）
+-- ----------------------------
+insert into dq_role_permission
+values (1, '超级管理员', '*', sysdate(), sysdate());
+
+-- ----------------------------
+-- 5、版块表
+-- ----------------------------
+drop table if exists dq_section;
+create table dq_section
+(
+    section_id            bigint(255)  not null auto_increment comment '版块主键',
+    section_name          varchar(255) not null comment '版块名称',
+    section_introduce     varchar(255) not null comment '版块介绍',
+    section_logo          varchar(255) not null comment '版块logo',
+    section_background    varchar(255) not null comment '版块背景图',
+    section_admin_user_id bigint(255)  not null default 1 comment '版主用户ID',
+    create_time           datetime comment '创建时间',
+    update_time           datetime comment '更新时间',
+    primary key (section_id)
+) engine = innodb
+  auto_increment = 1
+  CHARACTER SET = utf8mb4 comment = '版块表';
+-- ----------------------------
+-- 初始化-版块表
+-- ----------------------------
+insert into dq_section
+values (1, '行思工作室', '河南理工大学最强工作室', 'logo', 'background', 1, sysdate(), sysdate());
+
+-- ----------------------------
+-- 6、版块分类表
+-- ----------------------------
+drop table if exists dq_section_type;
+create table dq_section_type
+(
+    section_type_id   bigint(255)  not null auto_increment comment '版块分类主键',
+    section_type_name varchar(255) not null comment '版块分类名称',
+    section_id        bigint(255)  not null comment '分类所属的版块ID',
+    create_time       datetime comment '创建时间',
+    update_time       datetime comment '更新时间',
+    primary key (section_type_id)
+) engine = innodb
+  auto_increment = 1
+  CHARACTER SET = utf8mb4 comment = '版块分类表';
+-- ----------------------------
+-- 初始化-版块分类表
+-- ----------------------------
+insert into dq_section_type
+values (1, '程序组', 1, sysdate(), sysdate());
+
+-- ----------------------------
+-- 2、版块关注表
+-- ----------------------------
+drop table if exists dq_follow_interdqsection;
+create table dq_follow_interdqsection
+(
+    follow_id             bigint(255) not null auto_increment comment '主键ID',
+    give_follow_dquser_id bigint(255) not null comment '发起关注的用户的ID',
+    followed_dqsection_id bigint(255) not null comment '被关注的版块的ID',
+    create_time           datetime comment '创建时间',
+    update_time           datetime comment '更新时间',
+    primary key (follow_id)
+) engine = innodb
+  auto_increment = 1
+  CHARACTER SET = utf8mb4 comment = '用户关注版块的表';
+-- ----------------------------
+-- 初始化-版块关注表
+-- ----------------------------
+insert into dq_follow_interdqsection
+values (1, 1, 1, sysdate(), sysdate());
+
+-- ----------------------------
+-- 2、学校表
+-- ----------------------------
+drop table if exists dq_school;
+create table dq_school
+(
+    school_id         bigint(255)  not null auto_increment comment '学校主键ID',
+    school_name       varchar(255) not null comment '学校名称',
+    school_introduce  text         not null comment '学校介绍',
+    school_badge      varchar(255) not null comment '学校校徽',
+    school_motto      varchar(255) not null comment '学校校训',
+    school_background varchar(255) not null comment '学校背景图',
+    school_build_date datetime comment '建校时间',
+    school_location   varchar(255) comment '学校位置',
+    create_time       datetime comment '创建时间',
+    update_time       datetime comment '更新时间',
+    primary key (school_id)
+) engine = innodb
+  auto_increment = 1
+  CHARACTER SET = utf8mb4 comment = '学校表';
+-- ----------------------------
+-- 初始化-学校表
+-- ----------------------------
+insert into dq_school
+values (1, '河南理工大学',
+        '1909年，河南理工大学（简称“河南理工”；英文：Henan Polytechnic University，英文简称“HPU”）的前身——焦作路矿学堂，在黄河之滨、太行之阳的焦作诞生，成为我国第一所矿业高等学府和河南省建立最早的高等学校。学校历经福中矿务大学、私立焦作工学院、国立西北工学院、国立焦作工学院、焦作矿业学院（简称“焦作矿院”；英文：Jiaozuo Mining Institute，英文简称“JMI”）和焦作工学院（简称“焦工”；英文：Jiaozuo Institute of Technology，英文简称“JIT”）等重要历史时期，2004年更名河南理工大学，是中央与地方共建、以地方管理为主的河南省特色骨干大学，河南省人民政府与原国家安全生产监督管理总局共建高校，入选国家“中西部高校基础能力建设工程”高校。'
+           , 'badge', '明德任责，好学力行', 'background', sysdate(), '河南省焦作市世纪路2001号', sysdate(), sysdate());
 
 -- ----------------------------
 -- 2、文章表
@@ -62,14 +198,13 @@ create table dq_article
 (
     article_id      bigint(255)  not null auto_increment comment '文章ID',
     article_title   varchar(255) not null comment '文章标题',
-    article_content text comment '文章内容',
-    article_image   varchar(255) default '' comment '文章首页图片',
-    type_id         bigint(20)   default 1 comment '文章所属类型ID',
+    article_content text         not null comment '文章内容',
+    article_image   varchar(255) comment '文章首页图片',
+    section_id      bigint(255)  not null comment '文章所属版块ID',
+    section_type_id bigint(255)  not null comment '文章所在版块中的分类的ID',
     author_id       bigint(255)  not null comment '作者ID',
-    author_nickname varchar(255) default '作者昵称' comment '作者昵称',
-    author_username varchar(255) default '作者用户名' comment '作者用户名',
-    status          char(1)      default '0' comment '状态（0为正常，1为封禁）',
-    article_sort    bigint(255)  default 0 comment '文章排序',
+    status          char(1)     default '1' comment '状态（1为正常，0为封禁）',
+    article_weight  bigint(255) default 0 comment '文章权重',
     create_time     datetime comment '创建时间',
     update_time     datetime comment '更新时间',
     primary key (article_id)
@@ -81,58 +216,7 @@ create table dq_article
 -- 初始化-文章表数据
 -- ----------------------------
 insert into dq_article
-values (1, '文章标题1', '文章内容1', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        1, 1, '猫颜', 'maoyan', '0', 0, sysdate(), sysdate());
-insert into dq_article
-values (2, '文章标题2', '文章内容2', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        2, 2, '张三', 'zhangsan', '0', 0, sysdate(), sysdate());
-insert into dq_article
-values (3, '文章标题3', '文章内容3', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        3, 3, 'world', 'hello', '0', 0, sysdate(), sysdate());
-insert into dq_article
-values (4, '文章标题4', '文章内容4', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        1, 1, '猫颜', 'maoyan', '0', 0, sysdate(), sysdate());
-insert into dq_article
-values (5, '文章标题5', '文章内容5', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        2, 2, '张三', 'zhangsan', '0', 0, sysdate(), sysdate());
-insert into dq_article
-values (6, '文章标题6', '文章内容6', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        3, 3, 'world', 'hello', '0', 0, sysdate(), sysdate());
-
-
-
--- ----------------------------
--- 3、文章类型表
--- ----------------------------
-drop table if exists dq_type;
-create table dq_type
-(
-    type_id      bigint(255)  not null auto_increment comment '类型ID',
-    type_name    varchar(255) not null comment '类型名称',
-    type_image   varchar(255) default '类型图片' comment '类型图片',
-    status       char(1)      default '0' comment '状态（0为正常，1为封禁）',
-    create_manid bigint(20)   default 1 comment '创建者ID',
-    update_manid bigint(20)   default 1 comment '更新者ID',
-    introduce    varchar(255) default '类型介绍' comment '类型介绍',
-    create_time  datetime comment '创建时间',
-    update_time  datetime comment '更新时间',
-    primary key (type_id)
-) engine = innodb
-  auto_increment = 1
-  CHARACTER SET = utf8mb4 comment = '类型表';
-
--- ----------------------------
--- 初始化-文章类型表数据
--- ----------------------------
-insert into dq_type
-values (1, 'Java', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg', '0',
-        1, 1, 'Java是世界上最好的语言', sysdate(), sysdate());
-insert into dq_type
-values (2, 'php', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg', '0',
-        1, 1, 'Php是世界上最好的语言', sysdate(), sysdate());
-insert into dq_type
-values (3, 'html', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg', '0',
-        1, 1, 'Html是世界上最好的语言', sysdate(), sysdate());
+values (1, '第一篇文章', '# 欢迎您的到来', 'image', 1, 1, 1, 1, 0, sysdate(), sysdate());
 
 -- ----------------------------
 -- 4、评论表
@@ -140,22 +224,15 @@ values (3, 'html', 'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f
 drop table if exists dq_comment;
 create table dq_comment
 (
-    comment_id           bigint(255) not null auto_increment comment '评论ID',
-    article_id           bigint(255) not null comment '文章ID',
-    content              varchar(255)         default '评论内容' comment '评论内容',
-    comment_userid       bigint(20)           default 1 comment '评论者ID',
-    comment_usernickname varchar(255)         default '评论者的昵称' comment '评论者的昵称',
-    comment_username     varchar(255)         default '评论者的用户名' comment '评论者的用户名',
-    status               char(1)              default '0' comment '状态（0为正常，1为封禁）',
-    comment_user_avatar  varchar(255)         default '发表评论的用户的头像' comment '发表评论的用户的头像',
-    create_time          datetime comment '创建时间',
-    comment_type         char(2)              default '1' comment '评论的类型（1-评论 2-回复）',
-    to_user_id           bigint(255) not null default 1 comment '被回复的人的ID',
-    to_username          varchar(255)         default 'maoyan' comment '被回复的人的用户名',
-    to_nickname          varchar(255)         default '猫颜' comment '被回复的人的昵称',
-    to_user_avatar       varchar(255)         default '被回复的人的头像' comment '被回复的人的头像',
-    reply_id             bigint(255)          default 0 comment '父评论ID,回复的评论的ID(0则为是评论而不是回复)',
-    root_id              bigint(255)          default 0 comment '根评论ID(为0则为根评论)',
+    comment_id      bigint(255)  not null auto_increment comment '评论ID',
+    article_id      bigint(255)  not null comment '评论所在的文章ID',
+    content         varchar(255) not null comment '评论内容',
+    comment_user_id bigint(20)            default 1 comment '评论者ID',
+    status          char(1)               default '1' comment '状态（1为正常，0为封禁）',
+    to_user_id      bigint(255)  not null default 1 comment '被回复的人的ID',
+    reply_id        bigint(255)           default 0 comment '父评论ID,回复的评论的ID(0则为是评论而不是回复)',
+    root_id         bigint(255)           default 0 comment '根评论ID(为0则为根评论)',
+    create_time     datetime comment '创建时间',
     primary key (comment_id)
 ) engine = innodb
   auto_increment = 1
@@ -165,65 +242,28 @@ create table dq_comment
 -- 初始化-评论表数据
 -- ----------------------------
 insert into dq_comment
-values (1, 1, '第一个评论', 1, '猫颜', 'maoyan', '0', 'touxiang', sysdate(), 1, 1, 'maoyan', '猫颜', 'wu tou xiang', 0, 0);
-insert into dq_comment
-values (2, 1, '第二个评论', 1, '猫颜', 'maoyan', '0', 'touxiang', sysdate(), 1, 1, 'maoyan', '猫颜', 'wu tou xiang', 0, 0);
-insert into dq_comment
-values (3, 1, '第一个评论的回复', 1, '猫颜', 'maoyan', '0', 'touxiang', sysdate(), 2, 1, 'maoyan', '猫颜', 'touxiang', 1, 1);
-insert into dq_comment
-values (4, 1, '第一个回复的回复', 1, '猫颜', 'maoyan', '0', 'touxiang', sysdate(), 2, 1, 'maoyan', '猫颜', 'touxiang', 3, 1);
+values (1, 1, 'hello', 1, '1', 1, 0, 0, sysdate());
 
-
--- 4、角色权限对应表
 -- ----------------------------
-drop table if exists dq_role_permission;
-create table dq_role_permission
+-- 4、收藏表
+-- ----------------------------
+drop table if exists dq_collection;
+create table dq_collection
 (
-    role_id         bigint(255)  not null auto_increment comment '角色ID',
-    role_name       varchar(255) not null unique default '角色名称' comment '角色名称',
-    permission_name varchar(255)                 default 'user-ordinary' comment '权限名称',
-    create_time     datetime comment '创建时间',
-    update_time     datetime comment '更新时间',
-    primary key (role_id)
+    collection_id bigint(255) not null auto_increment comment '收藏ID',
+    user_id       bigint(255) not null comment '发起收藏的用户的ID',
+    article_id    bigint(255) not null comment '被收藏的文章的ID',
+    create_time   datetime comment '创建时间',
+    update_time   datetime comment '更新时间',
+    primary key (collection_id)
 ) engine = innodb
   auto_increment = 1
-  CHARACTER SET = utf8mb4 comment = '角色权限对应';
-
+  CHARACTER SET = utf8mb4 comment = '收藏表';
 -- ----------------------------
--- 初始化-角色权限对应数据
+-- 初始化-收藏表数据
 -- ----------------------------
-insert into dq_role_permission
-values (1, '超级管理员', 'super-admin', sysdate(), sysdate());
-insert into dq_role_permission value (2, '管理员', 'admin-ordinary', sysdate(), sysdate());
-insert into dq_role_permission value (3, '普通用户', 'user-ordinary', sysdate(), sysdate());
-insert into dq_role_permission value (4, '文章管理员', 'user*,admin-article', sysdate(), sysdate());
-
--- ----------------------------
--- 5、点赞对应表
--- ----------------------------
-drop table if exists dq_like;
-create table dq_like
-(
-    like_id           bigint(255) not null auto_increment comment '点赞ID',
-    give_like_user_id bigint(255) not null default 1 comment '点赞用户id',
-    like_article_id   bigint(255) not null default 1 comment '被点赞的文章id',
-    status            char(1)              default '0' comment '状态（0为取消，1为点赞状态）',
-    create_time       datetime comment '创建时间',
-    update_time       datetime comment '更新时间',
-    primary key (like_id)
-) engine = innodb
-  auto_increment = 1
-  CHARACTER SET = utf8mb4 comment = '用户点赞表';
-
--- ----------------------------
--- 初始化-角色权限对应数据
--- ----------------------------
-insert into dq_like
-values (1, 1, 1, 0, sysdate(), sysdate());
-insert into dq_like
-values (2, 1, 1, 0, sysdate(), sysdate());
-insert into dq_like
-values (3, 1, 1, 0, sysdate(), sysdate());
+insert into dq_collection
+values (1, 1, 1, sysdate(), sysdate());
 
 -- ----------------------------
 -- 5、操作记录表
@@ -263,93 +303,3 @@ values (2, '文章', 1, 'addDqArticle', 'POST', 'maoyan', 'localhost', '127.0.0.
 insert into dq_operlog
 values (3, '文章', 1, 'addDqArticle', 'POST', 'maoyan', 'localhost', '127.0.0.1', '河南', '请求参数', 'null', '0', '错误的消息',
         sysdate());
-
--- ----------------------------
--- 5、标签表
--- ----------------------------
-drop table if exists dq_tag;
-create table dq_tag
-(
-    tag_id      bigint(255)  not null auto_increment comment 'tagId',
-    tag_name    varchar(255) not null unique default 'tag名称' comment 'tag名称',
-    create_time datetime comment '创建时间',
-    update_time datetime comment '更新时间',
-
-    primary key (tag_id)
-) engine = innodb
-  auto_increment = 1
-  CHARACTER SET = utf8mb4 comment = '标签表';
-
--- ----------------------------
--- 初始化-标签表对应数据
--- ----------------------------
-insert into dq_tag
-values (1, 'Java', sysdate(), sysdate());
-insert into dq_tag
-values (2, 'SpringBoot', sysdate(), sysdate());
-insert into dq_tag
-values (3, 'Docker', sysdate(), sysdate());
-insert into dq_tag
-values (4, 'Linux', sysdate(), sysdate());
-insert into dq_tag
-values (5, 'PHP', sysdate(), sysdate());
-
-
--- ----------------------------
--- 5、文章标签对应表(一对多)
--- ----------------------------
-drop table if exists dq_article_tag;
-create table dq_article_tag
-(
-    article_tag_id bigint(255)  not null auto_increment comment '主键ID',
-    article_id     varchar(255) not null default 0 comment '文章ID',
-    tag_id         bigint(255)  not null default 0 comment 'tagID',
-    create_time    datetime comment '创建时间',
-    update_time    datetime comment '更新时间',
-    primary key (article_tag_id),
-    unique key article_id (article_id, tag_id)
-) engine = innodb
-  auto_increment = 1
-  CHARACTER SET = utf8mb4 comment = '文章标签对应表';
-
--- ----------------------------
--- 初始化-文章标签对应表对应数据
--- ----------------------------
-insert into dq_article_tag
-values (1, 1, 1, sysdate(), sysdate());
-insert into dq_article_tag
-values (2, 1, 2, sysdate(), sysdate());
-insert into dq_article_tag
-values (3, 1, 3, sysdate(), sysdate());
-insert into dq_article_tag
-values (4, 2, 1, sysdate(), sysdate());
-insert into dq_article_tag
-values (5, 2, 2, sysdate(), sysdate());
-insert into dq_article_tag
-values (6, 2, 3, sysdate(), sysdate());
-
--- ----------------------------
--- 6、消息表
--- ----------------------------
-drop table if exists dq_message;
-create table dq_message
-(
-    message_id         bigint(255)  not null auto_increment comment '主键ID',
-    re_user_id         bigint(255)  not null default 0 comment '提醒用户的ID',
-    message_type       varchar(255) not null comment '消息的类型(1-点赞消息，2-评论消息，2-关注用户的动态，0-服务器消息)',
-    se_user_id         bigint(255)           default 0 comment '消息发送的用户ID',
-    message_article_id bigint(255)           default 0 comment '消息所在的文章ID',
-    message_comment_id bigint(255)           default 0 comment '消息的评论ID',
-    message_is_read    char(1)               default 0 comment '消息是否已读(0-未读，1-已读)',
-    create_time        datetime comment '创建时间',
-    update_time        datetime comment '更新时间',
-    primary key (message_id)
-) engine = innodb
-  auto_increment = 1
-  CHARACTER SET = utf8mb4 comment = '消息表';
-
--- ----------------------------
--- 初始化-消息表
--- ----------------------------
-insert into dq_message
-values (1, 1, 0, 1, 1, 1, 0, sysdate(), sysdate());
