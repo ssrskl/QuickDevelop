@@ -10,6 +10,7 @@ import com.maoyan.quickdevelop.common.annotation.Log;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.enums.BusinessType;
 import com.maoyan.quickdevelop.system.service.IDqUserService;
 import io.swagger.annotations.ApiOperation;
@@ -48,8 +49,8 @@ public class DqUserController extends BaseController {
   public AjaxResult list(@RequestParam(defaultValue = "1") int pageNum,
                          @RequestParam(defaultValue = "10") int pageSize,
                          DqUser dqUser) {
-    List<DqUser> dqUsers = iUserService.selectAllDqUsers(pageNum, pageSize, dqUser);
-    PageInfo<DqUser> pageInfo = new PageInfo<>(dqUsers);
+    List<DqUserPostProcessor> dqUsers = iUserService.commonSelectDqUsers(pageNum, pageSize, dqUser);
+    PageInfo<DqUserPostProcessor> pageInfo = new PageInfo<>(dqUsers);
     return AjaxResult.success("查询成功", pageInfo);
   }
 
@@ -65,21 +66,6 @@ public class DqUserController extends BaseController {
   @Log(title = "用户操作", businessType = BusinessType.UPDATE)
   @PostMapping("/update")
   public AjaxResult update(@RequestBody DqUser newDqUser) {
-    //Assert.isTrue(StpUtil.hasRole("管理员") || StpUtil.getLoginId() == dqUserId, "只能更新自己的账号，坏东西");
-    //获取用户（后面可以从redis中获取）
-//        DqUser dqUser = iUserService.selectDqUserById(newDqUser.getDquserid());
-    DqUser dqUser = new DqUser();
-    //更新用户
-    dqUser.setUserId(newDqUser.getUserId());
-    dqUser.setUserName(newDqUser.getUserName());
-
-    dqUser.setEmail(newDqUser.getEmail());
-    dqUser.setPhoneNumber(newDqUser.getPhoneNumber());
-    dqUser.setSex(newDqUser.getSex());
-    dqUser.setAvatar(newDqUser.getAvatar());
-    //加密密码
-
-    dqUser.setSignature(newDqUser.getSignature());
     //更新完成用户后要刷新redis缓存
     int i = iUserService.updateDqUserSelf(newDqUser);
     return AjaxResult.success("更新成功", i);

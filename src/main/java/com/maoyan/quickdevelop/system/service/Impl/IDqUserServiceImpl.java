@@ -6,6 +6,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqRolePermission;
@@ -16,7 +17,7 @@ import com.maoyan.quickdevelop.common.utils.MyQueryWrapper;
 import com.maoyan.quickdevelop.common.utils.annotation.type.QueryType;
 import com.maoyan.quickdevelop.common.utils.ip.IpUtils;
 import com.maoyan.quickdevelop.system.mapper.DqUserMapper;
-import com.maoyan.quickdevelop.system.service.admin.IDqRolePermissionService;
+import com.maoyan.quickdevelop.system.mapper.postprocessor.DqUserPostProcessorMapper;
 import com.maoyan.quickdevelop.system.service.IDqUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,8 @@ public class IDqUserServiceImpl implements IDqUserService {
 
   @Autowired
   private DqUserMapper dqUserMapper;
-
   @Autowired
-  private IDqRolePermissionService idqRolePermissionService;
+  private DqUserPostProcessorMapper dqUserPostProcessorMapper;
 
   QueryWrapper<DqUser> queryWrapper = new QueryWrapper<>();
 
@@ -61,40 +61,13 @@ public class IDqUserServiceImpl implements IDqUserService {
   }
 
   @Override
-  public List<DqUser> selectAllDqUsers(int pageNum, int pageSize, DqUser dqUser){
-    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(StringUtils.isNotNull(dqUser.getUserId()), DqUser::getUserId, dqUser.getUserId())
-            .like(StringUtils.isNotEmpty(dqUser.getUserName()), DqUser::getUserName, dqUser.getUserName())
-            .like(StringUtils.isNotEmpty(dqUser.getNickName()), DqUser::getNickName, dqUser.getNickName())
-            .like(StringUtils.isNotEmpty(dqUser.getEmail()), DqUser::getEmail, dqUser.getEmail())
-            .like(StringUtils.isNotEmpty(dqUser.getPhoneNumber()), DqUser::getPhoneNumber, dqUser.getPhoneNumber())
-            .like(StringUtils.isNotEmpty(dqUser.getSex()), DqUser::getSex, dqUser.getSex())
-            //.like(StringUtils.isNotEmpty(dqUser.getStatus()),DqUser::getStatus,dqUser.getStatus())
-            .like(StringUtils.isNotEmpty(dqUser.getRole()), DqUser::getRole, dqUser.getRole())
-            // 不查询密码字段
-            .select(DqUser.class,tableFieldInfo -> !tableFieldInfo.getColumn().equals("password"));
+  public List<DqUserPostProcessor> commonSelectDqUsers(int pageNum, int pageSize, DqUser dqUser){
     PageHelper.startPage(pageNum, pageSize);
-    List<DqUser> dqUsers = dqUserMapper.selectList(dqUserLambdaQueryWrapper);
-    dqUserLambdaQueryWrapper.clear();
-    // 异常检测
-    if (StringUtils.isEmpty(dqUsers)) {
-      throw new CustomException("未查询到用户", HttpStatus.NOT_FOUND);
+    List<DqUserPostProcessor> dqUserPostProcessors = dqUserPostProcessorMapper.selectDqUserPostProcesser(dqUser);
+    if (StringUtils.isEmpty(dqUserPostProcessors)){
+      throw new CustomException("未查询到用户",HttpStatus.NOT_FOUND);
     }
-//        MyQueryWrapper<DqUser> myQueryWrapper = new MyQueryWrapper<>();
-//        PageHelper.startPage(pageNum, pageSize);
-//        HashMap<String, Object> queryRules = new LinkedHashMap<>();
-//        queryRules.put("userId", QueryType.EQ);
-//        queryRules.put("userName", QueryType.LIKE);
-//        queryRules.put("nickName", QueryType.LIKE);
-//        queryRules.put("email", QueryType.EQ);
-//        queryRules.put("phonenumber", QueryType.EQ);
-//        queryRules.put("role", QueryType.EQ);
-//        queryRules.put("status", QueryType.EQ);
-//        dqUser.setStatus("0");
-//        myQueryWrapper.queryAll(dqUser, queryRules);
-//        List<DqUser> dqUsers = dqUserMapper.selectList(myQueryWrapper);
-//        myQueryWrapper.clear();
-    return dqUsers;
+    return dqUserPostProcessors;
   }
 
   @Override
@@ -168,25 +141,16 @@ public class IDqUserServiceImpl implements IDqUserService {
    */
   @Override
   public int updateDqUserSelf(DqUser dqUser) {
-//    //获取原有的ID来更改
-//    if (StpUtil.getLoginIdAsLong() != dqUser.getUserId()) {
-//      throw new CustomException("不能更改其他用户信息", HttpStatus.FORBIDDEN);
-//    }
-    //DqUser dqUser1 = selectDqUserById(dqUserId);
     // 获取用户原有的信息
     DqUser oldDqUser = dqUserMapper.selectById(StpUtil.getLoginIdAsLong());
-//    if (StringUtils.isNull(oldDqUser)) {
-//      throw new CustomException("此用户不存在", HttpStatus.FORBIDDEN);
-//    }
     // 为空则默认不更改。
     oldDqUser.setUserName(dqUser.getUserName());
-    oldDqUser.setNickName(dqUser.getNickName());
     oldDqUser.setEmail(dqUser.getEmail());
     oldDqUser.setPhoneNumber(dqUser.getPhoneNumber());
     oldDqUser.setSex(dqUser.getSex());
     oldDqUser.setAvatar(dqUser.getAvatar());
-    if (StringUtils.isNotEmpty(dqUser.getPassWord())) {
-      oldDqUser.setPassWord(SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassWord())));
+    if (StringUtils.isNotEmpty(dqUser.getPassword())) {
+      oldDqUser.setPassword(SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassword())));
     }
     oldDqUser.setSignature(dqUser.getSignature());
     oldDqUser.setLoginDate(DateUtils.getNowDate());
@@ -199,23 +163,6 @@ public class IDqUserServiceImpl implements IDqUserService {
     return i;
   }
 
-
-  @Override
-  public String selectNowDqUserPermission() {
-//        StpUtil.isLogin();
-//        if (StpUtil.isLogin()){
-    long loginIdAsLong = StpUtil.getLoginIdAsLong();
-    //获取当前用户的所有信息
-    DqUser dqUser = selectDqUserById(loginIdAsLong);
-    String roleName = dqUser.getRole();
-    DqRolePermission dqRolePermission = idqRolePermissionService.selectDqRolePermissionByName(roleName);
-    String permissionName = dqRolePermission.getPermissionName();
-    return permissionName;
-//        }else {
-//            return "guest-permission";
-//        }
-
-  }
 
 
 }

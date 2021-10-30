@@ -5,7 +5,7 @@ import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.system.domain.vo.LoginVO;
 
 public interface IDqLoginService {
-  public SaTokenInfo dqUserLogin(DqUser dqUser);
+  public SaTokenInfo dqUserLogin(LoginVO loginVO);
   public SaTokenInfo dqUserThirdLogin();
   public SaTokenInfo dqUserGiteeLogin(String code);
 }

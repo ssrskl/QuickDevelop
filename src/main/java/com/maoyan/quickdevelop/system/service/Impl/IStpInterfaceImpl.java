@@ -52,7 +52,7 @@ public class IStpInterfaceImpl implements StpInterface {
 //                "user-ordinary");
 
 
-        List<String> dqUserPermissions = dqRolePermissionMapper.selectPermissionNameById((Long) loginId);
+        List<String> dqUserPermissions = dqRolePermissionMapper.selectPermissionNameById(Long.parseLong(String.valueOf(loginId)));
 //        List<String> list = new ArrayList<String>();
 //        //先将其转为String再转Long,直接(Long) loginId会报错，为啥，还得搜搜
 //        DqUser dqUser = iUserService.selectDqUserById(Long.parseLong(String.valueOf(loginId)));
@@ -94,7 +94,7 @@ public class IStpInterfaceImpl implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginKey) {
         // satoken的id就是当前用户的ID,通过这个Id直接查询角色
-        List<String> dqUserRoles = dqUserRoleMapper.selectRoleNameById((Long) loginId);
+        List<String> dqUserRoles = dqUserRoleMapper.selectRoleNameById(Long.parseLong(String.valueOf(loginId)));
 //        List<String> list = new ArrayList<String>();
 //        DqUser dqUser = iUserService.selectDqUserById(Long.parseLong(String.valueOf(loginId)));
 //        String role = dqUser.getRole();

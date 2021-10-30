@@ -247,7 +247,6 @@ public class IDqCommentServiceImpl implements IDqCommentService {
    */
   @Override
   public List<DqComment> selectDqCommentToMe(int pageNum, int pageSize) {
-    userQueryWrapper.lambda().eq(DqUser::getUserId, StpUtil.getLoginIdAsLong()).eq(DqUser::getStatus, "0");
     DqUser dqUser = dqUserMapper.selectOne(userQueryWrapper);
     userQueryWrapper.clear();
     if (StringUtils.isNull(dqUser)) {
@@ -282,14 +281,14 @@ public class IDqCommentServiceImpl implements IDqCommentService {
     }
     /** 参数补充**/
     DqUser dqUser = dqUserMapper.selectById(StpUtil.getLoginIdAsLong());
-    dqComment.setCommentUsername(dqUser.getUserName());
-    dqComment.setCommentUserNickName(dqUser.getNickName());
-    dqComment.setCommentUserAvatar(dqUser.getAvatar());
+//    dqComment.setCommentUsername(dqUser.getUserName());
+//    dqComment.setCommentUserNickName(dqUser.getNickName());
+//    dqComment.setCommentUserAvatar(dqUser.getAvatar());
     dqComment.setCreateTime(DateUtils.getNowDate());
     // 判断是评论还是回复
     if (dqComment.getReplyId() != 0) {
       //回复
-      dqComment.setCommentType("2");
+//      dqComment.setCommentType("2");
       //根据回复来查原来的评论或回复
       // MyQueryWrapper<DqComment> myQueryWrapper = new MyQueryWrapper<>();
       // myQueryWrapper.eq("comment_id",dqComment.getReplyId());
@@ -302,9 +301,9 @@ public class IDqCommentServiceImpl implements IDqCommentService {
       }
       dqComment.setToUserId(oldDqComments.getCommentUserId());
       DqUser toUser = dqUserMapper.selectById(dqComment.getToUserId());
-      dqComment.setToUsername(toUser.getUserName());
-      dqComment.setToNickname(toUser.getNickName());
-      dqComment.setToUserAvatar(toUser.getAvatar());
+//      dqComment.setToUsername(toUser.getUserName());
+//      dqComment.setToNickname(toUser.getNickName());
+//      dqComment.setToUserAvatar(toUser.getAvatar());
       // 判断所回复的回复是否为评论
       if (oldDqComments.getRootId() == 0) {
         dqComment.setRootId(oldDqComments.getCommentId());
@@ -314,12 +313,12 @@ public class IDqCommentServiceImpl implements IDqCommentService {
       myQueryWrapper.clear();
     } else {
       //评论
-      dqComment.setCommentType("1");
+//      dqComment.setCommentType("1");
       dqComment.setToUserId(dqArticle.getAuthorId());
       DqUser toUser = dqUserMapper.selectById(dqArticle.getAuthorId());
-      dqComment.setToUsername(toUser.getUserName());
-      dqComment.setToNickname(toUser.getNickName());
-      dqComment.setToUserAvatar(toUser.getAvatar());
+//      dqComment.setToUsername(toUser.getUserName());
+//      dqComment.setToNickname(toUser.getNickName());
+//      dqComment.setToUserAvatar(toUser.getAvatar());
       dqComment.setRootId(0L);
     }
     int insert = dqCommentMapper.insert(dqComment);
@@ -331,8 +330,8 @@ public class IDqCommentServiceImpl implements IDqCommentService {
     DqUser toDqUser = dqUserMapper.selectById(dqComment.getToUserId());
     // 邮件正文
     Context context = new Context();
-    context.setVariable("toDqUser",toDqUser.getNickName());
-    context.setVariable("username",dqUser.getNickName());
+//    context.setVariable("toDqUser",toDqUser.getNickName());
+//    context.setVariable("username",dqUser.getNickName());
     context.setVariable("replyContent",dqComment.getContent());
     context.setVariable("articleId",dqArticle.getArticleId());
     String emailContent = templateEngine.process("emailTemplate",context);

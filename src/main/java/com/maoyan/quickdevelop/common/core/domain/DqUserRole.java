@@ -33,7 +33,7 @@ public class DqUserRole implements Serializable {
   @TableField(value = "user_id")
   private Long userId;
   /**
-   * 角色状态
+   * 角色状态(1为激活，0为未激活,显示的时候，显示的是激活的)
    */
   @TableField(value = "role_status")
   private String roleStatus;

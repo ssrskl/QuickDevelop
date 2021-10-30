@@ -54,17 +54,6 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   @Override
   public List<DqArticle> selectDqArticle(int pageNum, int pageSize, DqArticle dqArticle) {
     PageHelper.startPage(pageNum, pageSize);
-    queryWrapper.lambda().eq(StringUtils.isNotNull(dqArticle.getArticleId()), DqArticle::getArticleId, dqArticle.getArticleId())
-        .like(StringUtils.isNotNull(dqArticle.getArticleTitle()), DqArticle::getArticleTitle, dqArticle.getArticleTitle())
-        .like(StringUtils.isNotNull(dqArticle.getArticleContent()), DqArticle::getArticleContent, dqArticle.getArticleContent())
-        .eq(StringUtils.isNotNull(dqArticle.getAuthorId()), DqArticle::getAuthorId, dqArticle.getAuthorId())
-        .eq(StringUtils.isNotNull(dqArticle.getAuthorNickname()), DqArticle::getAuthorNickname, dqArticle.getAuthorNickname())
-        .eq(StringUtils.isNotNull(dqArticle.getAuthorUsername()), DqArticle::getAuthorUsername, dqArticle.getAuthorUsername())
-        .eq(StringUtils.isNotNull(dqArticle.getTypeId()), DqArticle::getTypeId, dqArticle.getTypeId())
-        .eq(StringUtils.isNotNull(dqArticle.getArticleSort()), DqArticle::getArticleSort, dqArticle.getArticleSort())
-        .eq(DqArticle::getStatus, "0")
-        .orderByDesc(DqArticle::getArticleSort)
-        .orderByDesc(DqArticle::getArticleId);
 //        myQueryWrapper.queryAll(dqArticle, queryRules);
     List<DqArticle> dqArticles = dqArticleMapper.selectList(queryWrapper);
     queryWrapper.clear();
@@ -108,7 +97,6 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   public List<DqArticle> selectDqArticlesByTypeId(int pageNum, int pageSize, Long typeId) {
     /** 对typeid校验,将Long转换为String **/
     queryWrapper.lambda()
-        .eq(DqArticle::getTypeId, typeId)
         .eq(DqArticle::getStatus, "0")
         .orderByDesc(DqArticle::getArticleId);
 //        MyQueryWrapper<DqArticle> myQueryWrapper = new MyQueryWrapper<>();
@@ -166,8 +154,6 @@ public class IDqArticleServiceImpl implements IDqArticleService {
     Long autorId = dqArticle.getAuthorId();
     DqUser dqUser = dqUserMapper.selectById(autorId);
 //        DqUser dqUser = idqUserService.selectDqUserById(autorId);
-    dqArticle.setAuthorUsername(dqUser.getUserName());
-    dqArticle.setAuthorNickname(dqUser.getNickName());
     int insert = dqArticleMapper.insert(dqArticle);
     if (insert <= 0) {
       throw new CustomException("添加失败", HttpStatus.ERROR);
@@ -191,7 +177,6 @@ public class IDqArticleServiceImpl implements IDqArticleService {
     dqArticle.setArticleTitle(newdqArticle.getArticleTitle());
     dqArticle.setArticleContent(newdqArticle.getArticleContent());
     dqArticle.setArticleImage(newdqArticle.getArticleImage());
-    dqArticle.setTypeId(newdqArticle.getTypeId());
     dqArticle.setUpdateTime(DateUtils.getNowDate());
     int i = dqArticleMapper.updateById(dqArticle);
     if (i <= 0) {

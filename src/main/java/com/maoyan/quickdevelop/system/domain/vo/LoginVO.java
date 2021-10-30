@@ -20,15 +20,15 @@ public class LoginVO {
     /**
      * 用户名
      */
-    @ApiModelProperty(value = "用户名")
+    @ApiModelProperty(value = "邮箱")
     @NonNull
-    private String userName;
+    private String email;
 
     /**
      * 用户密码
      */
     @ApiModelProperty(value = "密码")
     @NonNull
-    private String passWord;
+    private String password;
 
 }

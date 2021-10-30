@@ -2,6 +2,7 @@ package com.maoyan.quickdevelop.system.service;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -21,13 +22,13 @@ public interface IDqUserService {
      */
     public DqUser selectDqUserByEmailAndPassword(String email,String password);
     /**
-     * new 查询所有的用户
+     * 通用查询用户
      * @author 猫颜
      * @date  下午9:01
      * @param dqUser 用户类
      * @return java.util.List<com.maoyan.quickdevelop.common.core.domain.DqUser>
      */
-    public List<DqUser> selectAllDqUsers(int pageNum,int pageSize,DqUser dqUser);
+    public List<DqUserPostProcessor> commonSelectDqUsers(int pageNum, int pageSize, DqUser dqUser);
 
     /**
      * 实用型
@@ -58,14 +59,6 @@ public interface IDqUserService {
      */
     public int insertDqUser(DqUser dqUser);
 
-//    /**
-//     * 获取全部的用户
-//     * @param pageNum 查询的页数
-//     * @param pageSize 每页的大小
-//     * @return
-//     */
-//    public List<DqUser> selectAllDqUsers(int pageNum, int pageSize);
-
     /**
      * 注销用户
      * @param
@@ -79,13 +72,6 @@ public interface IDqUserService {
      */
     public int updateDqUserSelf(DqUser dqUser);
 
-
-
-    /**
-     * 获取当前用户的权限
-     * @return
-     */
-    public String selectNowDqUserPermission();
 
 
 }

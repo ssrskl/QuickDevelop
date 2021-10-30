@@ -31,12 +31,12 @@ public class IDqLoginServiceImpl implements IDqLoginService {
   private DqUserMapper dqUserMapper;
 
   @Override
-  public SaTokenInfo dqUserLogin(DqUser dqUser) {
+  public SaTokenInfo dqUserLogin(LoginVO loginVO) {
 
     //登陆方法
-    DqUser dqUserFromDatabase = iUserService.selectDqUserByEmailAndPassword(dqUser.getEmail(), SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassword())));
+    DqUser dqUserFromDatabase = iUserService.selectDqUserByEmailAndPassword(loginVO.getEmail(), SaSecureUtil.md5(SaSecureUtil.sha1(loginVO.getPassword())));
     //去掉用户的password
-    dqUser.setPassword("000000");
+    dqUserFromDatabase.setPassword("000000");
     // 校验用户邮箱验证
     if (!StringUtils.equals("1", dqUserFromDatabase.getCheckStatus())) {
       throw new CustomException("邮箱验证未通过", HttpStatus.ERROR);

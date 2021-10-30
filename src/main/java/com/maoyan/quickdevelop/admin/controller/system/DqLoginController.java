@@ -28,8 +28,8 @@ public class DqLoginController {
 
     @ApiOperation(value = "用户登陆")
     @PostMapping("")
-    public AjaxResult login(@Validated @RequestBody DqUser dqUser) {
-        SaTokenInfo saTokenInfo = iDqLoginService.dqUserLogin(dqUser);
+    public AjaxResult login(@Validated @RequestBody LoginVO loginVO) {
+        SaTokenInfo saTokenInfo = iDqLoginService.dqUserLogin(loginVO);
         return AjaxResult.success("登陆成功", saTokenInfo);
     }
     /**

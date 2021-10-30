@@ -99,7 +99,6 @@ class QuickDevelopApplicationTests {
     void test() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
         DqUser dqUser = new DqUser();
         dqUser.setUserName("maoyan");
-        dqUser.setNickName("猫颜");
 
         //Hashmap是无序的，所以要使用LinkedHashMap
         HashMap<String, Object> queryRules = new LinkedHashMap<>();

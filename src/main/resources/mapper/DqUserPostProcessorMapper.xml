@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqUserPostProcessorMapper">
+
+    <resultMap id="DqUserResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor">
+
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="CHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+<!--        <result property="password" column="password" jdbcType="VARCHAR"/>-->
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="loginIp" column="loginIp" jdbcType="VARCHAR"/>
+        <result property="loginDate" column="loginDate" jdbcType="TIMESTAMP"/>
+        <result property="signature" column="signature" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="BIGINT"/>
+        <result property="experience" column="experience" jdbcType="BIGINT"/>
+        <result property="checkParam" column="check_param" jdbcType="VARCHAR"/>
+        <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
+
+        <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="dqUserRoleList" javaType="java.util.List"
+                    ofType="com.maoyan.quickdevelop.common.core.domain.DqUserRole" resultMap="RolesResult"/>
+    </resultMap>
+
+    <resultMap id="RolesResult" type="com.maoyan.quickdevelop.common.core.domain.DqUserRole">
+        <id property="userRoleId" column="user_role_id" jdbcType="BIGINT"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="roleStatus" column="role_status" jdbcType="CHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="selectDqUserPostProcesserVO">
+        select dq_user.user_id,
+               user_name,
+               email,
+               phone_number,
+               sex,
+               avatar,
+               status,
+               loginIp,
+               loginDate,
+               signature,
+               grade,
+               experience,
+               check_param,
+               check_status,
+               dq_user.create_time,
+               dq_user.update_time,
+               user_role_id,
+               role_name,
+               dur.user_id,
+               role_status,
+               dur.create_time,
+               dur.update_time
+        from dq_user
+                 left join dq_user_role dur on dq_user.user_id = dur.user_id
+    </sql>
+    <select id="selectDqUserPostProcesser"
+            parameterType="com.maoyan.quickdevelop.common.core.domain.DqUser"
+            resultMap="DqUserResult">
+        <include refid="selectDqUserPostProcesserVO"></include>
+        <where>
+            <if test="dqUser.userId != null and dqUser.userId!=''">
+                AND dq_user.user_id = #{dqUser.userId}
+            </if>
+            <if test="dqUser.userName != null and dqUser.userName != ''">
+                AND dq_user.user_name = #{dqUser.userName}
+            </if>
+            <if test="dqUser.email != null and dqUser.email != ''">
+                AND dq_user.email = #{dqUser.email}
+            </if>
+            <if test="dqUser.phoneNumber != null and dqUser.phoneNumber != ''">
+                AND dq_user.phone_number = #{dqUser.phoneNumber}
+            </if>
+            <if test="dqUser.sex != null and dqUser.sex != ''">
+                AND dq_user.sex = #{dqUser.sex}
+            </if>
+            <if test="dqUser.grade != null and dqUser.grade != ''">
+                AND dq_user.grade = #{dqUser.grade}
+            </if>
+            <if test="dqUser.experience != null and dqUser.experience != ''">
+                AND dq_user.experience = #{dqUser.experience}
+            </if>
+        </where>
+    </select>
+</mapper>

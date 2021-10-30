@@ -106,16 +106,6 @@ public class TestController {
         return md5;
     }
 
-    //权限注解记得把开关开开
-    @GetMapping("/nowper")
-    @SaCheckPermission("user-update")
-    public String nowPermission() {
-        if (StpUtil.isLogin()) {
-            System.out.println("用户已登陆");
-        }
-        String s = iDqUserService.selectNowDqUserPermission();
-        return s;
-    }
 
     @GetMapping("/per")
     public String checkPermissions(){

@@ -35,6 +35,9 @@ values (1, '猫颜', '1071352028@qq.com', '17104344673', '0',
         'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
         'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 'maoyan', 1, sysdate(),
         sysdate());
+insert into dq_user
+values (2, 'maoyan', '820244680@qq.com', '110', '0', 'logo', 'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1',
+        sysdate(), 'wu', 1, 0, 'maoyan2', 1, sysdate(), sysdate());
 -- ----------------------------
 -- 2、用户关注表
 -- ----------------------------
@@ -77,7 +80,8 @@ create table dq_user_role
 -- ----------------------------
 insert into dq_user_role
 values (1, '超级管理员', 1, 1, sysdate(), sysdate());
-
+insert into dq_user_role
+values (2, '普通用户', 2, 1, sysdate(), sysdate());
 -- ----------------------------
 -- 4、角色-权限对应表（多对多）
 -- ----------------------------
@@ -98,7 +102,8 @@ create table dq_role_permission
 -- ----------------------------
 insert into dq_role_permission
 values (1, '超级管理员', '*', sysdate(), sysdate());
-
+insert into dq_role_permission
+values (2, '普通用户', 'user', sysdate(), sysdate());
 -- ----------------------------
 -- 5、版块表
 -- ----------------------------
