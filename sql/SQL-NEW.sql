@@ -86,7 +86,7 @@ create table dq_role_permission
 (
     role_permission_id bigint(255)  not null auto_increment comment '主键',
     role_name          varchar(255) not null default '普通用户' comment '角色名称',
-    permission_name    varchar(255) not null default 'user-ordinary' comment '权限名称（逗号分割）',
+    permission_name    varchar(255) not null default 'user-ordinary' comment '权限名称',
     create_time        datetime comment '创建时间',
     update_time        datetime comment '更新时间',
     primary key (role_permission_id)

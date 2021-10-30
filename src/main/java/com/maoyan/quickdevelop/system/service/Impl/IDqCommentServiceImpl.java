@@ -69,7 +69,6 @@ public class IDqCommentServiceImpl implements IDqCommentService {
         //发表评论用户id
         .eq(StringUtils.isNotNull(dqComment.getCommentUserId()), DqComment::getCommentUserId, dqComment.getCommentUserId())
         //评论类型
-        .eq(StringUtils.isNotNull(dqComment.getCommentType()), DqComment::getCommentType, dqComment.getCommentType())
         //发给用户的id
         .eq(StringUtils.isNotNull(dqComment.getToUserId()), DqComment::getToUserId, dqComment.getToUserId())
         //父评论id

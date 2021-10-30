@@ -177,7 +177,6 @@ public class DqArticleController extends BaseController {
     dqArticle.setArticleTitle(dqArticleVO.getArticleTitle());
     dqArticle.setArticleContent(dqArticleVO.getArticleContent());
     dqArticle.setArticleImage(dqArticleVO.getArticleImage());
-    dqArticle.setTypeId(dqArticleVO.getTypeId());
     dqArticle.setAuthorId(StpUtil.getLoginIdAsLong());
     dqArticle.setStatus("0");
     dqArticle.setCreateTime(DateUtils.getNowDate());

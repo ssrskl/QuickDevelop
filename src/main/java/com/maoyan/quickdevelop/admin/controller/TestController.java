@@ -87,16 +87,6 @@ public class TestController {
         return "getSession";
     }
 
-    @GetMapping("/testuser")
-    public String testDqUser() {
-        DqUser user = new DqUser();
-        user.setUserId(1001L);
-        user.setUserName("maoyan");
-        user.setPassWord("123");
-
-        return user.toString();
-    }
-
     @GetMapping("/getuserbyid/{dqUserId}")
     public String getUser(@PathVariable Long dqUserId) {
         DqUser dqUser = iDqUserService.selectDqUserById(dqUserId);

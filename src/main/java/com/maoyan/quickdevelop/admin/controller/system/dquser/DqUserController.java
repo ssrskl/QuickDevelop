@@ -72,13 +72,13 @@ public class DqUserController extends BaseController {
     //更新用户
     dqUser.setUserId(newDqUser.getUserId());
     dqUser.setUserName(newDqUser.getUserName());
-    dqUser.setNickName(newDqUser.getNickName());
+
     dqUser.setEmail(newDqUser.getEmail());
     dqUser.setPhoneNumber(newDqUser.getPhoneNumber());
     dqUser.setSex(newDqUser.getSex());
     dqUser.setAvatar(newDqUser.getAvatar());
     //加密密码
-    dqUser.setPassWord(newDqUser.getPassWord());
+
     dqUser.setSignature(newDqUser.getSignature());
     //更新完成用户后要刷新redis缓存
     int i = iUserService.updateDqUserSelf(newDqUser);

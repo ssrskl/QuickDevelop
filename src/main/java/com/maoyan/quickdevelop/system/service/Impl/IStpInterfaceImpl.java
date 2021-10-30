@@ -1,9 +1,12 @@
 package com.maoyan.quickdevelop.system.service.Impl;
 
 import cn.dev33.satoken.stp.StpInterface;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.maoyan.quickdevelop.common.core.domain.DqRolePermission;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
-import com.maoyan.quickdevelop.system.service.admin.IDqRolePermissionService;
+import com.maoyan.quickdevelop.common.core.domain.DqUserRole;
+import com.maoyan.quickdevelop.system.mapper.DqRolePermissionMapper;
+import com.maoyan.quickdevelop.system.mapper.DqUserRoleMapper;
 import com.maoyan.quickdevelop.system.service.IDqUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,10 +26,10 @@ public class IStpInterfaceImpl implements StpInterface {
 
     @Autowired
     private IDqUserService iUserService;
-
     @Autowired
-    private IDqRolePermissionService idqRolePermissionService;
-
+    private DqUserRoleMapper dqUserRoleMapper;
+    @Autowired
+    private DqRolePermissionMapper dqRolePermissionMapper;
     /**
      * 获取权限列表
      * @param loginId
@@ -48,27 +51,29 @@ public class IStpInterfaceImpl implements StpInterface {
 //                "user-comment-add","user-comment-delete",
 //                "user-ordinary");
 
-        List<String> list = new ArrayList<String>();
-        //先将其转为String再转Long,直接(Long) loginId会报错，为啥，还得搜搜
-        DqUser dqUser = iUserService.selectDqUserById(Long.parseLong(String.valueOf(loginId)));
-        String roleName = dqUser.getRole();
-        DqRolePermission dqRolePermission = idqRolePermissionService.selectDqRolePermissionByName(roleName);
-        String permissions = dqRolePermission.getPermissionName();
-        //将权限分割
-        String[] permissions2 = permissions.split(",");
-        for (String permission : permissions2) {
-            list.add(permission);
-        }
-        if (Arrays.asList(permissions2).contains("super-admin")){
-            list.add("*");
-        }
-        if (Arrays.asList(permissions2).contains("admin-ordinary")){
-            list.add("user*");
-            list.add("admin*");
-        }
-        if (Arrays.asList(permissions2).contains("user-ordinary")){
-            list.add("user*");
-        }
+
+        List<String> dqUserPermissions = dqRolePermissionMapper.selectPermissionNameById((Long) loginId);
+//        List<String> list = new ArrayList<String>();
+//        //先将其转为String再转Long,直接(Long) loginId会报错，为啥，还得搜搜
+//        DqUser dqUser = iUserService.selectDqUserById(Long.parseLong(String.valueOf(loginId)));
+//        String roleName = dqUser.getRole();
+//        DqRolePermission dqRolePermission = idqRolePermissionService.selectDqRolePermissionByName(roleName);
+//        String permissions = dqRolePermission.getPermissionName();
+//        //将权限分割
+//        String[] permissions2 = permissions.split(",");
+//        for (String permission : permissions2) {
+//            list.add(permission);
+//        }
+//        if (Arrays.asList(permissions2).contains("super-admin")){
+//            list.add("*");
+//        }
+//        if (Arrays.asList(permissions2).contains("admin-ordinary")){
+//            list.add("user*");
+//            list.add("admin*");
+//        }
+//        if (Arrays.asList(permissions2).contains("user-ordinary")){
+//            list.add("user*");
+//        }
 
 //        List<String> list = new ArrayList<String>();
 //        String permissions = iUserService.selectNowDqUserPermission();
@@ -77,7 +82,7 @@ public class IStpInterfaceImpl implements StpInterface {
 //        for (String permission : permissions2) {
 //            list.add(permission);
 //        }
-        return list;
+        return dqUserPermissions;
     }
 
     /**
@@ -88,11 +93,13 @@ public class IStpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginKey) {
-        List<String> list = new ArrayList<String>();
-        DqUser dqUser = iUserService.selectDqUserById(Long.parseLong(String.valueOf(loginId)));
-        String role = dqUser.getRole();
-        list.add(role);
-        return list;
+        // satoken的id就是当前用户的ID,通过这个Id直接查询角色
+        List<String> dqUserRoles = dqUserRoleMapper.selectRoleNameById((Long) loginId);
+//        List<String> list = new ArrayList<String>();
+//        DqUser dqUser = iUserService.selectDqUserById(Long.parseLong(String.valueOf(loginId)));
+//        String role = dqUser.getRole();
+//        list.add(role);
+        return dqUserRoles;
     }
 
 }

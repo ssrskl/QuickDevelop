@@ -52,14 +52,6 @@ public interface IDqUserService {
 
 
     /**
-     * 根据账号密码查询用户（登陆功能）
-     * @param userName
-     * @param password
-     * @return
-     */
-    public DqUser selectDqUserByUserNameAndPassword(String userName,String password);
-
-    /**
      * 添加一个用户（注册方法）
      * @param dqUser
      * @return
