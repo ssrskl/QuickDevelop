@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqFollowSectionPostProcessorMapper">
+    <resultMap id="DqSectionResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor">
+        <id property="sectionId" column="section_id" jdbcType="BIGINT"/>
+        <result property="sectionName" column="section_name" jdbcType="VARCHAR"/>
+        <result property="sectionIntroduce" column="section_introduce" jdbcType="VARCHAR"/>
+        <result property="sectionLogo" column="section_logo" jdbcType="VARCHAR"/>
+        <result property="sectionBackground" column="section_background" jdbcType="VARCHAR"/>
+        <result property="sectionAdminUserId" column="section_admin_user_id" jdbcType="VARCHAR"/>
+        <result property="sectionWeight" column="section_weight" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="articleNum" column="article_num" jdbcType="BIGINT"/>
+        <result property="followNum" column="follow_num" jdbcType="BIGINT"/>
+        <association property="dqUserPostProcessor"
+                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
+                     resultMap="DqUserPostProcessorResult"/>
+
+    </resultMap>
+
+    <resultMap id="DqUserPostProcessorResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor">
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="CHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <!--        <result property="password" column="password" jdbcType="VARCHAR"/>-->
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="loginIp" column="loginIp" jdbcType="VARCHAR"/>
+        <result property="loginDate" column="loginDate" jdbcType="TIMESTAMP"/>
+        <result property="signature" column="signature" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="BIGINT"/>
+        <result property="experience" column="experience" jdbcType="BIGINT"/>
+        <result property="checkParam" column="check_param" jdbcType="VARCHAR"/>
+        <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
+        <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
+        <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="dqUserRoleList" javaType="java.util.List"
+                    ofType="com.maoyan.quickdevelop.common.core.domain.DqUserRole" resultMap="RolesResult"/>
+    </resultMap>
+    <resultMap id="RolesResult" type="com.maoyan.quickdevelop.common.core.domain.DqUserRole">
+        <id property="userRoleId" column="user_role_id" jdbcType="BIGINT"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="roleStatus" column="role_status" jdbcType="CHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="selectfollowSectionVO">
+        select dq_section.section_id,
+               dq_section.section_name,
+               dq_section.section_introduce,
+               dq_section.section_logo,
+               dq_section.section_background,
+               dq_section.section_admin_user_id,
+               dq_section.section_weight,
+               dq_section.create_time,
+               dq_section.update_time,
+               dq_user.user_id,
+               dq_user.user_name,
+               dq_user.email,
+               dq_user.phone_number,
+               dq_user.sex,
+               dq_user.avatar,
+               dq_user.password,
+               dq_user.status,
+               dq_user.loginIp,
+               dq_user.loginDate,
+               dq_user.signature,
+               dq_user.grade,
+               dq_user.experience,
+               dq_user.check_param,
+               dq_user.check_status,
+               dq_user.school_id,
+               dq_user.create_time,
+               dq_user.update_time,
+               dur.user_role_id,
+               dur.role_name,
+               dur.user_id,
+               dur.role_status,
+               dur.create_time,
+               dur.update_time,
+               (select count(*) from dq_article where dq_article.section_id = dq_section.section_id) as article_num,
+               (select count(*) from dq_follow_interdqsection)                                       as follow_num
+        from dq_section
+                 left join dq_user on dq_section.section_admin_user_id = dq_user.user_id
+                 left join dq_user_role dur on dq_section.section_admin_user_id = dur.user_id
+    </sql>
+    <sql id="selectGiveFollowDqUserBySectionIdVO">
+        select dq_user.user_id,
+               dq_user.user_name,
+               dq_user.email,
+               dq_user.phone_number,
+               dq_user.sex,
+               dq_user.avatar,
+               dq_user.password,
+               dq_user.status,
+               dq_user.loginIp,
+               dq_user.loginDate,
+               dq_user.signature,
+               dq_user.grade,
+               dq_user.experience,
+               dq_user.check_param,
+               dq_user.check_status,
+               dq_user.create_time,
+               dq_user.update_time,
+               dur.user_role_id,
+               dur.role_name,
+               dur.user_id,
+               dur.role_status,
+               dur.create_time,
+               dur.update_time
+        from dq_user
+                 left join dq_user_role dur on dq_user.user_id = dur.user_id
+    </sql>
+    <select id="selectFollowedSectionByUserId"
+            parameterType="java.lang.Long"
+            resultMap="DqSectionResult">
+        <include refid="selectfollowSectionVO"></include>
+        <where>
+            section_id = any (select community.dq_follow_interdqsection.followed_dqsection_id
+            from dq_follow_interdqsection
+            where give_follow_dquser_id = #{dqUserId})
+        </where>
+    </select>
+
+    <select id="selectGiveFollowDqUserBySectionId"
+            parameterType="java.lang.Long"
+            resultMap="DqUserPostProcessorResult">
+        <include refid="selectGiveFollowDqUserBySectionIdVO"></include>
+        <where>
+            dq_user.user_id = any (select community.dq_follow_interdqsection.give_follow_dquser_id
+            from dq_follow_interdqsection
+            where followed_dqsection_id = #{dqSectionId})
+        </where>
+    </select>
+</mapper>

@@ -51,6 +51,8 @@ public class IDqFollowSectionServiceImpl implements IDqFollowSectionService {
 
   @Override
   public int followDqSectionBySectionId(Long dqSectionId) {
+    // 检查是否已经关注
+
     DqFollowSection dqFollowSection = new DqFollowSection();
     dqFollowSection.setFollowedDqsectionId(dqSectionId);
     dqFollowSection.setGiveFollowDqUserId(StpUtil.getLoginIdAsLong());
