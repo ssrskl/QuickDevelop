@@ -20,7 +20,7 @@
         <result property="experience" column="experience" jdbcType="BIGINT"/>
         <result property="checkParam" column="check_param" jdbcType="VARCHAR"/>
         <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
-
+        <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
         <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -51,6 +51,7 @@
                experience,
                check_param,
                check_status,
+               school_id,
                dq_user.create_time,
                dq_user.update_time,
                user_role_id,
@@ -87,6 +88,9 @@
             </if>
             <if test="dqUser.experience != null and dqUser.experience != ''">
                 AND dq_user.experience = #{dqUser.experience}
+            </if>
+            <if test="dqUser.schoolId != null and dqUser.schoolId != ''">
+                AND dq_user.school_id = #{dqUser.schoolId}
             </if>
         </where>
     </select>

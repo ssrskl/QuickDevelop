@@ -1,6 +1,7 @@
 package com.maoyan.quickdevelop.system.service.Impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.exception.CustomException;
@@ -36,7 +37,7 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
     dqUser.setUpdateTime(DateUtils.getNowDate());
     dqUser.setLoginDate(DateUtils.getNowDate());
     // 生成邮箱校验码
-    dqUser.setCheckParam("maoyan");
+    dqUser.setCheckParam(RandomUtil.randomString(20));
     dqUser.setCheckStatus("0");
     // 发送到邮箱认证邮箱
     //注册

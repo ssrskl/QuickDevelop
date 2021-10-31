@@ -3,9 +3,11 @@ package com.maoyan.quickdevelop.admin.controller.system.dquser;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.github.pagehelper.PageInfo;
 import com.maoyan.quickdevelop.admin.controller.system.BaseController;
+import com.maoyan.quickdevelop.common.annotation.Log;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
+import com.maoyan.quickdevelop.common.enums.BusinessType;
 import com.maoyan.quickdevelop.system.service.IDqFollowUserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dquser")
+@RequestMapping("/dquser/dquser")
 public class DqFollowUserController extends BaseController {
   @Autowired
   private IDqFollowUserService iDqFollowUserService;
@@ -42,6 +44,7 @@ public class DqFollowUserController extends BaseController {
   }
   @SaCheckLogin
   @ApiOperation(value = "关注指定用户")
+  @Log(title = "关注用户", businessType = BusinessType.INSERT)
   @GetMapping("/follow")
   public AjaxResult followDqUser(Long dqUserId){
     int i = iDqFollowUserService.followDqUserByUserId(dqUserId);
@@ -49,6 +52,7 @@ public class DqFollowUserController extends BaseController {
   }
   @SaCheckLogin
   @ApiOperation(value = "取消关注指定用户")
+  @Log(title = "取消关注用户", businessType = BusinessType.DELETE)
   @GetMapping("/cancelfollow")
   public AjaxResult cancelFollowDqUser(Long dqUserId){
     int i = iDqFollowUserService.cancelFollowDqUserByUserId(dqUserId);

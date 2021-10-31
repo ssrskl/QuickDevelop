@@ -31,6 +31,7 @@ public interface DqFollowUserPostProcessorMapper extends BaseMapper<DqUserPostPr
           "       experience,\n" +
           "       check_param,\n" +
           "       check_status,\n" +
+          "       dq_user.school_id,\n" +
           "       dq_user.create_time,\n" +
           "       dq_user.update_time,\n" +
           "       user_role_id,\n" +
@@ -65,6 +66,7 @@ public interface DqFollowUserPostProcessorMapper extends BaseMapper<DqUserPostPr
           "       experience,\n" +
           "       check_param,\n" +
           "       check_status,\n" +
+          "       dq_user.school_id,\n" +
           "       dq_user.create_time,\n" +
           "       dq_user.update_time,\n" +
           "       user_role_id,\n" +

@@ -10,6 +10,15 @@
 
 用户通用权限：user-ordinary(user*)
 
+版块权限（例如版块ID为1）
+版块版主权限section-1-*
+版块文章管理员权限section-1-admin-article
+版块分类管理员权限section-1-admin-type
+版块评论管理员权限section-1-admin-comment
+版块权限管理员权限section-1-admin-power
+版块对用户的管理员权限section-1-admin-user
+
+
 管理员权限
 管理员对文章的权限（就不再细化了）：admin-article
 管理员对类型的权限：admin-type

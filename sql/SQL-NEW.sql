@@ -21,6 +21,7 @@ create table dq_user
     experience   bigint(255)  default 0 comment '用户经验值',
     check_param  varchar(255) unique comment '邮箱校验的参数（也可以当作盐值加密的参数）',
     check_status char(1) comment '邮箱校验的状态(1-通过，0-未通过)',
+    school_id    bigint(255)  default 0 comment '用户所在学校ID',
     create_time  datetime comment '创建时间',
     update_time  datetime comment '更新时间',
     primary key (user_id)
@@ -33,11 +34,11 @@ create table dq_user
 insert into dq_user
 values (1, '猫颜', '1071352028@qq.com', '17104344673', '0',
         'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 'maoyan', 1, sysdate(),
+        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 'maoyan', 1, 1,sysdate(),
         sysdate());
 insert into dq_user
 values (2, 'maoyan', '820244680@qq.com', '110', '0', 'logo', 'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1',
-        sysdate(), 'wu', 1, 0, 'maoyan2', 1, sysdate(), sysdate());
+        sysdate(), 'wu', 1, 0, 'maoyan2', 1, 1,sysdate(), sysdate());
 -- ----------------------------
 -- 2、用户关注表
 -- ----------------------------
@@ -116,6 +117,7 @@ create table dq_section
     section_logo          varchar(255) not null comment '版块logo',
     section_background    varchar(255) not null comment '版块背景图',
     section_admin_user_id bigint(255)  not null default 1 comment '版主用户ID',
+    section_weight        bigint(255)  not null default 0 comment '版块权重',
     create_time           datetime comment '创建时间',
     update_time           datetime comment '更新时间',
     primary key (section_id)
@@ -126,7 +128,7 @@ create table dq_section
 -- 初始化-版块表
 -- ----------------------------
 insert into dq_section
-values (1, '行思工作室', '河南理工大学最强工作室', 'logo', 'background', 1, sysdate(), sysdate());
+values (1, '行思工作室', '河南理工大学最强工作室', 'logo', 'background', 1, 0, sysdate(), sysdate());
 
 -- ----------------------------
 -- 6、版块分类表
@@ -134,11 +136,14 @@ values (1, '行思工作室', '河南理工大学最强工作室', 'logo', 'back
 drop table if exists dq_section_type;
 create table dq_section_type
 (
-    section_type_id   bigint(255)  not null auto_increment comment '版块分类主键',
-    section_type_name varchar(255) not null comment '版块分类名称',
-    section_id        bigint(255)  not null comment '分类所属的版块ID',
-    create_time       datetime comment '创建时间',
-    update_time       datetime comment '更新时间',
+    section_type_id      bigint(255)  not null auto_increment comment '版块分类主键',
+    section_type_name    varchar(255) not null comment '版块分类名称',
+    section_id           bigint(255)  not null comment '分类所属的版块ID',
+    section_type_weight  bigint(255)  not null default 0 comment '分类权重',
+    section_type_mold    char(1)      not null default 0 comment '分类类型（0-普通分类，1-特殊分类）',
+    section_type_network varchar(255) comment '分类网址',
+    create_time          datetime comment '创建时间',
+    update_time          datetime comment '更新时间',
     primary key (section_type_id)
 ) engine = innodb
   auto_increment = 1
@@ -147,7 +152,7 @@ create table dq_section_type
 -- 初始化-版块分类表
 -- ----------------------------
 insert into dq_section_type
-values (1, '程序组', 1, sysdate(), sysdate());
+values (1, '程序组', 1, 0, 0, 'url', sysdate(), sysdate());
 
 -- ----------------------------
 -- 2、版块关注表

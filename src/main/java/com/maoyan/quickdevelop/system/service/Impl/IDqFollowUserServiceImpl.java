@@ -1,12 +1,14 @@
 package com.maoyan.quickdevelop.system.service.Impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqFollowUser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.exception.CustomException;
+import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.system.mapper.DqFollowUserMapper;
 import com.maoyan.quickdevelop.system.mapper.postprocessor.DqFollowUserPostProcessorMapper;
@@ -52,6 +54,8 @@ public class IDqFollowUserServiceImpl implements IDqFollowUserService {
     DqFollowUser dqFollowUser = new DqFollowUser();
     dqFollowUser.setFollowedDqUserId(StpUtil.getLoginIdAsLong());
     dqFollowUser.setFollowedDqUserId(dqUserId);
+    dqFollowUser.setCreateTime(DateUtils.getNowDate());
+    dqFollowUser.setUpdateTime(DateUtil.date());
     int insert = dqFollowUserMapper.insert(dqFollowUser);
     if (insert <= 0) {
       throw new CustomException("关注失败", HttpStatus.ERROR);
@@ -62,7 +66,8 @@ public class IDqFollowUserServiceImpl implements IDqFollowUserService {
   @Override
   public int cancelFollowDqUserByUserId(Long dqUserId) {
     LambdaQueryWrapper<DqFollowUser> dqFollowUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqFollowUserLambdaQueryWrapper.eq(DqFollowUser::getFollowedDqUserId, dqUserId);
+    dqFollowUserLambdaQueryWrapper.eq(DqFollowUser::getFollowedDqUserId, dqUserId)
+            .eq(DqFollowUser::getGiveFollowDqUserId, StpUtil.getLoginIdAsLong());
     int delete = dqFollowUserMapper.delete(dqFollowUserLambdaQueryWrapper);
     if (delete <= 0) {
       throw new CustomException("取消关注失败", HttpStatus.ERROR);

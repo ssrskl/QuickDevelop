@@ -2,18 +2,11 @@ package com.maoyan.quickdevelop.common.core.domain.postprocessor;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.maoyan.quickdevelop.common.core.domain.DqUserRole;
-import com.maoyan.quickdevelop.common.core.domain.dqabstract.DqStatusDispose;
-import com.maoyan.quickdevelop.common.utils.annotation.MapperQuery;
-import com.maoyan.quickdevelop.common.utils.annotation.type.QueryType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -134,6 +127,12 @@ public class DqUserPostProcessor implements Serializable {
    */
   @TableField(value = "check_status")
   private String checkStatus;
+
+  /**
+   * 用户所在学校的ID
+   */
+  @TableField(value = "school_id")
+  private Long schoolId;
   /**
    * 创建时间
    */

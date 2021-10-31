@@ -133,6 +133,12 @@ public class DqUser extends DqStatusDispose implements Serializable {
    */
   @TableField(value = "check_status")
   private String checkStatus;
+
+  /**
+   * 用户所在学校的ID
+   */
+  @TableField(value = "school_id")
+  private Long schoolId;
   /**
    * 创建时间
    */

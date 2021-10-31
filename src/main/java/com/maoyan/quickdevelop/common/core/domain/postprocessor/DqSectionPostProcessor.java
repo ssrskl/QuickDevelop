@@ -1,8 +1,7 @@
-package com.maoyan.quickdevelop.common.core.domain;
+package com.maoyan.quickdevelop.common.core.domain.postprocessor;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +13,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "dq_section")
-public class DqSection implements Serializable {
+public class DqSectionPostProcessor implements Serializable {
   private static final long serialVersionUID = 1L;
   /**
    * 版块主键
@@ -47,7 +45,6 @@ public class DqSection implements Serializable {
    */
   @TableField(value = "section_admin_user_id")
   private Long sectionAdminUserId;
-
   /**
    * 文章权重
    */
@@ -64,4 +61,8 @@ public class DqSection implements Serializable {
    */
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date updateTime;
+  // -------------增强内容------------------
+  private DqUserPostProcessor dqUserPostProcessor;
+  private Long articleNum;
+  private Long followNum;
 }

@@ -33,6 +33,21 @@ public class DqSectionType implements Serializable {
   @TableField(value = "section_id")
   private Long sectionId;
   /**
+   * 类型权重
+   */
+  @TableField(value = "section_type_weight")
+  private Long sectionTypeWeight;
+  /**
+   * 分类类型
+   */
+  @TableField(value = "section_type_mold")
+  private String sectionTypeMold;
+  /**
+   * 分类网址
+   */
+  @TableField(value = "section_type_network")
+  private String sectionTypeNetwork;
+  /**
    * 创建时间
    */
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
