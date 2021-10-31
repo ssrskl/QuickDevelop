@@ -152,6 +152,7 @@ public class IDqUserServiceImpl implements IDqUserService {
     if (StringUtils.isNotEmpty(dqUser.getPassword())) {
       oldDqUser.setPassword(SaSecureUtil.md5(SaSecureUtil.sha1(dqUser.getPassword())));
     }
+    oldDqUser.setSchoolId(dqUser.getSchoolId());
     oldDqUser.setSignature(dqUser.getSignature());
     oldDqUser.setLoginDate(DateUtils.getNowDate());
     oldDqUser.setLoginIp(IpUtils.getHostIp());
