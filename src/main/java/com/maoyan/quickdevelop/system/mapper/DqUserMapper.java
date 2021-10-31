@@ -16,8 +16,6 @@ import java.util.List;
 @Mapper
 public interface DqUserMapper extends BaseMapper<DqUser> {
 
-  @Select("")
-  DqUser selectDqUserByEmailAndPassword(String email,String password);
 
 //    DqUser selectDquserById(@Param("dqUserId")Long dqUserId);
 

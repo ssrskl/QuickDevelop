@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqFollowUserPostProcessorMapper">
+
+    <resultMap id="DqUserResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor">
+
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="CHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <!--        <result property="password" column="password" jdbcType="VARCHAR"/>-->
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="loginIp" column="loginIp" jdbcType="VARCHAR"/>
+        <result property="loginDate" column="loginDate" jdbcType="TIMESTAMP"/>
+        <result property="signature" column="signature" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="BIGINT"/>
+        <result property="experience" column="experience" jdbcType="BIGINT"/>
+        <result property="checkParam" column="check_param" jdbcType="VARCHAR"/>
+        <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
+        <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
+        <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="dqUserRoleList" javaType="java.util.List"
+                    ofType="com.maoyan.quickdevelop.common.core.domain.DqUserRole" resultMap="RolesResult"/>
+    </resultMap>
+
+    <resultMap id="RolesResult" type="com.maoyan.quickdevelop.common.core.domain.DqUserRole">
+        <id property="userRoleId" column="user_role_id" jdbcType="BIGINT"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="roleStatus" column="role_status" jdbcType="CHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="selectfollowUserVO">
+        select dq_user.user_id,
+               user_name,
+               email,
+               phone_number,
+               sex,
+               avatar,
+               status,
+               loginIp,
+               loginDate,
+               signature,
+               grade,
+               experience,
+               check_param,
+               check_status,
+               dq_user.create_time,
+               dq_user.update_time,
+               user_role_id,
+               role_name,
+               dur.user_id,
+               role_status,
+               dur.create_time,
+               dur.update_time
+        from dq_user
+                 left join dq_user_role dur on dq_user.user_id = dur.user_id
+    </sql>
+    <select id="selectFollowedDqUserByUserId"
+            parameterType="java.lang.Long"
+            resultMap="DqUserResult">
+        <include refid="selectfollowUserVO"></include>
+        <where>
+            dq_user.user_id = any (
+            select community.dq_follow_interdquser.followed_dquser_id
+            from dq_follow_interdquser
+            where give_follow_dquser_id = #{dqUserId})
+        </where>
+    </select>
+
+    <select id="selectGiveFollowDqUserByUserId"
+            parameterType="java.lang.Long"
+            resultMap="DqUserResult">
+        <include refid="selectfollowUserVO"></include>
+        <where>
+            dq_user.user_id = any (
+            select community.dq_follow_interdquser.give_follow_dquser_id
+            from dq_follow_interdquser
+            where followed_dquser_id = #{dqUserId})
+        </where>
+    </select>
+</mapper>

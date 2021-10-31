@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqFollowUser;
+import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
