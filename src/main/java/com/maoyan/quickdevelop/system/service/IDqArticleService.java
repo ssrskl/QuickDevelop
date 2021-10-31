@@ -18,60 +18,76 @@ import java.util.List;
 
 public interface IDqArticleService {
 
-    /** 查询 **/
-    /**
-     * 统一的查询方法
-     * @param dqArticle
-     * @return
-     */
-    public List<DqArticle> selectDqArticle(int pageNum, int pageSize,DqArticle dqArticle);
-    
-    /**
-     * 通过ID查询
-     * @param dqArticleId
-     * @return
-     */
-    public DqArticle selectDqArticleById(Long dqArticleId);
+  /** 查询 **/
+  /**
+   * 统一的查询方法
+   *
+   * @param dqArticle
+   * @return
+   */
+  public List<DqArticlePostProcesser> commonSelectDqArticle(int pageNum, int pageSize, DqArticle dqArticle);
 
-    /**
-     * 通过标题查询
-     * @param title
-     * @return
-     */
-    public DqArticle selectDqArticleByTitle(String title);
+  /**
+   * 通过ID查询
+   *
+   * @param dqArticleId
+   * @return
+   */
+  public DqArticle selectDqArticleById(Long dqArticleId);
 
-    /**
-     * 通过类型ID查询
-     * @param typeId
-     * @return
-     */
-    public List<DqArticle> selectDqArticlesByTypeId(int pageNum, int pageSize,Long typeId);
+  /**
+   * 通过标题查询
+   *
+   * @param title
+   * @return
+   */
+  public DqArticle selectDqArticleByTitle(String title);
 
-    /**
-     * 通过作者ID查询
-     * @param authorId
-     * @return
-     */
-    public List<DqArticle> selectDqArticlesByAuthorId(int pageNum, int pageSize,Long authorId);
+  /**
+   * 通过类型ID查询
+   *
+   * @param typeId
+   * @return
+   */
+  public List<DqArticle> selectDqArticlesByTypeId(int pageNum, int pageSize, Long typeId);
 
-    /**
-     * 通过作者用户名查询
-     * @param authorUsername
-     * @return
-     */
-    public List<DqArticle> selectDqArticlesByAuthorUsername(int pageNum, int pageSize,String authorUsername);
+  /**
+   * 通过作者ID查询
+   *
+   * @param authorId
+   * @return
+   */
+  public List<DqArticle> selectDqArticlesByAuthorId(int pageNum, int pageSize, Long authorId);
 
-    /** 增加 **/
-    public int insertDqArticle(DqArticle dqArticle);
+  /**
+   * 通过作者用户名查询
+   *
+   * @param authorUsername
+   * @return
+   */
+  public List<DqArticle> selectDqArticlesByAuthorUsername(int pageNum, int pageSize, String authorUsername);
 
-    /** 修改 **/
-    public int updateDqArticle(DqArticle dqArticle);
-    /** 删除 **/
-    public int deleteDqArticleById(Long articleId);
-    /*********************************************/
+  /**
+   * 增加
+   **/
+  public int insertDqArticle(DqArticle dqArticle);
+
+  /**
+   * 修改
+   **/
+  public int updateDqArticle(DqArticle dqArticle);
+
+  /**
+   * 删除
+   **/
+  public int deleteDqArticleById(Long articleId);
+  /*********************************************/
 
 
-    /**==========================================增强版==============================================**/
-    public List<DqArticlePostProcesser> selectDqArticlePostProcessers(int pageNum,int pageSize,DqArticlePostProcesser dqArticlePostProcesser);
-    public DqArticlePostProcesser selectDqArticlePostProcesserByDqArticleId();
+  /**
+   * ==========================================增强版==============================================
+   **/
+  public List<DqArticlePostProcesser> selectDqArticlePostProcessers(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser);
+
+  public DqArticlePostProcesser selectDqArticlePostProcesserByDqArticleId();
 }

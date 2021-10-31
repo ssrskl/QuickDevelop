@@ -52,17 +52,13 @@ public class IDqArticleServiceImpl implements IDqArticleService {
    * @return
    */
   @Override
-  public List<DqArticle> selectDqArticle(int pageNum, int pageSize, DqArticle dqArticle) {
+  public List<DqArticlePostProcesser> commonSelectDqArticle(int pageNum, int pageSize, DqArticle dqArticle) {
     PageHelper.startPage(pageNum, pageSize);
-//        myQueryWrapper.queryAll(dqArticle, queryRules);
-    List<DqArticle> dqArticles = dqArticleMapper.selectList(queryWrapper);
-    queryWrapper.clear();
-    if (dqArticles.isEmpty()) {
+    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticle);
+    if (dqArticlePostProcessers.isEmpty()) {
       throw new CustomException("未查询到文章", HttpStatus.NOT_FOUND);
     }
-
-//        queryRules.clear();
-    return dqArticles;
+    return dqArticlePostProcessers;
   }
 
   @Override
@@ -207,7 +203,7 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   @Override
   public List<DqArticlePostProcesser> selectDqArticlePostProcessers(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser) {
     PageHelper.startPage(pageNum, pageSize);
-    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticlePostProcesser);
+    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(new DqArticle());
     if (dqArticlePostProcessers.isEmpty()) {
       throw new CustomException("未查询到文章", HttpStatus.NOT_FOUND);
     }

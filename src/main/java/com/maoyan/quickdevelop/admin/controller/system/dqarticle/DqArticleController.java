@@ -51,8 +51,8 @@ public class DqArticleController extends BaseController {
   public AjaxResult listArticle(@RequestParam(defaultValue = "1", name = "pageNum") int pageNum,
                                 @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
                                 DqArticle dqArticle) {
-    List<DqArticle> dqArticles = iArticleService.selectDqArticle(pageNum, pageSize, dqArticle);
-    return AjaxResult.success("查询成功", new PageInfo<>(dqArticles));
+    List<DqArticlePostProcesser> dqArticlePostProcessers = iArticleService.commonSelectDqArticle(pageNum, pageSize, dqArticle);
+    return AjaxResult.success("查询成功", new PageInfo<>(dqArticlePostProcessers));
 
   }
   /**

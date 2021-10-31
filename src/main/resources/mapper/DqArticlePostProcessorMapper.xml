@@ -3,91 +3,171 @@
 <mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqArticlePostProcessorMapper">
     <resultMap id="DqArticleResult"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser">
+
+<!--        TODO column还没写-->
         <id property="articleId" column="article_id" jdbcType="BIGINT"/>
         <result property="articleTitle" column="article_title" jdbcType="VARCHAR"/>
         <result property="articleContent" column="article_content" jdbcType="LONGVARCHAR"/>
         <result property="articleImage" column="article_image" jdbcType="VARCHAR"/>
-        <!--        类型-->
-        <result property="typeId" column="type_id" jdbcType="BIGINT"/>
-        <result property="typeName" column="type_name" jdbcType="VARCHAR"/>
-        <result property="typeImage" column="type_image" jdbcType="VARCHAR"/>
-        <!--        作者信息-->
+        <result property="sectionId" column="type_id" jdbcType="BIGINT"/>
+        <result property="sectionTypeId" column="type_name" jdbcType="VARCHAR"/>
         <result property="authorId" column="author_id" jdbcType="BIGINT"/>
-        <result property="authorNickname" column="author_nickname" jdbcType="VARCHAR"/>
-        <result property="authorUsername" column="author_username" jdbcType="VARCHAR"/>
-        <result property="userId" column="user_id" jdbcType="BIGINT"/>
-        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
-        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
-        <result property="email" column="email" jdbcType="VARCHAR"/>
-        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
-        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="articleWeight" column="author_nickname" jdbcType="VARCHAR"/>
 
         <result property="status" column="status" jdbcType="CHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="commentNum" column="comment_num" jdbcType="INTEGER"/>
-        <result property="articleSort" column="article_sort" jdbcType="BIGINT"/>
-        <collection property="articleTags" javaType="java.util.List" ofType="com.maoyan.quickdevelop.common.core.domain.DqTag" resultMap="TagsResult"/>
+        <association property="dqSectionPostProcessor"
+                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
+                     resultMap="DqUserPostProcessorResult"/>
+        <association property="dqSectionType" javaType="com.maoyan.quickdevelop.common.core.domain.DqSectionType"
+                     resultMap="DqSectionTypeResult"/>
+        <association property="dqArticleAuthor"
+                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
+                     resultMap="DqUserPostProcessorResult"/>
     </resultMap>
-
-    <resultMap id="TagsResult" type="com.maoyan.quickdevelop.common.core.domain.DqTag">
-        <id property="tagId" column="tag_id" jdbcType="BIGINT"/>
-        <result property="tagName" column="tag_name" jdbcType="VARCHAR"/>
+    <resultMap id="DqUserPostProcessorResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor">
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="CHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <!--        <result property="password" column="password" jdbcType="VARCHAR"/>-->
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="loginIp" column="loginIp" jdbcType="VARCHAR"/>
+        <result property="loginDate" column="loginDate" jdbcType="TIMESTAMP"/>
+        <result property="signature" column="signature" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="BIGINT"/>
+        <result property="experience" column="experience" jdbcType="BIGINT"/>
+        <result property="checkParam" column="check_param" jdbcType="VARCHAR"/>
+        <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
+        <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
+        <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="dqUserRoleList" javaType="java.util.List"
+                    ofType="com.maoyan.quickdevelop.common.core.domain.DqUserRole" resultMap="RolesResult"/>
+    </resultMap>
+    <resultMap id="RolesResult" type="com.maoyan.quickdevelop.common.core.domain.DqUserRole">
+        <id property="userRoleId" column="user_role_id" jdbcType="BIGINT"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="roleStatus" column="role_status" jdbcType="CHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
-    <sql id="selectDqArticlePostProcessorVO">
-        --         select *, (select count(*) from dq_comment where article_id = dq_article.article_id) as comment_num
---         from dq_article
---                  inner join dq_user du on dq_article.author_id = du.user_id
---                  inner join dq_type dt on dq_article.type_id = dt.type_id
 
-        select *, (select count(*) from dq_comment where article_id = dq_article.article_id) as comment_num
+    <resultMap id="DqSectionTypeResult" type="com.maoyan.quickdevelop.common.core.domain.DqSectionType">
+        <id property="sectionTypeId" column="" jdbcType=""/>
+        <result property="sectionTypeName" column="" jdbcType=""/>
+        <result property="sectionId" column="" jdbcType=""/>
+        <result property="sectionTypeWeight" column="" jdbcType=""/>
+        <result property="sectionTypeMold" column="" jdbcType=""/>
+        <result property="sectionTypeNetwork" column="" jdbcType=""/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="selectDqArticlePostProcessorVO">
+        select dq_article.article_id,
+               dq_article.article_title,
+               dq_article.article_content,
+               dq_article.article_image,
+               dq_article.section_id,
+               dq_article.section_type_id,
+               dq_article.author_id,
+               dq_article.status,
+               dq_article.article_weight,
+               dq_article.create_time,
+               dq_article.update_time,
+               ds.section_id,
+               ds.section_name,
+               ds.section_introduce,
+               ds.section_logo,
+               ds.section_background,
+               ds.section_admin_user_id,
+               ds.section_weight,
+               ds.create_time,
+               ds.update_time,
+               dst.section_type_id,
+               dst.section_type_name,
+               dst.section_id,
+               dst.section_type_weight,
+               dst.section_type_mold,
+               dst.section_type_network,
+               dst.create_time,
+               dst.update_time,
+               du.user_id,
+               du.user_name,
+               du.email,
+               du.phone_number,
+               du.sex,
+               du.avatar,
+               du.status,
+               du.loginIp,
+               du.loginDate,
+               du.signature,
+               du.grade,
+               du.experience,
+               du.check_param,
+               du.check_status,
+               du.school_id,
+               du.create_time,
+               du.update_time,
+               dur.user_role_id,
+               dur.role_name,
+               dur.user_id,
+               dur.role_status,
+               dur.create_time,
+               dur.update_time
         from dq_article
-                 inner join dq_user du on dq_article.author_id = du.user_id
-                 inner join dq_type dt on dq_article.type_id = dt.type_id
-                 left join dq_article_tag dag on dq_article.article_id = dag.article_id
-                 left join dq_tag d on dag.tag_id = d.tag_id
+                 left join dq_section ds on dq_article.section_id = ds.section_id
+                 left join dq_section_type dst on dq_article.section_type_id = dst.section_type_id
+                 left join dq_user du on dq_article.author_id = du.user_id
+                 left join dq_user_role dur on du.user_id = dur.user_id
     </sql>
     <select id="selectAllDqArticlePostProcesser"
-            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser"
+            parameterType="com.maoyan.quickdevelop.common.core.domain.DqArticle"
             resultMap="DqArticleResult">
         <include refid="selectDqArticlePostProcessorVO"></include>
         <where>
             dq_article.status=0 and dt.status=0 and du.status=0
-            <if test="dqArticlePostProcesser.articleId != null and dqArticlePostProcesser.articleId != ''">
-                AND dq_article.article_Id = #{dqArticlePostProcesser.articleId}
-            </if>
-            <if test="dqArticlePostProcesser.articleTitle != null and dqArticlePostProcesser.articleTitle != ''">
-                AND article_title like concat('%',#{dqArticlePostProcesser.articleTitle},'%')
-            </if>
-            <if test="dqArticlePostProcesser.articleContent != null and dqArticlePostProcesser.articleContent != ''">
-                AND article_content like concat('%',#{dqArticlePostProcesser.articleContent},'%')
-            </if>
-            <if test="dqArticlePostProcesser.typeId != null and dqArticlePostProcesser.typeId != ''">
-                AND dq_article.type_id = #{dqArticlePostProcesser.typeId}
-            </if>
-            <if test="dqArticlePostProcesser.authorId != null and dqArticlePostProcesser.authorId != ''">
-                AND author_id = #{dqArticlePostProcesser.authorId}
-            </if>
-            <if test="dqArticlePostProcesser.authorNickname != null and dqArticlePostProcesser.authorNickname != ''">
-                AND author_nickname like concat('%',#{dqArticlePostProcesser.authorNickname},'%')
-            </if>
-            <if test="dqArticlePostProcesser.authorUsername != null and dqArticlePostProcesser.authorUsername != ''">
-                AND author_username like concat('%',#{dqArticlePostProcesser.authorUsername},'%')
-            </if>
-            <if test="dqArticlePostProcesser.articleSort != null and dqArticlePostProcesser.articleSort != ''">
-                AND article_sort = #{dqArticlePostProcesser.articleSort}
-            </if>
-            <if test="dqArticlePostProcesser.createTime != null and dqArticlePostProcesser.createTime != ''">
-                AND data_format(create_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.createTime},'%y%m%d')
-            </if>
-            <if test="dqArticlePostProcesser.updateTime != null and dqArticlePostProcesser.updateTime != ''">
-                AND data_format(update_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.updateTime},'%y%m%d')
-            </if>
-            <if test="true">
-                order by dq_article.article_sort desc ,dq_article.article_id desc
-            </if>
+<!--            <if test="dqArticlePostProcesser.articleId != null and dqArticlePostProcesser.articleId != ''">-->
+<!--                AND dq_article.article_Id = #{dqArticlePostProcesser.articleId}-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.articleTitle != null and dqArticlePostProcesser.articleTitle != ''">-->
+<!--                AND article_title like concat('%',#{dqArticlePostProcesser.articleTitle},'%')-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.articleContent != null and dqArticlePostProcesser.articleContent != ''">-->
+<!--                AND article_content like concat('%',#{dqArticlePostProcesser.articleContent},'%')-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.typeId != null and dqArticlePostProcesser.typeId != ''">-->
+<!--                AND dq_article.type_id = #{dqArticlePostProcesser.typeId}-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.authorId != null and dqArticlePostProcesser.authorId != ''">-->
+<!--                AND author_id = #{dqArticlePostProcesser.authorId}-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.authorNickname != null and dqArticlePostProcesser.authorNickname != ''">-->
+<!--                AND author_nickname like concat('%',#{dqArticlePostProcesser.authorNickname},'%')-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.authorUsername != null and dqArticlePostProcesser.authorUsername != ''">-->
+<!--                AND author_username like concat('%',#{dqArticlePostProcesser.authorUsername},'%')-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.articleSort != null and dqArticlePostProcesser.articleSort != ''">-->
+<!--                AND article_sort = #{dqArticlePostProcesser.articleSort}-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.createTime != null and dqArticlePostProcesser.createTime != ''">-->
+<!--                AND data_format(create_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.createTime},'%y%m%d')-->
+<!--            </if>-->
+<!--            <if test="dqArticlePostProcesser.updateTime != null and dqArticlePostProcesser.updateTime != ''">-->
+<!--                AND data_format(update_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.updateTime},'%y%m%d')-->
+<!--            </if>-->
+<!--            <if test="true">-->
+<!--                order by dq_article.article_sort desc ,dq_article.article_id desc-->
+<!--            </if>-->
         </where>
     </select>
 </mapper>

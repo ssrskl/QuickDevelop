@@ -129,16 +129,6 @@ class QuickDevelopApplicationTests {
         System.out.println(userName.queryType().name());
     }
 
-    @Test
-    void test3() throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        DqArticle dqArticle = new DqArticle();
-        //dqArticle.setArticleTitle("文章");
-//        dqArticle.setArticleContent("2");
-//        dqArticle.setArticleImage("hello");
-        List<DqArticle> dqArticles = iDqArticleService.selectDqArticle(1,10,dqArticle);
-        PageInfo pageInfo = new PageInfo<>(dqArticles);
-        System.out.println(pageInfo);
-    }
 
     @Test
     void testLambda(){
@@ -184,17 +174,6 @@ class QuickDevelopApplicationTests {
         String key = RedisKeyUtils.getLikedKey(1L,3L);
         Long delete = redisTemplate.opsForHash().delete(RedisKeyUtils.MAP_KEY_USER_LIKED, key);
         System.out.println("删除成功"+delete);
-    }
-
-    @Test
-    void testMapper(){
-        DqArticlePostProcesser dqArticlePostProcesser = new DqArticlePostProcesser();
-        PageHelper.startPage(1,10);
-        List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticlePostProcesser);
-        PageInfo<DqArticlePostProcesser> dqArticlePostProcesserPageInfo = new PageInfo<>(dqArticlePostProcessers);
-        System.out.println(dqArticlePostProcesserPageInfo);
-//        DqClassPostProcessor dqClassPostProcessor = dqArticleMapper.sSelectDqArticles();
-//        System.out.println(dqClassPostProcessor.toString());
     }
 
     @Test

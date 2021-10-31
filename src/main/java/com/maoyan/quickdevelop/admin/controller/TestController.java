@@ -117,17 +117,6 @@ public class TestController {
         }
     }
 
-    @GetMapping("/aaa")
-    public AjaxResult testMapper(){
-        DqArticlePostProcesser dqArticlePostProcesser = new DqArticlePostProcesser();
-        PageHelper.startPage(1,10);
-        List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticlePostProcesser);
-        PageInfo<DqArticlePostProcesser> dqArticlePostProcesserPageInfo = new PageInfo<>(dqArticlePostProcessers);
-//        DqClassPostProcessor dqClassPostProcessor = dqArticleMapper.sSelectDqArticles();
-//        System.out.println(dqClassPostProcessor.toString());
-        return AjaxResult.success("success",dqArticlePostProcesserPageInfo);
-    }
-
     @GetMapping("/dqmessage")
     public AjaxResult testDqMessageMapper(){
         DqMessage dqMessage = dqMessageMapper.selectById(1L);
