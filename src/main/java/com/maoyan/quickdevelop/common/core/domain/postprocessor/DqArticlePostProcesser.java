@@ -86,11 +86,18 @@ public class DqArticlePostProcesser implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-
+    //---------排序方式-----------------
+    /**
+     * 什么都不添则默认排序
+     * 1-按照热度（评论数量排序）
+     */
+    private String articleSortWay;
+    //---------数量相关-----------------
+    private Long commentNum;
+    private Long collectionNum;
     //--------增强内容------------------
     private DqSectionPostProcessor dqSectionPostProcessor;
     private DqSectionType dqSectionType;
     private DqUserPostProcessor dqArticleAuthor;
-    //---------数量相关-----------------
-    private Long commentNum;
+
 }

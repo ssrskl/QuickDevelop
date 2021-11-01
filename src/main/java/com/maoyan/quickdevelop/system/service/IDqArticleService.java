@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.maoyan.quickdevelop.common.core.domain.DqArticle;
 import com.maoyan.quickdevelop.common.core.domain.DqType;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser;
+import com.maoyan.quickdevelop.system.domain.DqArticleVO;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -22,10 +23,10 @@ public interface IDqArticleService {
   /**
    * 统一的查询方法
    *
-   * @param dqArticle
+   * @param dqArticlePostProcesser
    * @return
    */
-  public List<DqArticlePostProcesser> commonSelectDqArticle(int pageNum, int pageSize, DqArticle dqArticle);
+  public List<DqArticlePostProcesser> commonSelectDqArticlePostProcesser(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser);
 
   /**
    * 通过ID查询
@@ -70,7 +71,8 @@ public interface IDqArticleService {
   /**
    * 增加
    **/
-  public int insertDqArticle(DqArticle dqArticle);
+  public int publishDqArticle(DqArticle dqArticle);
+  public int publishDqArticle(DqArticleVO dqArticleVO);
 
   /**
    * 修改
@@ -83,11 +85,4 @@ public interface IDqArticleService {
   public int deleteDqArticleById(Long articleId);
   /*********************************************/
 
-
-  /**
-   * ==========================================增强版==============================================
-   **/
-  public List<DqArticlePostProcesser> selectDqArticlePostProcessers(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser);
-
-  public DqArticlePostProcesser selectDqArticlePostProcesserByDqArticleId();
 }

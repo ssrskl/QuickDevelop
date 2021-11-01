@@ -3,30 +3,49 @@
 <mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqArticlePostProcessorMapper">
     <resultMap id="DqArticleResult"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser">
-
-<!--        TODO column还没写-->
         <id property="articleId" column="article_id" jdbcType="BIGINT"/>
         <result property="articleTitle" column="article_title" jdbcType="VARCHAR"/>
         <result property="articleContent" column="article_content" jdbcType="LONGVARCHAR"/>
         <result property="articleImage" column="article_image" jdbcType="VARCHAR"/>
-        <result property="sectionId" column="type_id" jdbcType="BIGINT"/>
-        <result property="sectionTypeId" column="type_name" jdbcType="VARCHAR"/>
+        <result property="sectionId" column="section_id" jdbcType="BIGINT"/>
+        <result property="sectionTypeId" column="section_type_id" jdbcType="BIGINT"/>
         <result property="authorId" column="author_id" jdbcType="BIGINT"/>
-        <result property="articleWeight" column="author_nickname" jdbcType="VARCHAR"/>
-
         <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="articleWeight" column="article_weight" jdbcType="BIGINT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="commentNum" column="comment_num" jdbcType="INTEGER"/>
+        <result property="collectionNum" column="collection_num" jdbcType="BIGINT"/>
+        <result property="commentNum" column="comment_num" jdbcType="BIGINT"/>
+
         <association property="dqSectionPostProcessor"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
-                     resultMap="DqUserPostProcessorResult"/>
+                     resultMap="DqSectionResult"/>
         <association property="dqSectionType" javaType="com.maoyan.quickdevelop.common.core.domain.DqSectionType"
                      resultMap="DqSectionTypeResult"/>
         <association property="dqArticleAuthor"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
                      resultMap="DqUserPostProcessorResult"/>
     </resultMap>
+
+    <resultMap id="DqSectionResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor">
+        <id property="sectionId" column="section_id" jdbcType="BIGINT"/>
+        <result property="sectionName" column="section_name" jdbcType="VARCHAR"/>
+        <result property="sectionIntroduce" column="section_introduce" jdbcType="VARCHAR"/>
+        <result property="sectionLogo" column="section_logo" jdbcType="VARCHAR"/>
+        <result property="sectionBackground" column="section_background" jdbcType="VARCHAR"/>
+        <result property="sectionAdminUserId" column="section_admin_user_id" jdbcType="VARCHAR"/>
+        <result property="sectionWeight" column="section_weight" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="articleNum" column="article_num" jdbcType="BIGINT"/>
+        <result property="followNum" column="follow_num" jdbcType="BIGINT"/>
+        <association property="dqUserPostProcessor"
+                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
+                     resultMap="DqUserPostProcessorResult"/>
+
+    </resultMap>
+
     <resultMap id="DqUserPostProcessorResult"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor">
         <id property="userId" column="user_id" jdbcType="BIGINT"/>
@@ -61,12 +80,12 @@
     </resultMap>
 
     <resultMap id="DqSectionTypeResult" type="com.maoyan.quickdevelop.common.core.domain.DqSectionType">
-        <id property="sectionTypeId" column="" jdbcType=""/>
-        <result property="sectionTypeName" column="" jdbcType=""/>
-        <result property="sectionId" column="" jdbcType=""/>
-        <result property="sectionTypeWeight" column="" jdbcType=""/>
-        <result property="sectionTypeMold" column="" jdbcType=""/>
-        <result property="sectionTypeNetwork" column="" jdbcType=""/>
+        <id property="sectionTypeId" column="section_type_id" jdbcType="BIGINT"/>
+        <result property="sectionTypeName" column="section_type_name" jdbcType="VARCHAR"/>
+        <result property="sectionId" column="section_id" jdbcType="BIGINT"/>
+        <result property="sectionTypeWeight" column="section_type_weight" jdbcType="BIGINT"/>
+        <result property="sectionTypeMold" column="section_type_mold" jdbcType="VARCHAR"/>
+        <result property="sectionTypeNetwork" column="section_type_network" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -122,7 +141,11 @@
                dur.user_id,
                dur.role_status,
                dur.create_time,
-               dur.update_time
+               dur.update_time,
+               (select count(*) from dq_comment where dq_comment.article_id = dq_article.article_id) as comment_num,
+               (select count(*)
+                from dq_collection
+                where dq_collection.article_id = dq_article.article_id)                              as collection_num
         from dq_article
                  left join dq_section ds on dq_article.section_id = ds.section_id
                  left join dq_section_type dst on dq_article.section_type_id = dst.section_type_id
@@ -130,43 +153,40 @@
                  left join dq_user_role dur on du.user_id = dur.user_id
     </sql>
     <select id="selectAllDqArticlePostProcesser"
-            parameterType="com.maoyan.quickdevelop.common.core.domain.DqArticle"
+            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser"
             resultMap="DqArticleResult">
         <include refid="selectDqArticlePostProcessorVO"></include>
         <where>
-            dq_article.status=0 and dt.status=0 and du.status=0
-<!--            <if test="dqArticlePostProcesser.articleId != null and dqArticlePostProcesser.articleId != ''">-->
-<!--                AND dq_article.article_Id = #{dqArticlePostProcesser.articleId}-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.articleTitle != null and dqArticlePostProcesser.articleTitle != ''">-->
-<!--                AND article_title like concat('%',#{dqArticlePostProcesser.articleTitle},'%')-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.articleContent != null and dqArticlePostProcesser.articleContent != ''">-->
-<!--                AND article_content like concat('%',#{dqArticlePostProcesser.articleContent},'%')-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.typeId != null and dqArticlePostProcesser.typeId != ''">-->
-<!--                AND dq_article.type_id = #{dqArticlePostProcesser.typeId}-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.authorId != null and dqArticlePostProcesser.authorId != ''">-->
-<!--                AND author_id = #{dqArticlePostProcesser.authorId}-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.authorNickname != null and dqArticlePostProcesser.authorNickname != ''">-->
-<!--                AND author_nickname like concat('%',#{dqArticlePostProcesser.authorNickname},'%')-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.authorUsername != null and dqArticlePostProcesser.authorUsername != ''">-->
-<!--                AND author_username like concat('%',#{dqArticlePostProcesser.authorUsername},'%')-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.articleSort != null and dqArticlePostProcesser.articleSort != ''">-->
-<!--                AND article_sort = #{dqArticlePostProcesser.articleSort}-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.createTime != null and dqArticlePostProcesser.createTime != ''">-->
-<!--                AND data_format(create_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.createTime},'%y%m%d')-->
-<!--            </if>-->
-<!--            <if test="dqArticlePostProcesser.updateTime != null and dqArticlePostProcesser.updateTime != ''">-->
-<!--                AND data_format(update_time,'%y%m%d') >= data_format(#{dqArticlePostProcesser.updateTime},'%y%m%d')-->
-<!--            </if>-->
-<!--            <if test="true">-->
-<!--                order by dq_article.article_sort desc ,dq_article.article_id desc-->
+            <if test="dqArticlePostProcesser.articleId != null and dqArticlePostProcesser.articleId != ''">
+                AND dq_article.article_Id = #{dqArticlePostProcesser.articleId}
+            </if>
+            <if test="dqArticlePostProcesser.articleTitle != null and dqArticlePostProcesser.articleTitle != ''">
+                AND dq_article.article_title like concat('%',#{dqArticlePostProcesser.articleTitle},'%')
+            </if>
+            <if test="dqArticlePostProcesser.sectionId != null and dqArticlePostProcesser.sectionId != ''">
+                AND dq_article.section_id = #{dqArticlePostProcesser.sectionId}
+            </if>
+            <if test="dqArticlePostProcesser.sectionTypeId != null and dqArticlePostProcesser.sectionTypeId != ''">
+                AND dq_article.section_type_id = #{dqArticlePostProcesser.sectionTypeId}
+            </if>
+            <if test="dqArticlePostProcesser.authorId != null and dqArticlePostProcesser.authorId != ''">
+                AND dq_article.author_id = #{dqArticlePostProcesser.authorId}
+            </if>
+            <if test="true">
+                AND dq_article.status = 1
+            </if>
+            <choose>
+                <when test="dqArticlePostProcesser.articleSortWay == '1'">
+                    order by comment_num desc
+                </when>
+                <otherwise>
+
+                </otherwise>
+            </choose>
+<!--            <if test="dqArticlePostProcesser.articleSortWay != null and dqArticlePostProcesser.articleSortWay != ''">-->
+<!--                <if test="dqArticlePostProcesser.articleSortWay == '1'">-->
+<!--                    order by dq_article.article_id asc-->
+<!--                </if>-->
 <!--            </if>-->
         </where>
     </select>

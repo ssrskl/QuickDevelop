@@ -1,8 +1,11 @@
 package com.maoyan.quickdevelop.system.service.Impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
+import com.maoyan.quickdevelop.common.core.domain.DqSectionType;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqArticle;
@@ -12,7 +15,9 @@ import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostPro
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.MyQueryWrapper;
+import com.maoyan.quickdevelop.system.domain.DqArticleVO;
 import com.maoyan.quickdevelop.system.mapper.DqArticleMapper;
+import com.maoyan.quickdevelop.system.mapper.DqSectionTypeMapper;
 import com.maoyan.quickdevelop.system.mapper.DqTypeMapper;
 import com.maoyan.quickdevelop.system.mapper.DqUserMapper;
 import com.maoyan.quickdevelop.system.mapper.postprocessor.DqArticlePostProcessorMapper;
@@ -44,17 +49,19 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   private IDqUserService idqUserService;
   @Autowired
   private DqUserMapper dqUserMapper;
+  @Autowired
+  private DqSectionTypeMapper dqSectionTypeMapper;
 
   /**
    * 统一的查询方法
    *
-   * @param dqArticle
+   * @param dqArticlePostProcesser
    * @return
    */
   @Override
-  public List<DqArticlePostProcesser> commonSelectDqArticle(int pageNum, int pageSize, DqArticle dqArticle) {
+  public List<DqArticlePostProcesser> commonSelectDqArticlePostProcesser(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser) {
     PageHelper.startPage(pageNum, pageSize);
-    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticle);
+    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticlePostProcesser);
     if (dqArticlePostProcessers.isEmpty()) {
       throw new CustomException("未查询到文章", HttpStatus.NOT_FOUND);
     }
@@ -93,8 +100,8 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   public List<DqArticle> selectDqArticlesByTypeId(int pageNum, int pageSize, Long typeId) {
     /** 对typeid校验,将Long转换为String **/
     queryWrapper.lambda()
-        .eq(DqArticle::getStatus, "0")
-        .orderByDesc(DqArticle::getArticleId);
+            .eq(DqArticle::getStatus, "0")
+            .orderByDesc(DqArticle::getArticleId);
 //        MyQueryWrapper<DqArticle> myQueryWrapper = new MyQueryWrapper<>();
 //        myQueryWrapper.statuseq("type_id", String.valueOf(typeId));
     DqType dqType = dqTypeMapper.selectById(typeId);
@@ -146,13 +153,36 @@ public class IDqArticleServiceImpl implements IDqArticleService {
 
 
   @Override
-  public int insertDqArticle(DqArticle dqArticle) {
+  public int publishDqArticle(DqArticle dqArticle) {
     Long autorId = dqArticle.getAuthorId();
     DqUser dqUser = dqUserMapper.selectById(autorId);
 //        DqUser dqUser = idqUserService.selectDqUserById(autorId);
     int insert = dqArticleMapper.insert(dqArticle);
     if (insert <= 0) {
       throw new CustomException("添加失败", HttpStatus.ERROR);
+    }
+    return insert;
+  }
+
+  @Override
+  public int publishDqArticle(DqArticleVO dqArticleVO) {
+    DqArticle dqArticle = new DqArticle();
+    LambdaQueryWrapper<DqSectionType> dqSectionTypeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqSectionTypeLambdaQueryWrapper.eq(DqSectionType::getSectionTypeId, dqArticleVO.getSectionTypeId());
+    DqSectionType dqSectionType = dqSectionTypeMapper.selectOne(dqSectionTypeLambdaQueryWrapper);
+    dqArticle.setArticleTitle(dqArticleVO.getArticleTitle());
+    dqArticle.setArticleContent(dqArticleVO.getArticleContent());
+    dqArticle.setArticleImage(dqArticleVO.getArticleImage());
+    dqArticle.setSectionTypeId(dqArticleVO.getSectionTypeId());
+    dqArticle.setSectionId(dqSectionType.getSectionId());
+    dqArticle.setAuthorId(StpUtil.getLoginIdAsLong());
+    dqArticle.setStatus("0");
+    dqArticle.setArticleWeight(0L);
+    dqArticle.setCreateTime(DateUtil.date());
+    dqArticle.setUpdateTime(DateUtil.date());
+    int insert = dqArticleMapper.insert(dqArticle);
+    if (insert <= 0) {
+      throw new CustomException("发表失败",HttpStatus.ERROR);
     }
     return insert;
   }
@@ -198,22 +228,5 @@ public class IDqArticleServiceImpl implements IDqArticleService {
       throw new CustomException("删除失败", HttpStatus.ERROR);
     }
   }
-
-
-  @Override
-  public List<DqArticlePostProcesser> selectDqArticlePostProcessers(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser) {
-    PageHelper.startPage(pageNum, pageSize);
-    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(new DqArticle());
-    if (dqArticlePostProcessers.isEmpty()) {
-      throw new CustomException("未查询到文章", HttpStatus.NOT_FOUND);
-    }
-    return dqArticlePostProcessers;
-  }
-
-  @Override
-  public DqArticlePostProcesser selectDqArticlePostProcesserByDqArticleId() {
-    return null;
-  }
-
 }
 
