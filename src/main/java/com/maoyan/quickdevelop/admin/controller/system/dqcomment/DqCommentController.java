@@ -32,133 +32,134 @@ import java.util.List;
 public class DqCommentController extends BaseController {
 
 
-    @Autowired
-    private IDqCommentService idqCommentService;
-    @Autowired
-    private IDqArticleService idqArticleService;
+  @Autowired
+  private IDqCommentService idqCommentService;
+  @Autowired
+  private IDqArticleService idqArticleService;
 
-    @Autowired
-    private IDqUserService idqUserService;
+  @Autowired
+  private IDqUserService idqUserService;
 
-    private PageInfo<DqComment> pageInfo;
-
-
-    /**
-     * 通用评论查询
-     *
-     * @param pageNum
-     * @param pageSize
-     * @param dqComment
-     * @return com.maoyan.quickdevelop.common.core.AjaxResult
-     * @author 猫颜
-     * @date 上午8:41
-     */
-    @GetMapping("/list")
-    @ApiOperation(value = "评论通用查询")
-    public AjaxResult listComment(@RequestParam(defaultValue = "1", name = "pageNum") int pageNum,
-                                  @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
-                                  DqComment dqComment) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        List<DqComment> dqComments = idqCommentService.selectDqComment(pageNum, pageSize, dqComment);
-        return AjaxResult.success("查询成功", new PageInfo<>(dqComments));
-    }
-
-    /**
-     * 通过ID查询评论
-     *
-     * @param dqCommentId
-     * @return
-     */
-    @GetMapping("/{dqCommentId}")
-    @ApiOperation(value = "通过ID查询评论")
-    public AjaxResult getInfo(@PathVariable Long dqCommentId) {
-        //后面可以根据缓存中先查询
-        DqComment dqComment = idqCommentService.selectDqCommentById(dqCommentId);
-        return AjaxResult.success("查询成功", dqComment);
-    }
-
-    /**
-     * 根据文章ID查询所有根评论
-     *
-     * @param pageNum
-     * @param pageSize
-     * @param articleId
-     * @return
-     */
-    @GetMapping("/dqarticle/{articleId}")
-    @ApiOperation(value = "根据文章ID查询所有根评论")
-    public AjaxResult getInfoByArticleId(@RequestParam(defaultValue = "1") int pageNum,
-                                         @RequestParam(defaultValue = "10") int pageSize,
-                                         @PathVariable Long articleId) {
-        List<DqComment> dqComments = idqCommentService.selectDqCommentByDqArticleId(pageNum, pageSize, articleId);
-        pageInfo = new PageInfo<>(dqComments);
-        return AjaxResult.success("查询成功", pageInfo);
-    }
-
-    /**
-     * 根据根评论查询回复（根据id查询根评论下的所有回复）
-     * @author 猫颜
-     * @date 2021/7/24 上午7:55
- * @param pageNum
- * @param pageSize
- * @param rootId 
- * @return com.maoyan.quickdevelop.common.core.AjaxResult
-     */
-    @GetMapping("/dqroot/{rootId}")
-    @ApiOperation(value = "根据根评论查询回复（根据id查询根评论下的所有回复）")
-    public AjaxResult getDqCommentsByRootId(@RequestParam(defaultValue = "1") int pageNum,
-                                            @RequestParam(defaultValue = "100") int pageSize,
-                                            @PathVariable Long rootId){
-        List<DqComment> dqComments = idqCommentService.selectDqCommentsByRootId(pageNum, pageSize, rootId);
-        pageInfo = new PageInfo<>(dqComments);
-        return AjaxResult.success("查询成功", pageInfo);
-    }
-
-    /**
-     * 查看指定用户发表的所有评论
-     *
-     * @param userId
-     * @return
-     */
-    @GetMapping("/dquser/{userId}")
-    @ApiOperation(value = "根据发表评论的用户的ID来查")
-    public AjaxResult getInfoByUserId(@RequestParam(defaultValue = "1") int pageNum,
-                                      @RequestParam(defaultValue = "10") int pageSize,
-                                      @PathVariable Long userId) {
-        List<DqComment> dqComments = idqCommentService.selectDqCommentByDqUserId(pageNum, pageSize, userId);
-        pageInfo = new PageInfo<>(dqComments);
-        return AjaxResult.success("查询成功", pageInfo);
-    }
+  private PageInfo<DqComment> pageInfo;
 
 
-    /**
-     * @ApiOperation(value = "查找所有发给当前登陆用户的评论")
-     * @author 猫颜
-     * @date  下午7:42
-     * @return com.maoyan.quickdevelop.common.core.AjaxResult
-     */
-    @SaCheckLogin
-    @SaCheckPermission(value = "user-query")
-    @GetMapping("/tome")
-    @ApiOperation(value = "查找所有发给当前登陆用户的评论")
-    public AjaxResult getCommentToMe(@RequestParam(defaultValue = "1") int pageNum,
-                                     @RequestParam(defaultValue = "10") int pageSize){
-        List<DqComment> dqComments = idqCommentService.selectDqCommentToMe(pageNum, pageSize);
-        pageInfo = new PageInfo<>(dqComments);
-        return AjaxResult.success("查询成功", pageInfo);
-    }
+  /**
+   * 通用评论查询
+   *
+   * @param pageNum
+   * @param pageSize
+   * @param dqComment
+   * @return com.maoyan.quickdevelop.common.core.AjaxResult
+   * @author 猫颜
+   * @date 上午8:41
+   */
+  @GetMapping("/list")
+  @ApiOperation(value = "评论通用查询")
+  public AjaxResult listComment(@RequestParam(defaultValue = "1", name = "pageNum") int pageNum,
+                                @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
+                                DqComment dqComment) {
+    List<DqCommentPostProcesser> dqCommentPostProcessers = idqCommentService.commonSelectDqCommentPostProcesser(pageNum, pageSize, dqComment);
+    return AjaxResult.success("查询成功", new PageInfo<>(dqCommentPostProcessers));
+  }
 
-    /**
-     * 添加评论
-     *
-     * @param dqCommentVO
-     * @return
-     */
-    @Log(title = "发表评论或回复", businessType = BusinessType.INSERT)
-    @SaCheckLogin
-    @SaCheckPermission(value = "user-add")
-    @PostMapping("/add")
-    @ApiOperation(value = "发表评论或回复")
-    public AjaxResult addType(@RequestBody DqCommentVO dqCommentVO) {
+  /**
+   * 通过ID查询评论
+   *
+   * @param dqCommentId
+   * @return
+   */
+  @GetMapping("/{dqCommentId}")
+  @ApiOperation(value = "通过ID查询评论")
+  public AjaxResult getInfo(@PathVariable Long dqCommentId) {
+    //后面可以根据缓存中先查询
+    DqComment dqComment = idqCommentService.selectDqCommentById(dqCommentId);
+    return AjaxResult.success("查询成功", dqComment);
+  }
+
+  /**
+   * 根据文章ID查询所有根评论
+   *
+   * @param pageNum
+   * @param pageSize
+   * @param articleId
+   * @return
+   */
+  @GetMapping("/dqarticle/{articleId}")
+  @ApiOperation(value = "根据文章ID查询所有根评论")
+  public AjaxResult getInfoByArticleId(@RequestParam(defaultValue = "1") int pageNum,
+                                       @RequestParam(defaultValue = "10") int pageSize,
+                                       @PathVariable Long articleId) {
+    List<DqComment> dqComments = idqCommentService.selectDqCommentByDqArticleId(pageNum, pageSize, articleId);
+    pageInfo = new PageInfo<>(dqComments);
+    return AjaxResult.success("查询成功", pageInfo);
+  }
+
+  /**
+   * 根据根评论查询回复（根据id查询根评论下的所有回复）
+   *
+   * @param pageNum
+   * @param pageSize
+   * @param rootId
+   * @return com.maoyan.quickdevelop.common.core.AjaxResult
+   * @author 猫颜
+   * @date 2021/7/24 上午7:55
+   */
+  @GetMapping("/dqroot/{rootId}")
+  @ApiOperation(value = "根据根评论查询回复（根据id查询根评论下的所有回复）")
+  public AjaxResult getDqCommentsByRootId(@RequestParam(defaultValue = "1") int pageNum,
+                                          @RequestParam(defaultValue = "100") int pageSize,
+                                          @PathVariable Long rootId) {
+    List<DqComment> dqComments = idqCommentService.selectDqCommentsByRootId(pageNum, pageSize, rootId);
+    pageInfo = new PageInfo<>(dqComments);
+    return AjaxResult.success("查询成功", pageInfo);
+  }
+
+  /**
+   * 查看指定用户发表的所有评论
+   *
+   * @param userId
+   * @return
+   */
+  @GetMapping("/dquser/{userId}")
+  @ApiOperation(value = "根据发表评论的用户的ID来查")
+  public AjaxResult getInfoByUserId(@RequestParam(defaultValue = "1") int pageNum,
+                                    @RequestParam(defaultValue = "10") int pageSize,
+                                    @PathVariable Long userId) {
+    List<DqComment> dqComments = idqCommentService.selectDqCommentByDqUserId(pageNum, pageSize, userId);
+    pageInfo = new PageInfo<>(dqComments);
+    return AjaxResult.success("查询成功", pageInfo);
+  }
+
+
+  /**
+   * @return com.maoyan.quickdevelop.common.core.AjaxResult
+   * @ApiOperation(value = "查找所有发给当前登陆用户的评论")
+   * @author 猫颜
+   * @date 下午7:42
+   */
+  @SaCheckLogin
+  @SaCheckPermission(value = "user-query")
+  @GetMapping("/tome")
+  @ApiOperation(value = "查找所有发给当前登陆用户的评论")
+  public AjaxResult getCommentToMe(@RequestParam(defaultValue = "1") int pageNum,
+                                   @RequestParam(defaultValue = "10") int pageSize) {
+    List<DqComment> dqComments = idqCommentService.selectDqCommentToMe(pageNum, pageSize);
+    pageInfo = new PageInfo<>(dqComments);
+    return AjaxResult.success("查询成功", pageInfo);
+  }
+
+  /**
+   * 添加评论
+   *
+   * @param dqCommentVO
+   * @return
+   */
+  @Log(title = "发表评论或回复", businessType = BusinessType.INSERT)
+  @SaCheckLogin
+  @SaCheckPermission(value = "user-add")
+  @PostMapping("/add")
+  @ApiOperation(value = "发表评论或回复")
+  public AjaxResult addType(@RequestBody DqCommentVO dqCommentVO) {
 
 //        /** 参数校验 **/
 //        if (StringUtils.isNull(dqCommentVO.getReplyid())) {
@@ -166,48 +167,37 @@ public class DqCommentController extends BaseController {
 //        } else if (StringUtils.isNull(dqCommentVO.getTouserid())) {
 //            throw new CustomException("请填写被回复的人的ID", HttpStatus.BAD_REQUEST);
 //        }
-        DqComment dqComment = new DqComment();
-        dqComment.setContent(dqCommentVO.getContent());
-        dqComment.setCommentUserId(StpUtil.getLoginIdAsLong());
-        dqComment.setArticleId(dqCommentVO.getArticleId());
-        dqComment.setReplyId(dqCommentVO.getReplyId());
-        int i = idqCommentService.publishDqComment(dqComment);
-        return AjaxResult.success("发表评论成功", i);
+    DqComment dqComment = new DqComment();
+    dqComment.setContent(dqCommentVO.getContent());
+    dqComment.setCommentUserId(StpUtil.getLoginIdAsLong());
+    dqComment.setArticleId(dqCommentVO.getArticleId());
+    dqComment.setReplyId(dqCommentVO.getReplyId());
+    int i = idqCommentService.publishDqComment(dqComment);
+    return AjaxResult.success("发表评论成功", i);
 
-    }
-
-
-    /**
-     * 删除评论
-     *
-     * @param dqCommentId
-     * @return
-     */
-    @Log(title = "删除评论或回复", businessType = BusinessType.DELETE)
-    @SaCheckLogin
-    @SaCheckPermission(value = "user-delete")
-    @GetMapping("/remove/{dqCommentId}")
-    @ApiOperation(value = "根据ID删除评论")
-    public AjaxResult remove(@PathVariable Long dqCommentId) {
-        int i = idqCommentService.deleteDqCommentById(dqCommentId);
-        return AjaxResult.success("删除评论成功", i);
-    }
+  }
 
 
+  /**
+   * 删除评论
+   *
+   * @param dqCommentId
+   * @return
+   */
+  @Log(title = "删除评论或回复", businessType = BusinessType.DELETE)
+  @SaCheckLogin
+  @SaCheckPermission(value = "user-delete")
+  @GetMapping("/remove/{dqCommentId}")
+  @ApiOperation(value = "根据ID删除评论")
+  public AjaxResult remove(@PathVariable Long dqCommentId) {
+    int i = idqCommentService.deleteDqCommentById(dqCommentId);
+    return AjaxResult.success("删除评论成功", i);
+  }
+  /**
+   * 评论无法修改（其实是我懒得添加的）
+   */
 
-    @GetMapping("/superlist")
-    @ApiOperation(value = "super评论通用查询")
-    public AjaxResult selectDqCommentPostProcessers(@RequestParam(defaultValue = "1", name = "pageNum") int pageNum,
-                                  @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
-                                  DqCommentPostProcesser dqCommentPostProcesser) {
-        List<DqCommentPostProcesser> dqCommentPostProcessers = idqCommentService.selectDqCommentPostProcessers(pageNum, pageSize, dqCommentPostProcesser);
-        return AjaxResult.success("查询成功", new PageInfo<>(dqCommentPostProcessers));
-    }
-    /**
-     * 评论无法修改（其实是我懒得添加的）
-     */
-
-    //管理员会用
+  //管理员会用
 //    /**
 //     * 查询所有的评论
 //     *
@@ -225,10 +215,6 @@ public class DqCommentController extends BaseController {
 //
 //        return AjaxResult.success("查询成功", pageInfo);
 //    }
-
-
-
-
 
 
 }

@@ -56,57 +56,14 @@ public class IDqCommentServiceImpl implements IDqCommentService {
   QueryWrapper<DqArticle> articleQueryWrapper = new QueryWrapper<>();
   QueryWrapper<DqUser> userQueryWrapper = new QueryWrapper<>();
 
-  QueryWrapper<? extends DqStatusDispose> queryWrapper1 = new QueryWrapper<>();
-
-  DqStatusDisposrUtils dqStatusDisposrUtils = new DqStatusDisposrUtils();
-
   @Override
-  public List<DqComment> selectDqComment(int pageNum, int pageSize, DqComment dqComment) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-    //评论id
-    queryWrapper.lambda().eq(StringUtils.isNotNull(dqComment.getCommentId()), DqComment::getCommentId, dqComment.getCommentId())
-        //文章id
-        .eq(StringUtils.isNotNull(dqComment.getArticleId()), DqComment::getArticleId, dqComment.getArticleId())
-        //发表评论用户id
-        .eq(StringUtils.isNotNull(dqComment.getCommentUserId()), DqComment::getCommentUserId, dqComment.getCommentUserId())
-        //评论类型
-        //发给用户的id
-        .eq(StringUtils.isNotNull(dqComment.getToUserId()), DqComment::getToUserId, dqComment.getToUserId())
-        //父评论id
-        .eq(StringUtils.isNotNull(dqComment.getReplyId()), DqComment::getReplyId, dqComment.getReplyId())
-        //根评论id
-        .eq(StringUtils.isNotNull(dqComment.getRootId()), DqComment::getRootId, dqComment.getRootId())
-        .eq(DqComment::getStatus, "0");
+  public List<DqCommentPostProcesser> commonSelectDqCommentPostProcesser(int pageNum, int pageSize, DqComment dqComment){
     PageHelper.startPage(pageNum, pageSize);
-    List<DqComment> dqComments = dqCommentMapper.selectList(queryWrapper);
-    queryWrapper.clear();
-    if (dqComments.isEmpty()) {
-      throw new CustomException("未查询到评论", HttpStatus.NOT_FOUND);
+    List<DqCommentPostProcesser> dqCommentPostProcessers = dqCommentPostProcessorMapper.commonSelectDqCommentPostProcesser(dqComment);
+    if (StringUtils.isEmpty(dqCommentPostProcessers)){
+      throw new CustomException("未查询到评论",HttpStatus.NOT_FOUND);
     }
-    return dqComments;
-
-
-//        HashMap<String, Object> queryRules = new LinkedHashMap<>();
-//        queryRules.put("commentId", QueryType.EQ);
-//        queryRules.put("articleId", QueryType.EQ);
-//        queryRules.put("commentUserId", QueryType.EQ);
-//        queryRules.put("commentType", QueryType.EQ);
-//        queryRules.put("toUserId", QueryType.EQ);
-//        queryRules.put("replyId",QueryType.EQ);
-//        queryRules.put("rootId",QueryType.EQ);
-//        queryRules.put("status", QueryType.EQ);
-//        //只查询没有被封禁的
-//        dqComment.setStatus("0");
-//        MyQueryWrapper<DqComment> myQueryWrapper = new MyQueryWrapper<>();
-//        myQueryWrapper.queryAll(dqComment, queryRules);
-//        //System.out.println(dqComment.toString());
-//
-//        List<DqComment> dqComments = dqCommentMapper.selectList(myQueryWrapper);
-//        myQueryWrapper.clear();
-//        queryRules.clear();
-//        if (dqComments.isEmpty()) {
-//            throw new CustomException("未查询到评论", HttpStatus.NOT_FOUND);
-//        }
-//        return dqComments;
+    return dqCommentPostProcessers;
   }
 
   /**
@@ -371,16 +328,6 @@ public class IDqCommentServiceImpl implements IDqCommentService {
       throw new CustomException("删除失败", HttpStatus.FORBIDDEN);
     }
     return i;
-  }
-
-  @Override
-  public List<DqCommentPostProcesser> selectDqCommentPostProcessers(int pageNum, int pageSize, DqCommentPostProcesser dqCommentPostProcesser) {
-    PageHelper.startPage(pageNum, pageSize);
-    List<DqCommentPostProcesser> dqCommentPostProcessers = dqCommentPostProcessorMapper.selectAllDqCommentPostProcesser(dqCommentPostProcesser);
-    if (dqCommentPostProcessers.isEmpty()) {
-      throw new CustomException("未查询到评论", HttpStatus.NOT_FOUND);
-    }
-    return dqCommentPostProcessers;
   }
 
 //    @Override

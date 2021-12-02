@@ -5,14 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.maoyan.quickdevelop.common.core.domain.dqabstract.DqStatusDispose;
-import com.maoyan.quickdevelop.common.utils.annotation.MapperQuery;
-import com.maoyan.quickdevelop.common.utils.annotation.type.QueryType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

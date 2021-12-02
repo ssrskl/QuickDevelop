@@ -61,6 +61,11 @@ public class IDqSchoolServiceImpl implements IDqSchoolService {
 
   @Override
   public int setSchoolForDqUser(Long dqSchoolId) {
+    // 验证学校是否存在
+    DqSchool dqSchool = dqSchoolMapper.selectById(dqSchoolId);
+    if (StringUtils.isNull(dqSchool)){
+      throw new CustomException("此学校不存在",HttpStatus.NOT_FOUND);
+    }
     DqUser dqUser = new DqUser();
     dqUser.setUserId(StpUtil.getLoginIdAsLong());
     dqUser.setSchoolId(dqSchoolId);

@@ -34,11 +34,12 @@ create table dq_user
 insert into dq_user
 values (1, '猫颜', '1071352028@qq.com', '17104344673', '0',
         'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 'maoyan', 1, 1,sysdate(),
+        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 'maoyan', 1, 1,
+        sysdate(),
         sysdate());
 insert into dq_user
 values (2, 'maoyan', '820244680@qq.com', '110', '0', 'logo', 'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1',
-        sysdate(), 'wu', 1, 0, 'maoyan2', 1, 1,sysdate(), sysdate());
+        sysdate(), 'wu', 1, 0, 'maoyan2', 1, 1, sysdate(), sysdate());
 -- ----------------------------
 -- 2、用户关注表
 -- ----------------------------
@@ -317,3 +318,11 @@ values (2, '文章', 1, 'addDqArticle', 'POST', 'maoyan', 'localhost', '127.0.0.
 insert into dq_operlog
 values (3, '文章', 1, 'addDqArticle', 'POST', 'maoyan', 'localhost', '127.0.0.1', '河南', '请求参数', 'null', '0', '错误的消息',
         sysdate());
+
+-- ----------------------------
+-- 添加唯一性约束(两个字段不能同时一样)
+-- ----------------------------
+alter table dq_follow_interdquser
+    add unique key (give_follow_dquser_id, followed_dquser_id);
+alter table dq_collection
+    add unique key (user_id, article_id);

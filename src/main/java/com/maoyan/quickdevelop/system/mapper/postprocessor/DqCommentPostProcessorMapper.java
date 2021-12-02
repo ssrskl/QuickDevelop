@@ -14,5 +14,5 @@ import java.util.List;
  */
 @Mapper
 public interface DqCommentPostProcessorMapper extends BaseMapper<DqCommentPostProcesser> {
-  public List<DqCommentPostProcesser> selectAllDqCommentPostProcesser(@Param("dqCommentPostProcesser") DqCommentPostProcesser dqCommentPostProcesser);
+  List<DqCommentPostProcesser> commonSelectDqCommentPostProcesser(@Param("dqComment") DqComment dqComment);
 }

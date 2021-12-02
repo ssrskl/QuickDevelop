@@ -2,9 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqUserPostProcessorMapper">
 
-    <resultMap id="DqUserResult"
+    <resultMap id="DqUserPostProcessorResult"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor">
-
         <id property="userId" column="user_id" jdbcType="BIGINT"/>
         <result property="userName" column="user_name" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
@@ -18,7 +17,6 @@
         <result property="signature" column="signature" jdbcType="VARCHAR"/>
         <result property="grade" column="grade" jdbcType="BIGINT"/>
         <result property="experience" column="experience" jdbcType="BIGINT"/>
-        <result property="checkParam" column="check_param" jdbcType="VARCHAR"/>
         <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
         <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
         <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
@@ -49,7 +47,6 @@
                signature,
                grade,
                experience,
-               check_param,
                check_status,
                school_id,
                dq_user.create_time,
@@ -65,7 +62,7 @@
     </sql>
     <select id="selectDqUserPostProcesser"
             parameterType="com.maoyan.quickdevelop.common.core.domain.DqUser"
-            resultMap="DqUserResult">
+            resultMap="DqUserPostProcessorResult">
         <include refid="selectDqUserPostProcesserVO"></include>
         <where>
             <if test="dqUser.userId != null and dqUser.userId!=''">

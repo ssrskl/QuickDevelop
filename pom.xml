@@ -57,7 +57,7 @@
         <!--            <version>2021.1</version>-->
         <!--        </dependency>-->
         <!-- 阿里JSON解析器 -->
-        <dependency>RandomUtils.
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
@@ -112,14 +112,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper -->
-        <!--        <dependency>-->
-        <!--            <groupId>com.github.pagehelper</groupId>-->
-        <!--            <artifactId>pagehelper</artifactId>-->
-        <!--            <version>5.2.0</version>-->
-        <!--        </dependency>-->
-
         <!-- 获取系统信息 -->
         <dependency>
             <groupId>com.github.oshi</groupId>
@@ -251,12 +243,8 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 

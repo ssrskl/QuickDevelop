@@ -53,7 +53,22 @@ public class LogAspect {
 
   @Before("logPointCut()")
   public void doBefore(JoinPoint joinPoint) {
-    handleDqUserStatus();
+    // 如果是用户注册则不校验登陆状态
+    // 获得注解
+    Log controllerLog = null;
+    try {
+      controllerLog = getAnnotationLog(joinPoint);
+      if (controllerLog == null) {
+        return;
+      }
+      if (!StringUtils.equals(controllerLog.title(), "用户注册")) {
+        // 校验用户登陆状态
+        handleDqUserStatus();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
   /***
@@ -89,10 +104,14 @@ public class LogAspect {
    * 对写操作的用户状态进行验证
    */
   protected void handleDqUserStatus() {
+    /**
+     * 这里直接拦截所有的写操作，进行登陆判断，没有登陆无法进行写操作，这样在其他写操作中就不需要验证登陆了。
+     */
+    // 这里可以直接验证登陆状态了
     long loginIdAsLong = StpUtil.getLoginIdAsLong();
     DqUser dqUser = iDqUserService.selectDqUserById(loginIdAsLong);
     boolean dqUserIsNull = Optional.ofNullable(dqUser).isPresent();
-    if (!dqUserIsNull){
+    if (!dqUserIsNull) {
       throw new CustomException("您已经被封禁", HttpStatus.FORBIDDEN);
     }
   }

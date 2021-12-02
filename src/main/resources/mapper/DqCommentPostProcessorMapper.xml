@@ -2,79 +2,137 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqCommentPostProcessorMapper">
 
-    <resultMap id="DqCommentResult"
+    <resultMap id="DqCommentPostProcesserResult"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCommentPostProcesser">
         <id property="commentId" column="comment_id" jdbcType="BIGINT"/>
         <result property="articleId" column="article_id" jdbcType="BIGINT"/>
         <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="commentUserId" column="comment_userid" jdbcType="BIGINT"/>
-        <result property="commentUserNickName" column="comment_usernickname" jdbcType="VARCHAR"/>
-        <result property="commentUsername" column="comment_username" jdbcType="VARCHAR"/>
+        <result property="commentUserId" column="comment_user_id" jdbcType="BIGINT"/>
         <result property="status" column="status" jdbcType="CHAR"/>
-        <result property="commentUserAvatar" column="comment_user_avatar" jdbcType="VARCHAR"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="commentType" column="comment_type" jdbcType="CHAR"/>
         <result property="toUserId" column="to_user_id" jdbcType="BIGINT"/>
-        <result property="toUsername" column="to_username" jdbcType="VARCHAR"/>
-        <result property="toNickname" column="to_nickname" jdbcType="VARCHAR"/>
-        <result property="toUserAvatar" column="to_user_avatar" jdbcType="VARCHAR"/>
         <result property="replyId" column="reply_id" jdbcType="BIGINT"/>
         <result property="rootId" column="root_id" jdbcType="BIGINT"/>
-        <result property="childCommentNum" column="child_commentnum" jdbcType="BIGINT"/>
-<!--        <collection property="childComments" javaType="java.util.List" ofType="com.maoyan.quickdevelop.common.core.domain.DqComment" resultMap="ChildCommentResult"/>-->
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="childCommentNum" column="child_comment_num" jdbcType="BIGINT"/>
+        <association property="commentDqUserPostProcessor"
+                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
+                     resultMap="DqUserPostProcessorResult"/>
+        <association property="toDqUser"
+                     javaType="com.maoyan.quickdevelop.common.core.domain.DqUser"
+                     resultMap="DqUserResult"/>
+    </resultMap>
+    <resultMap id="DqUserPostProcessorResult"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor">
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="CHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="loginIp" column="loginIp" jdbcType="VARCHAR"/>
+        <result property="loginDate" column="loginDate" jdbcType="TIMESTAMP"/>
+        <result property="signature" column="signature" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="BIGINT"/>
+        <result property="experience" column="experience" jdbcType="BIGINT"/>
+        <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
+        <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="dqUserRoleList" javaType="java.util.List"
+                    ofType="com.maoyan.quickdevelop.common.core.domain.DqUserRole" resultMap="RolesResult"/>
     </resultMap>
 
-<!--    <resultMap id="ChildCommentResult" type="com.maoyan.quickdevelop.common.core.domain.DqComment">-->
-<!--        <id property="commentId" column="comment_id" jdbcType="BIGINT"/>-->
-<!--        <result property="articleId" column="article_id" jdbcType="BIGINT"/>-->
-<!--        <result property="content" column="content" jdbcType="VARCHAR"/>-->
-<!--        <result property="commentUserId" column="comment_userid" jdbcType="BIGINT"/>-->
-<!--        <result property="commentUserNickName" column="comment_usernickname" jdbcType="VARCHAR"/>-->
-<!--        <result property="commentUsername" column="comment_username" jdbcType="VARCHAR"/>-->
-<!--        <result property="status" column="status" jdbcType="CHAR"/>-->
-<!--        <result property="commentUserAvatar" column="comment_user_avatar" jdbcType="VARCHAR"/>-->
-<!--        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>-->
-<!--        <result property="commentType" column="comment_type" jdbcType="CHAR"/>-->
-<!--        <result property="toUserId" column="to_user_id" jdbcType="BIGINT"/>-->
-<!--        <result property="toUsername" column="to_username" jdbcType="VARCHAR"/>-->
-<!--        <result property="toNickname" column="to_nickname" jdbcType="VARCHAR"/>-->
-<!--        <result property="toUserAvatar" column="to_user_avatar" jdbcType="VARCHAR"/>-->
-<!--        <result property="replyId" column="reply_id" jdbcType="BIGINT"/>-->
-<!--        <result property="rootId" column="root_id" jdbcType="BIGINT"/>-->
-<!--    </resultMap>-->
+    <resultMap id="RolesResult" type="com.maoyan.quickdevelop.common.core.domain.DqUserRole">
+        <id property="userRoleId" column="user_role_id" jdbcType="BIGINT"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="roleStatus" column="role_status" jdbcType="CHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
 
+    <resultMap id="DqUserResult" type="com.maoyan.quickdevelop.common.core.domain.DqUser">
+        <id property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="CHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="signature" column="signature" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="BIGINT"/>
+        <result property="experience" column="experience" jdbcType="BIGINT"/>
+        <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
+        <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
 
     <sql id="selectDqCommentPostProcessorVO">
-        select *, (select count(*) from dq_comment dq where dq_comment.comment_id = dq.root_id) as child_commentnum
-        from dq_comment
+        select dq_comment.comment_id,
+               dq_comment.article_id,
+               dq_comment.content,
+               dq_comment.comment_user_id,
+               dq_comment.status,
+               dq_comment.to_user_id,
+               dq_comment.reply_id,
+               dq_comment.root_id,
+               dq_comment.create_time,
+               du.user_id,
+               du.user_name,
+               du.email,
+               du.phone_number,
+               du.sex,
+               du.avatar,
+               du.status,
+               du.loginIp,
+               du.loginDate,
+               du.signature,
+               du.grade,
+               du.experience,
+               du.check_status,
+               du.school_id,
+               du.create_time,
+               du.update_time,
+               dur.user_role_id,
+               dur.role_name,
+               dur.user_id,
+               dur.role_status,
+               dur.create_time,
+               dur.update_time,
+               (select count(*) from dq_comment rr where dq_comment.comment_id = rr.root_id) as child_comment_num
+        from dq_comment dq_comment
+                 left join dq_user du on du.user_id = dq_comment.comment_user_id
+                 left join dq_user_role dur on du.user_id = dur.user_id
+                 left join dq_user todu on todu.user_id = dq_comment.to_user_id
     </sql>
 
-    <select id="selectAllDqCommentPostProcesser"
-            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCommentPostProcesser"
-            resultMap="DqCommentResult">
+    <select id="commonSelectDqCommentPostProcesser"
+            parameterType="com.maoyan.quickdevelop.common.core.domain.DqComment"
+            resultMap="DqCommentPostProcesserResult">
         <include refid="selectDqCommentPostProcessorVO"></include>
         <where>
-            status = 0
-            <if test="dqCommentPostProcesser.commentId != null and dqCommentPostProcesser.commentId != ''">
-                AND comment_id = #{dqCommentPostProcesser.commentId}
+            <if test="dqComment.commentId != null and dqComment.commentId!= ''">
+                AND dq_comment.comment_id = #{dqComment.commentId}
             </if>
-            <if test="dqCommentPostProcesser.articleId != null and dqCommentPostProcesser.articleId != ''">
-                AND article_id = #{dqCommentPostProcesser.articleId}
+            <if test="dqComment.articleId != null and dqComment.articleId!= ''">
+                AND dq_comment.article_id = #{dqComment.articleId}
             </if>
-            <if test="dqCommentPostProcesser.content != null and dqCommentPostProcesser.content != ''">
-                AND content like concat('%',#{dqCommentPostProcesser.content},'%')
+            <if test="dqComment.commentUserId != null and dqComment.commentUserId!= ''">
+                AND dq_comment.comment_user_id = #{dqComment.commentUserId}
             </if>
-            <if test="dqCommentPostProcesser.commentUserId != null and dqCommentPostProcesser.commentUserId != ''">
-                AND comment_userid = #{dqCommentPostProcesser.commentUserId}
+            <if test="dqComment.toUserId != null and dqComment.toUserId!= ''">
+                AND dq_comment.to_user_id = #{dqComment.toUserId}
             </if>
-            <if test="dqCommentPostProcesser.toUserId != null and dqCommentPostProcesser.toUserId != ''">
-                AND to_user_id = #{dqCommentPostProcesser.toUserId}
+            <if test="dqComment.replyId != null and dqComment.replyId!= ''">
+                AND dq_comment.reply_id = #{dqComment.replyId}
             </if>
-            <if test="dqCommentPostProcesser.replyId != null and dqCommentPostProcesser.replyId != ''">
-                AND reply_id = #{dqCommentPostProcesser.replyId}
+            <if test="dqComment.rootId != null and dqComment.rootId!= ''">
+                AND dq_comment.root_id = #{dqComment.rootId}
             </if>
-            <if test="dqCommentPostProcesser.rootId != null and dqCommentPostProcesser.rootId != ''">
-                AND root_id = #{dqCommentPostProcesser.rootId}
+            <if test="true">
+                AND dq_comment.status = 1
             </if>
         </where>
     </select>

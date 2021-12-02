@@ -25,7 +25,7 @@ public interface IDqCommentService {
      * @param dqComment
      * @return com.maoyan.quickdevelop.common.core.domain.DqComment
      */
-    public List<DqComment> selectDqComment(int pageNum,int pageSize,DqComment dqComment) throws NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IllegalAccessException;
+    public List<DqCommentPostProcesser> commonSelectDqCommentPostProcesser(int pageNum,int pageSize,DqComment dqComment);
     /**
      * 根据ID查询评论
      * @param dqCommentId
@@ -95,16 +95,5 @@ public interface IDqCommentService {
      * @return
      */
     public int deleteDqCommentById(Long dqCommentId);
-
-    /** 评论强化查询 **/
-    public List<DqCommentPostProcesser> selectDqCommentPostProcessers(int pageNum, int pageSize, DqCommentPostProcesser dqCommentPostProcesser);
-
-//    /**
-//     * 根据ID更改评论
-//     * @param dqCommentId
-//     * @param dqComment
-//     * @return
-//     */
-//    public int updateDqCommentById(Long dqCommentId, DqComment dqComment);
 
 }

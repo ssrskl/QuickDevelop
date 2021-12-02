@@ -143,7 +143,7 @@ public class DqArticleController extends BaseController {
 
   /**
    * 根据Id删除文章
-   *
+   * 删除不仅要删除文章，还包括他人的收藏，评论可以不删除
    * @param articleId
    * @return
    */

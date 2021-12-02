@@ -189,12 +189,13 @@ public class IDqArticleServiceImpl implements IDqArticleService {
 
   @Override
   public int updateDqArticle(DqArticle newdqArticle) {
+    // 获取文章ID
     Long articleId = newdqArticle.getArticleId();
     DqArticle dqArticle = dqArticleMapper.selectById(articleId);
     if (dqArticle == null) {
       throw new CustomException("没有此文章", HttpStatus.NOT_FOUND);
     }
-    if (StringUtils.equals("1", dqArticle.getStatus())) {
+    if (StringUtils.equals("0", dqArticle.getStatus())) {
       throw new CustomException("此文章已被封禁无法更改", HttpStatus.FORBIDDEN);
     }
     if (StpUtil.getLoginIdAsLong() != dqArticle.getAuthorId()) {
@@ -221,7 +222,9 @@ public class IDqArticleServiceImpl implements IDqArticleService {
     if (StpUtil.getLoginIdAsLong() != autorId) {
       throw new CustomException("不能删除其他人的文章", HttpStatus.ERROR);
     }
+    // 删除文章
     int i = dqArticleMapper.deleteById(dqArticleId);
+    // 删除收藏信息
     if (i > 0) {
       return i;
     } else {

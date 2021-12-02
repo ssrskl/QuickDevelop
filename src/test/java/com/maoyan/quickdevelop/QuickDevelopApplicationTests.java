@@ -175,10 +175,4 @@ class QuickDevelopApplicationTests {
         Long delete = redisTemplate.opsForHash().delete(RedisKeyUtils.MAP_KEY_USER_LIKED, key);
         System.out.println("删除成功"+delete);
     }
-
-    @Test
-    void testCommentMapper(){
-        List<DqCommentPostProcesser> dqCommentPostProcessers = dqCommentPostProcessorMapper.selectAllDqCommentPostProcesser(new DqCommentPostProcesser());
-        System.out.println(dqCommentPostProcessers);
-    }
 }

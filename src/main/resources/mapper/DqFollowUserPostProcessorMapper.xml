@@ -18,7 +18,6 @@
         <result property="signature" column="signature" jdbcType="VARCHAR"/>
         <result property="grade" column="grade" jdbcType="BIGINT"/>
         <result property="experience" column="experience" jdbcType="BIGINT"/>
-        <result property="checkParam" column="check_param" jdbcType="VARCHAR"/>
         <result property="checkStatus" column="check_status" jdbcType="CHAR"/>
         <result property="schoolId" column="school_id" jdbcType="BIGINT"/>
         <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
@@ -49,7 +48,6 @@
                signature,
                grade,
                experience,
-               check_param,
                check_status,
                dq_user.create_time,
                dq_user.update_time,
