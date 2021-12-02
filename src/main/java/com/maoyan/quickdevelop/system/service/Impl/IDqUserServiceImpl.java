@@ -164,6 +164,22 @@ public class IDqUserServiceImpl implements IDqUserService {
     return i;
   }
 
-
-
+  @Override
+  public int emailVerification(String emailVerification) {
+    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqUserLambdaQueryWrapper.eq(DqUser::getCheckParam,emailVerification);
+    DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
+    if (StringUtils.isNull(dqUser)){
+      throw new CustomException("不存在此用户");
+    }
+    if (StringUtils.equals(dqUser.getCheckParam(),"1")){
+      throw new CustomException("该用户邮箱已验证");
+    }
+    dqUser.setCheckStatus("1");
+    int i = dqUserMapper.updateById(dqUser);
+    if (i<=0){
+      throw new CustomException("邮箱验证失败");
+    }
+    return 0;
+  }
 }

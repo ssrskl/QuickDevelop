@@ -72,6 +72,12 @@ public interface IDqUserService {
      */
     public int updateDqUserSelf(DqUser dqUser);
 
+    /**
+     * 用户的邮箱验证
+     * @param emailVerification
+     * @return
+     */
+    public int emailVerification(String emailVerification);
 
 
 }

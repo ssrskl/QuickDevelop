@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DqUserRegisterVO {
+public class DqUserVO {
   private static final long serialVersionUID = 1L;
 
   @NotNull
