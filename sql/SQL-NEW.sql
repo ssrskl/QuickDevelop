@@ -154,7 +154,8 @@ create table dq_section_type
 -- ----------------------------
 insert into dq_section_type
 values (1, '程序组', 1, 0, 0, 'url', sysdate(), sysdate());
-
+insert into dq_section_type
+values (2, '设计组', 1, 0, 0, 'url', sysdate(), sysdate());
 -- ----------------------------
 -- 2、版块关注表
 -- ----------------------------
@@ -175,7 +176,6 @@ create table dq_follow_interdqsection
 -- ----------------------------
 insert into dq_follow_interdqsection
 values (1, 1, 1, sysdate(), sysdate());
-maoyanscsvr
 
 -- ----------------------------
 -- 2、学校表

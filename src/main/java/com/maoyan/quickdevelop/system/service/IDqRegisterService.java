@@ -1,7 +1,8 @@
 package com.maoyan.quickdevelop.system.service;
 
-import com.maoyan.quickdevelop.common.core.domain.domainvo.DqUserVO;
+import com.maoyan.quickdevelop.system.domain.DqUserVO;
+import com.maoyan.quickdevelop.system.domain.vo.RegisterVO;
 
 public interface IDqRegisterService {
-  public int dqUserRegister(DqUserVO dqUserVO);
+  public int dqUserRegister(RegisterVO registerVO);
 }

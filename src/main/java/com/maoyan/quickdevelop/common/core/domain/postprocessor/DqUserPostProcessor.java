@@ -69,12 +69,12 @@ public class DqUserPostProcessor implements Serializable {
   @TableField(value = "avatar")
   private String avatar;
 
-  /**
-   * 密码（可修改）
-   */
-  @TableField(value = "password")
-  @NotNull
-  private String password;
+//  /**
+//   * 密码（可修改）
+//   */
+//  @TableField(value = "password")
+//  @NotNull
+//  private String password;
 
   /**
    * 帐号状态（1正常 0停用）（管理员可修改）
@@ -120,8 +120,8 @@ public class DqUserPostProcessor implements Serializable {
   /**
    * 邮箱校验的参数（也可以当作盐值加密的参数）
    */
-  @TableField(value = "check_param")
-  private String checkParam;
+//  @TableField(value = "check_param")
+//  private String checkParam;
   /**
    * 邮箱校验的状态(1-通过，0-未通过)'
    */

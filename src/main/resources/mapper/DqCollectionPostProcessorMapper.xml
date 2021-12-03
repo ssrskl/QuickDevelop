@@ -169,7 +169,7 @@
                  left join dq_user_role dur on du.user_id = dur.user_id
     </sql>
     <select id="selectDqCollectionPostProcessor"
-            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCollectionPostProcesser"
+            parameterType="com.maoyan.quickdevelop.system.domain.queryvo.DqCollectionQueryVO"
             resultMap="DqCollectionPostProcessorResult">
         <include refid="selectDqCollectionPostProcessorVO"></include>
         <where>

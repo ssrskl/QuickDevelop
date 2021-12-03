@@ -2,17 +2,14 @@ package com.maoyan.quickdevelop.admin.controller.system.dqarticle;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.stp.StpUtil;
 import com.github.pagehelper.PageInfo;
 import com.maoyan.quickdevelop.admin.controller.system.BaseController;
-import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.annotation.Log;
-import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
 import com.maoyan.quickdevelop.common.core.domain.DqArticle;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser;
 import com.maoyan.quickdevelop.common.enums.BusinessType;
-import com.maoyan.quickdevelop.common.utils.DateUtils;
+import com.maoyan.quickdevelop.system.domain.queryvo.DqArticleQueryVO;
 import com.maoyan.quickdevelop.system.domain.DqArticleVO;
 import com.maoyan.quickdevelop.system.service.IDqArticleService;
 import com.maoyan.quickdevelop.system.service.IDqUserService;
@@ -35,12 +32,13 @@ public class DqArticleController extends BaseController {
   private IDqArticleService iArticleService;
   @Autowired
   private IDqUserService iUserService;
+
   /**
    * TODO 文章通用查询
    *
-   * @param pageNum   第几页
-   * @param pageSize  每页几个
-   * @param dqArticlePostProcesser 查询信息
+   * @param pageNum                第几页
+   * @param pageSize               每页几个
+   * @param dqArticleQueryVO 查询信息
    * @return com.maoyan.quickdevelop.common.core.AjaxResult
    * @author 猫颜
    * @date 上午9:58
@@ -49,8 +47,8 @@ public class DqArticleController extends BaseController {
   @ApiOperation(value = "通用查询所有的文章")
   public AjaxResult listArticle(@RequestParam(defaultValue = "1", name = "pageNum") int pageNum,
                                 @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
-                                DqArticlePostProcesser dqArticlePostProcesser) {
-    List<DqArticlePostProcesser> dqArticlePostProcessers = iArticleService.commonSelectDqArticlePostProcesser(pageNum, pageSize, dqArticlePostProcesser);
+                                DqArticleQueryVO dqArticleQueryVO) {
+    List<DqArticlePostProcesser> dqArticlePostProcessers = iArticleService.commonSelectDqArticlePostProcesser(pageNum, pageSize, dqArticleQueryVO);
     return AjaxResult.success("查询成功", new PageInfo<>(dqArticlePostProcessers));
 
   }
@@ -144,6 +142,7 @@ public class DqArticleController extends BaseController {
   /**
    * 根据Id删除文章
    * 删除不仅要删除文章，还包括他人的收藏，评论可以不删除
+   *
    * @param articleId
    * @return
    */

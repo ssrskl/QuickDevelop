@@ -99,5 +99,4 @@ public class DqArticlePostProcesser implements Serializable {
     private DqSectionPostProcessor dqSectionPostProcessor;
     private DqSectionType dqSectionType;
     private DqUserPostProcessor dqArticleAuthor;
-
 }

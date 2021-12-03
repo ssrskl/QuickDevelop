@@ -151,30 +151,30 @@
                  left join dq_user_role dur on du.user_id = dur.user_id
     </sql>
     <select id="selectAllDqArticlePostProcesser"
-            parameterType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser"
+            parameterType="com.maoyan.quickdevelop.system.domain.queryvo.DqArticleQueryVO"
             resultMap="DqArticleResult">
         <include refid="selectDqArticlePostProcessorVO"></include>
         <where>
-            <if test="dqArticlePostProcesser.articleId != null and dqArticlePostProcesser.articleId != ''">
-                AND dq_article.article_Id = #{dqArticlePostProcesser.articleId}
+            <if test="dqArticleQueryVO.articleId != null and dqArticleQueryVO.articleId != ''">
+                AND dq_article.article_Id = #{dqArticleQueryVO.articleId}
             </if>
-            <if test="dqArticlePostProcesser.articleTitle != null and dqArticlePostProcesser.articleTitle != ''">
-                AND dq_article.article_title like concat('%',#{dqArticlePostProcesser.articleTitle},'%')
+            <if test="dqArticleQueryVO.articleTitle != null and dqArticleQueryVO.articleTitle != ''">
+                AND dq_article.article_title like concat('%',#{dqArticleQueryVO.articleTitle},'%')
             </if>
-            <if test="dqArticlePostProcesser.sectionId != null and dqArticlePostProcesser.sectionId != ''">
-                AND dq_article.section_id = #{dqArticlePostProcesser.sectionId}
+            <if test="dqArticleQueryVO.sectionId != null and dqArticleQueryVO.sectionId != ''">
+                AND dq_article.section_id = #{dqArticleQueryVO.sectionId}
             </if>
-            <if test="dqArticlePostProcesser.sectionTypeId != null and dqArticlePostProcesser.sectionTypeId != ''">
-                AND dq_article.section_type_id = #{dqArticlePostProcesser.sectionTypeId}
+            <if test="dqArticleQueryVO.sectionTypeId != null and dqArticleQueryVO.sectionTypeId != ''">
+                AND dq_article.section_type_id = #{dqArticleQueryVO.sectionTypeId}
             </if>
-            <if test="dqArticlePostProcesser.authorId != null and dqArticlePostProcesser.authorId != ''">
-                AND dq_article.author_id = #{dqArticlePostProcesser.authorId}
+            <if test="dqArticleQueryVO.authorId != null and dqArticleQueryVO.authorId != ''">
+                AND dq_article.author_id = #{dqArticleQueryVO.authorId}
             </if>
             <if test="true">
                 AND dq_article.status = 1
             </if>
             <choose>
-                <when test="dqArticlePostProcesser.articleSortWay == '1'">
+                <when test="dqArticleQueryVO.articleSortWay == '1'">
                     order by comment_num desc
                 </when>
                 <otherwise>

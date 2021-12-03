@@ -15,6 +15,7 @@ import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostPro
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.MyQueryWrapper;
+import com.maoyan.quickdevelop.system.domain.queryvo.DqArticleQueryVO;
 import com.maoyan.quickdevelop.system.domain.DqArticleVO;
 import com.maoyan.quickdevelop.system.mapper.DqArticleMapper;
 import com.maoyan.quickdevelop.system.mapper.DqSectionTypeMapper;
@@ -59,9 +60,9 @@ public class IDqArticleServiceImpl implements IDqArticleService {
    * @return
    */
   @Override
-  public List<DqArticlePostProcesser> commonSelectDqArticlePostProcesser(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser) {
+  public List<DqArticlePostProcesser> commonSelectDqArticlePostProcesser(int pageNum, int pageSize, DqArticleQueryVO dqArticleQueryVO) {
     PageHelper.startPage(pageNum, pageSize);
-    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticlePostProcesser);
+    List<DqArticlePostProcesser> dqArticlePostProcessers = dqArticlePostProcessorMapper.selectAllDqArticlePostProcesser(dqArticleQueryVO);
     if (dqArticlePostProcessers.isEmpty()) {
       throw new CustomException("未查询到文章", HttpStatus.NOT_FOUND);
     }
@@ -176,7 +177,7 @@ public class IDqArticleServiceImpl implements IDqArticleService {
     dqArticle.setSectionTypeId(dqArticleVO.getSectionTypeId());
     dqArticle.setSectionId(dqSectionType.getSectionId());
     dqArticle.setAuthorId(StpUtil.getLoginIdAsLong());
-    dqArticle.setStatus("0");
+    dqArticle.setStatus("1");
     dqArticle.setArticleWeight(0L);
     dqArticle.setCreateTime(DateUtil.date());
     dqArticle.setUpdateTime(DateUtil.date());

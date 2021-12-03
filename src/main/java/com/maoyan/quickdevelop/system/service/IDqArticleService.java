@@ -1,14 +1,10 @@
 package com.maoyan.quickdevelop.system.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.maoyan.quickdevelop.common.core.domain.DqArticle;
-import com.maoyan.quickdevelop.common.core.domain.DqType;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser;
+import com.maoyan.quickdevelop.system.domain.queryvo.DqArticleQueryVO;
 import com.maoyan.quickdevelop.system.domain.DqArticleVO;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -23,10 +19,10 @@ public interface IDqArticleService {
   /**
    * 统一的查询方法
    *
-   * @param dqArticlePostProcesser
+   * @param dqArticleQueryVO
    * @return
    */
-  public List<DqArticlePostProcesser> commonSelectDqArticlePostProcesser(int pageNum, int pageSize, DqArticlePostProcesser dqArticlePostProcesser);
+  public List<DqArticlePostProcesser> commonSelectDqArticlePostProcesser(int pageNum, int pageSize, DqArticleQueryVO dqArticleQueryVO);
 
   /**
    * 通过ID查询

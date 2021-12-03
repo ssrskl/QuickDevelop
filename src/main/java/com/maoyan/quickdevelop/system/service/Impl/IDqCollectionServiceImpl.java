@@ -1,6 +1,7 @@
 package com.maoyan.quickdevelop.system.service.Impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.io.unit.DataUnit;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
@@ -8,7 +9,9 @@ import com.maoyan.quickdevelop.common.core.domain.DqArticle;
 import com.maoyan.quickdevelop.common.core.domain.DqCollection;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCollectionPostProcesser;
 import com.maoyan.quickdevelop.common.exception.CustomException;
+import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
+import com.maoyan.quickdevelop.system.domain.queryvo.DqCollectionQueryVO;
 import com.maoyan.quickdevelop.system.mapper.DqArticleMapper;
 import com.maoyan.quickdevelop.system.mapper.DqCollectionMapper;
 import com.maoyan.quickdevelop.system.mapper.postprocessor.DqCollectionPostProcessorMapper;
@@ -30,9 +33,9 @@ public class IDqCollectionServiceImpl implements IDqCollectionService {
   private DqArticleMapper dqArticleMapper;
 
   @Override
-  public List<DqCollectionPostProcesser> commonSelectDqCollectionPostProcesser(int pageNum, int pageSize, DqCollectionPostProcesser dqCollectionPostProcesser) {
+  public List<DqCollectionPostProcesser> commonSelectDqCollectionPostProcesser(int pageNum, int pageSize, DqCollectionQueryVO dqCollectionQueryVO) {
     PageHelper.startPage(pageNum, pageSize);
-    List<DqCollectionPostProcesser> dqCollectionPostProcessers = dqCollectionPostProcessorMapper.selectDqCollectionPostProcessor(dqCollectionPostProcesser);
+    List<DqCollectionPostProcesser> dqCollectionPostProcessers = dqCollectionPostProcessorMapper.selectDqCollectionPostProcessor(dqCollectionQueryVO);
     if (StringUtils.isEmpty(dqCollectionPostProcessers)) {
       throw new CustomException("未查询到收藏信息", HttpStatus.NOT_FOUND);
     }
@@ -49,6 +52,8 @@ public class IDqCollectionServiceImpl implements IDqCollectionService {
     DqCollection dqCollection = new DqCollection();
     dqCollection.setArticleId(dqArticleId);
     dqCollection.setUserId(StpUtil.getLoginIdAsLong());
+    dqCollection.setCreateTime(DateUtils.getNowDate());
+    dqCollection.setUpdateTime(DateUtils.getNowDate());
     int insert = dqCollectionMapper.insert(dqCollection);
     if (insert <= 0) {
       throw new CustomException("收藏失败", HttpStatus.ERROR);
