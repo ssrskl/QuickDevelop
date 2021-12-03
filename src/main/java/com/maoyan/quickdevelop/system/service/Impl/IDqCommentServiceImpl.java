@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
+import com.maoyan.quickdevelop.common.rabbitmq.ProucerUtil;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqArticle;
@@ -16,6 +17,7 @@ import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.DqStatusDisposrUtils;
 import com.maoyan.quickdevelop.common.utils.MyQueryWrapper;
 import com.maoyan.quickdevelop.common.utils.mail.DqMailUtil;
+import com.maoyan.quickdevelop.system.domain.DqCommentVO;
 import com.maoyan.quickdevelop.system.mapper.DqArticleMapper;
 import com.maoyan.quickdevelop.system.mapper.DqCommentMapper;
 import com.maoyan.quickdevelop.system.mapper.DqUserMapper;
@@ -220,85 +222,116 @@ public class IDqCommentServiceImpl implements IDqCommentService {
   /**
    * 发表评论
    *
-   * @param dqComment
+   * @param dqCommentVO
    * @return int
    * @author 猫颜
    * @date 上午9:17
    */
   @Override
-  public int publishDqComment(DqComment dqComment) {
+  public int publishDqComment(DqCommentVO dqCommentVO) {
     // 通过ID获取文章信息
-    DqArticle dqArticle = dqArticleMapper.selectById(dqComment.getArticleId());
+    DqArticle dqArticle = dqArticleMapper.selectById(dqCommentVO.getArticleId());
     // 判断文章是否存在
     if (dqArticle == null) {
       throw new CustomException("此文章不存在", HttpStatus.ERROR);
     }
-    if (StringUtils.equals("1", dqArticle.getStatus())) {
+    if (StringUtils.equals("0", dqArticle.getStatus())) {
       throw new CustomException("该文章已被锁定", HttpStatus.ERROR);
     }
-    /** 参数补充**/
-    DqUser dqUser = dqUserMapper.selectById(StpUtil.getLoginIdAsLong());
-//    dqComment.setCommentUsername(dqUser.getUserName());
-//    dqComment.setCommentUserNickName(dqUser.getNickName());
-//    dqComment.setCommentUserAvatar(dqUser.getAvatar());
-    dqComment.setCreateTime(DateUtils.getNowDate());
+    // 构建评论实体类
+    DqComment newDqComment = new DqComment();
+    newDqComment.setContent(dqCommentVO.getContent());
+    newDqComment.setCommentUserId(StpUtil.getLoginIdAsLong());
+    newDqComment.setArticleId(dqCommentVO.getArticleId());
+    newDqComment.setReplyId(dqCommentVO.getReplyId());
+    newDqComment.setStatus("1");
+    newDqComment.setCreateTime(DateUtils.getNowDate());
+    int insert = 0;
     // 判断是评论还是回复
-    if (dqComment.getReplyId() != 0) {
-      //回复
-//      dqComment.setCommentType("2");
-      //根据回复来查原来的评论或回复
-      // MyQueryWrapper<DqComment> myQueryWrapper = new MyQueryWrapper<>();
-      // myQueryWrapper.eq("comment_id",dqComment.getReplyId());
-      // 查询当前回复所回复的回复ID
-      LambdaQueryWrapper<DqComment> myQueryWrapper = new LambdaQueryWrapper<>();
-      myQueryWrapper.eq(DqComment::getCommentId, dqComment.getReplyId());
-      DqComment oldDqComments = dqCommentMapper.selectOne(myQueryWrapper);
-      if (oldDqComments == null) {
-        throw new CustomException("此评论不存在", HttpStatus.ERROR);
+    if (dqCommentVO.getReplyId() == 0){
+      // 为评论
+      newDqComment.setRootId(0L);
+      newDqComment.setToUserId(dqArticle.getAuthorId());
+      insert = dqCommentMapper.insert(newDqComment);
+
+    }else {
+      // 为回复,获得上级回复
+      LambdaQueryWrapper<DqComment> dqCommentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+      dqCommentLambdaQueryWrapper.eq(DqComment::getCommentId,dqCommentVO.getReplyId());
+      DqComment previousDqComment = dqCommentMapper.selectOne(dqCommentLambdaQueryWrapper);
+      if (StringUtils.isNull(previousDqComment)){
+        throw new CustomException("回复的评论不存在");
       }
-      dqComment.setToUserId(oldDqComments.getCommentUserId());
-      DqUser toUser = dqUserMapper.selectById(dqComment.getToUserId());
-//      dqComment.setToUsername(toUser.getUserName());
-//      dqComment.setToNickname(toUser.getNickName());
-//      dqComment.setToUserAvatar(toUser.getAvatar());
-      // 判断所回复的回复是否为评论
-      if (oldDqComments.getRootId() == 0) {
-        dqComment.setRootId(oldDqComments.getCommentId());
-      } else {
-        dqComment.setRootId(oldDqComments.getRootId());
-      }
-      myQueryWrapper.clear();
-    } else {
-      //评论
-//      dqComment.setCommentType("1");
-      dqComment.setToUserId(dqArticle.getAuthorId());
-      DqUser toUser = dqUserMapper.selectById(dqArticle.getAuthorId());
-//      dqComment.setToUsername(toUser.getUserName());
-//      dqComment.setToNickname(toUser.getNickName());
-//      dqComment.setToUserAvatar(toUser.getAvatar());
-      dqComment.setRootId(0L);
-    }
-    int insert = dqCommentMapper.insert(dqComment);
-    if (insert <= 0) {
-      throw new CustomException("发表评论失败", HttpStatus.ERROR);
-    }
-    // 发表评论成功
-    // 设置邮箱(发送邮件可以放到消息队列中)
-    DqUser toDqUser = dqUserMapper.selectById(dqComment.getToUserId());
-    // 邮件正文
-    Context context = new Context();
-//    context.setVariable("toDqUser",toDqUser.getNickName());
-//    context.setVariable("username",dqUser.getNickName());
-    context.setVariable("replyContent",dqComment.getContent());
-    context.setVariable("articleId",dqArticle.getArticleId());
-    String emailContent = templateEngine.process("emailTemplate",context);
-    try {
-      dqMailUtil.sendMailByThymeleaf("有人回复了您",toDqUser.getEmail(),
-          emailContent);
-    } catch (MessagingException e) {
-      throw new CustomException("邮件发送失败",HttpStatus.ERROR);
+      newDqComment.setToUserId(previousDqComment.getCommentUserId());
+      newDqComment.setArticleId(previousDqComment.getArticleId());
+      newDqComment.setRootId(previousDqComment.getRootId());
+      insert = dqCommentMapper.insert(newDqComment);
     }
     return insert;
+//    // 获取上级评论
+//
+//    /** 参数补充**/
+//    DqUser dqUser = dqUserMapper.selectById(StpUtil.getLoginIdAsLong());
+////    dqComment.setCommentUsername(dqUser.getUserName());
+////    dqComment.setCommentUserNickName(dqUser.getNickName());
+////    dqComment.setCommentUserAvatar(dqUser.getAvatar());
+//    dqComment.setCreateTime(DateUtils.getNowDate());
+//    // 判断是评论还是回复
+//    if (dqComment.getReplyId() != 0) {
+//      //回复
+////      dqComment.setCommentType("2");
+//      //根据回复来查原来的评论或回复
+//      // MyQueryWrapper<DqComment> myQueryWrapper = new MyQueryWrapper<>();
+//      // myQueryWrapper.eq("comment_id",dqComment.getReplyId());
+//      // 查询当前回复所回复的回复ID
+//      LambdaQueryWrapper<DqComment> myQueryWrapper = new LambdaQueryWrapper<>();
+//      myQueryWrapper.eq(DqComment::getCommentId, dqComment.getReplyId());
+//      DqComment oldDqComments = dqCommentMapper.selectOne(myQueryWrapper);
+//      if (oldDqComments == null) {
+//        throw new CustomException("此评论不存在", HttpStatus.ERROR);
+//      }
+//      dqComment.setToUserId(oldDqComments.getCommentUserId());
+//      DqUser toUser = dqUserMapper.selectById(dqComment.getToUserId());
+////      dqComment.setToUsername(toUser.getUserName());
+////      dqComment.setToNickname(toUser.getNickName());
+////      dqComment.setToUserAvatar(toUser.getAvatar());
+//      // 判断所回复的回复是否为评论
+//      if (oldDqComments.getRootId() == 0) {
+//        dqComment.setRootId(oldDqComments.getCommentId());
+//      } else {
+//        dqComment.setRootId(oldDqComments.getRootId());
+//      }
+//      myQueryWrapper.clear();
+//    } else {
+//      //评论
+////      dqComment.setCommentType("1");
+//      dqComment.setToUserId(dqArticle.getAuthorId());
+//      DqUser toUser = dqUserMapper.selectById(dqArticle.getAuthorId());
+////      dqComment.setToUsername(toUser.getUserName());
+////      dqComment.setToNickname(toUser.getNickName());
+////      dqComment.setToUserAvatar(toUser.getAvatar());
+//      dqComment.setRootId(0L);
+//    }
+//    int insert = dqCommentMapper.insert(dqComment);
+//    if (insert <= 0) {
+//      throw new CustomException("发表评论失败", HttpStatus.ERROR);
+//    }
+//    // 发表评论成功
+//    // 设置邮箱(发送邮件可以放到消息队列中)
+//    DqUser toDqUser = dqUserMapper.selectById(dqComment.getToUserId());
+//    // 邮件正文
+//    Context context = new Context();
+////    context.setVariable("toDqUser",toDqUser.getNickName());
+////    context.setVariable("username",dqUser.getNickName());
+//    context.setVariable("replyContent",dqComment.getContent());
+//    context.setVariable("articleId",dqArticle.getArticleId());
+//    String emailContent = templateEngine.process("emailTemplate",context);
+//    try {
+//      dqMailUtil.sendMailByThymeleaf("有人回复了您",toDqUser.getEmail(),
+//          emailContent);
+//    } catch (MessagingException e) {
+//      throw new CustomException("邮件发送失败",HttpStatus.ERROR);
+//    }
   }
 
 //    @Override
@@ -313,6 +346,11 @@ public class IDqCommentServiceImpl implements IDqCommentService {
 //        return dqComments;
 //    }
 
+  /**
+   * (直接删除的话，后面还会有很多的评论等等，所以采用逻辑删除)
+   * @param dqCommentId
+   * @return
+   */
   @Override
   public int deleteDqCommentById(Long dqCommentId) {
     DqComment dqComment = dqCommentMapper.selectById(dqCommentId);
@@ -323,7 +361,9 @@ public class IDqCommentServiceImpl implements IDqCommentService {
     if (StpUtil.getLoginIdAsLong() != dqCommentUserId) {
       throw new CustomException("不能删除他人的评论", HttpStatus.FORBIDDEN);
     }
-    int i = dqCommentMapper.deleteById(dqCommentId);
+    dqComment.setStatus("0");
+    int i = dqCommentMapper.updateById(dqComment);
+//    int i = dqCommentMapper.deleteById(dqCommentId);
     if (i <= 0) {
       throw new CustomException("删除失败", HttpStatus.FORBIDDEN);
     }

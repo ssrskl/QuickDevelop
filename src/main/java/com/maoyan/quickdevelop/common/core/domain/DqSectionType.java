@@ -38,7 +38,7 @@ public class DqSectionType implements Serializable {
   @TableField(value = "section_type_weight")
   private Long sectionTypeWeight;
   /**
-   * 分类类型
+   * 分类类型(0-普通分类，1-特殊分类)
    */
   @TableField(value = "section_type_mold")
   private String sectionTypeMold;

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>
+    尊敬的<span style="color: dodgerblue;" th:text="${toDqUser}"></span>,请点击下方链接激活您的帐号：
+</h3>
+<br/>
+<div th:text="${emailVerificationUrl}"></div>
+</body>
+</html>

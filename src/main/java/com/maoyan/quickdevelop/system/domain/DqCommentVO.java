@@ -56,9 +56,7 @@ public class DqCommentVO {
 //    /** 被回复的人的头像 **/
 //    private String touseravatar;
 
-    /** 回复的评论的ID **/
+    /** 回复的评论的ID(为0则为评论) **/
     @NonNull
     private Long replyId;
-
-
 }

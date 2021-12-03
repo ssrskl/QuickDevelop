@@ -3,6 +3,7 @@ package com.maoyan.quickdevelop.system.service;
 import com.maoyan.quickdevelop.common.core.domain.DqComment;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCommentPostProcesser;
+import com.maoyan.quickdevelop.system.domain.DqCommentVO;
 import com.maoyan.quickdevelop.system.mapper.postprocessor.DqCommentPostProcessorMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -84,10 +85,10 @@ public interface IDqCommentService {
 
     /**
      *发表一个评论
-     * @param dqComment
+     * @param dqCommentVO
      * @return
      */
-    public int publishDqComment(DqComment dqComment);
+    public int publishDqComment(DqCommentVO dqCommentVO);
 
     /**
      * 根据Id删除评论

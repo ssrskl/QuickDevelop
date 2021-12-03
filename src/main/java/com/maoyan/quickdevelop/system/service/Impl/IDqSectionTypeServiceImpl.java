@@ -23,12 +23,14 @@ public class IDqSectionTypeServiceImpl implements IDqSectionTypeService {
   @Override
   public List<DqSectionType> commonSelectSectionType(int pageNum, int pageSize, DqSectionType dqSectionType) {
     LambdaQueryWrapper<DqSectionType> dqSectionTypeLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqSectionTypeLambdaQueryWrapper.eq(StringUtils.isNotEmpty(dqSectionType.getSectionTypeName()), DqSectionType::getSectionTypeName, dqSectionType.getSectionTypeName())
+    dqSectionTypeLambdaQueryWrapper
+            .eq(StringUtils.isNotNull(dqSectionType.getSectionTypeId()),DqSectionType::getSectionTypeId,dqSectionType.getSectionTypeId())
+            .eq(StringUtils.isNotEmpty(dqSectionType.getSectionTypeName()), DqSectionType::getSectionTypeName, dqSectionType.getSectionTypeName())
             .eq(StringUtils.isNotNull(dqSectionType.getSectionId()), DqSectionType::getSectionId, dqSectionType.getSectionId())
             .eq(StringUtils.isNotNull(dqSectionType.getSectionTypeMold()), DqSectionType::getSectionTypeMold, dqSectionType.getSectionTypeMold());
     PageHelper.startPage(pageNum, pageSize);
     List<DqSectionType> dqSectionTypes = dqSectionTypeMapper.selectList(dqSectionTypeLambdaQueryWrapper);
-    if (StringUtils.isEmpty(dqSectionTypes)){
+    if (StringUtils.isEmpty(dqSectionTypes)) {
       throw new CustomException("未查询到分类", HttpStatus.NOT_FOUND);
     }
     return dqSectionTypes;

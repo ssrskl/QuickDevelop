@@ -1,16 +1,12 @@
 package com.maoyan.quickdevelop;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
-import com.maoyan.quickdevelop.common.core.domain.DqArticle;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
-import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser;
-import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCommentPostProcesser;
 import com.maoyan.quickdevelop.common.utils.MyQueryWrapper;
 import com.maoyan.quickdevelop.common.utils.annotation.MapperQuery;
 import com.maoyan.quickdevelop.common.utils.annotation.type.QueryType;
+import com.maoyan.quickdevelop.common.rabbitmq.ProucerUtil;
 import com.maoyan.quickdevelop.common.utils.redis.RedisKeyUtils;
 import com.maoyan.quickdevelop.system.mapper.DqUserMapper;
 import com.maoyan.quickdevelop.system.mapper.TestMybatis;
@@ -22,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -174,5 +172,12 @@ class QuickDevelopApplicationTests {
         String key = RedisKeyUtils.getLikedKey(1L,3L);
         Long delete = redisTemplate.opsForHash().delete(RedisKeyUtils.MAP_KEY_USER_LIKED, key);
         System.out.println("删除成功"+delete);
+    }
+    @Autowired
+    private ProucerUtil proucerUtil;
+    @Test
+    void testRabbitMq() throws IOException, TimeoutException {
+        proucerUtil.send("发送消息");
+        System.out.println("发送成功");
     }
 }

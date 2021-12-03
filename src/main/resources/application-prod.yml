@@ -106,8 +106,13 @@ spring:
   mail:
     username: 1071352028@qq.com
     # 不是密码而是授权码
-    password: efyvcoaydydnbfii
+    password: wxmvjoivirfebfcc
     host: smtp.qq.com
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 my-sa-token:
   annotation: flase
@@ -134,6 +139,14 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
+
+#应用监控
+management:
+  server:
+    port: 9002
+  endpoint:
+    shutdown:
+      enabled: true
 
 
 

@@ -47,6 +47,7 @@ public class IDqUserServiceImpl implements IDqUserService {
 
   /**
    * 工具型，不抛出异常
+   *
    * @param email
    * @param password
    * @return
@@ -54,18 +55,18 @@ public class IDqUserServiceImpl implements IDqUserService {
   @Override
   public DqUser selectDqUserByEmailAndPassword(String email, String password) {
     LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(StringUtils.isNotEmpty(email),DqUser::getEmail,email)
-            .eq(StringUtils.isNotEmpty(password),DqUser::getPassword,password);
+    dqUserLambdaQueryWrapper.eq(StringUtils.isNotEmpty(email), DqUser::getEmail, email)
+            .eq(StringUtils.isNotEmpty(password), DqUser::getPassword, password);
     DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
     return dqUser;
   }
 
   @Override
-  public List<DqUserPostProcessor> commonSelectDqUsers(int pageNum, int pageSize, DqUser dqUser){
+  public List<DqUserPostProcessor> commonSelectDqUsers(int pageNum, int pageSize, DqUser dqUser) {
     PageHelper.startPage(pageNum, pageSize);
     List<DqUserPostProcessor> dqUserPostProcessors = dqUserPostProcessorMapper.selectDqUserPostProcesser(dqUser);
-    if (StringUtils.isEmpty(dqUserPostProcessors)){
-      throw new CustomException("未查询到用户",HttpStatus.NOT_FOUND);
+    if (StringUtils.isEmpty(dqUserPostProcessors)) {
+      throw new CustomException("未查询到用户", HttpStatus.NOT_FOUND);
     }
     return dqUserPostProcessors;
   }
@@ -73,23 +74,25 @@ public class IDqUserServiceImpl implements IDqUserService {
   @Override
   public DqUser getDqUserById_Server(Long dqUserId) {
     // 判断是否为空
-    if (StringUtils.isNull(dqUserId)){
+    if (StringUtils.isNull(dqUserId)) {
       throw new CustomException("请传入用户ID", HttpStatus.ERROR);
     }
     LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(DqUser::getUserId,dqUserId);
+    dqUserLambdaQueryWrapper.eq(DqUser::getUserId, dqUserId);
     DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
-    if (dqUser == null){
-      throw new CustomException("未查询到此用户",HttpStatus.NOT_FOUND);
+    if (dqUser == null) {
+      throw new CustomException("未查询到此用户", HttpStatus.NOT_FOUND);
     }
     return dqUser;
   }
 
-  /** 工具型 **/
+  /**
+   * 工具型
+   **/
   @Override
   public DqUser selectDqUserById(Long dqUserId) {
     LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(DqUser::getUserId,dqUserId);
+    dqUserLambdaQueryWrapper.eq(DqUser::getUserId, dqUserId);
     DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
     return dqUser;
 //    MyQueryWrapper<DqUser> myQueryWrapper = new MyQueryWrapper<>();
@@ -127,8 +130,8 @@ public class IDqUserServiceImpl implements IDqUserService {
   public int deleteDqUserMySelf() {
     Long dqUserId = StpUtil.getLoginIdAsLong();
     int i = dqUserMapper.deleteById(dqUserId);
-    if (i<=0){
-      throw new CustomException("删除失败",HttpStatus.ERROR);
+    if (i <= 0) {
+      throw new CustomException("删除失败", HttpStatus.ERROR);
     }
     return i;
   }
@@ -165,21 +168,21 @@ public class IDqUserServiceImpl implements IDqUserService {
   }
 
   @Override
-  public int emailVerification(String emailVerification) {
+  public int emailVerification(String emailVerificationCode) {
     LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(DqUser::getCheckParam,emailVerification);
+    dqUserLambdaQueryWrapper.eq(DqUser::getCheckParam, emailVerificationCode);
     DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
-    if (StringUtils.isNull(dqUser)){
+    if (StringUtils.isNull(dqUser)) {
       throw new CustomException("不存在此用户");
     }
-    if (StringUtils.equals(dqUser.getCheckParam(),"1")){
+    if (StringUtils.equals(dqUser.getCheckParam(), "1")) {
       throw new CustomException("该用户邮箱已验证");
     }
     dqUser.setCheckStatus("1");
     int i = dqUserMapper.updateById(dqUser);
-    if (i<=0){
+    if (i <= 0) {
       throw new CustomException("邮箱验证失败");
     }
-    return 0;
+    return i;
   }
 }

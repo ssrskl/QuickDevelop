@@ -2,9 +2,12 @@ package com.maoyan.quickdevelop.system.service.Impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.exception.CustomException;
+import com.maoyan.quickdevelop.common.rabbitmq.ProucerUtil;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.system.domain.vo.RegisterVO;
@@ -15,15 +18,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+
 @Transactional
 @Service
 @Slf4j
 public class IDqRegisterServiceImpl implements IDqRegisterService {
   @Autowired
   private IDqUserService iUserService;
+  @Autowired
+  private ProucerUtil proucerUtil;
 
   @Override
   public int dqUserRegister(RegisterVO registerVO) {
+    String random = RandomUtil.randomString(20);
     DqUser newDqUser = new DqUser();
     newDqUser.setUserName(registerVO.getUserName());
     newDqUser.setEmail(registerVO.getEmail());
@@ -37,7 +45,7 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
     newDqUser.setSignature(StringUtils.isNotEmpty(registerVO.getSignature()) ? registerVO.getSignature() : "个性签名");
     newDqUser.setGrade(1L);
     newDqUser.setExperience(0L);
-    newDqUser.setCheckParam(RandomUtil.randomString(20));
+    newDqUser.setCheckParam(random);
     newDqUser.setCheckStatus("0");
     newDqUser.setSchoolId(0L);
     newDqUser.setCreateTime(DateUtils.getNowDate());
@@ -49,6 +57,12 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
     if (i <= 0) {
       throw new CustomException("注册失败", HttpStatus.ERROR);
     }
+    // 发送消息
+    HashMap<String, String> emailMessage = new HashMap<>();
+    emailMessage.put("DqUserUsername",newDqUser.getUserName());
+    emailMessage.put("DqUserEmail", newDqUser.getEmail());
+    emailMessage.put("EmailVerificationCode", random);
+    proucerUtil.send(JSONUtil.toJsonStr(emailMessage));
     return i;
   }
 }

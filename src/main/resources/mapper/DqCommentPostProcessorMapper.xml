@@ -128,7 +128,7 @@
             <if test="dqComment.replyId != null and dqComment.replyId!= ''">
                 AND dq_comment.reply_id = #{dqComment.replyId}
             </if>
-            <if test="dqComment.rootId != null and dqComment.rootId!= ''">
+            <if test="dqComment.rootId != null and dqComment.rootId!= '' or dqComment.rootId==0">
                 AND dq_comment.root_id = #{dqComment.rootId}
             </if>
             <if test="true">
