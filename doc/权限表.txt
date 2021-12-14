@@ -21,13 +21,15 @@
 
 管理员权限
 管理员对文章的权限（就不再细化了）：admin-article
-管理员对类型的权限：admin-type
 管理员对去权限的控制：admin-power
 管理员对用户的权限：admin-user
 管理员对评论的权限：admin-comment
 管理员对日志的权限：admin-log
+管理员对版块的权限：admin-section
+管理员对学校的权限：admin-school
 文章管理员权限：user* admin-article
 ...
 副超级管理员权限：admin-ordinary(admin*)(user*)
 
 超级管理员权限：super-admin(*权限)
+

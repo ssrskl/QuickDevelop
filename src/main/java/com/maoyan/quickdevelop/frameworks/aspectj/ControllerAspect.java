@@ -36,7 +36,6 @@ public class ControllerAspect
         /**
          * 拿到request
          */
-
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         String url = request.getRequestURL().toString();

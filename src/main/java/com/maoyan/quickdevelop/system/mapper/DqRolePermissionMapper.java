@@ -15,8 +15,14 @@ import java.util.List;
  */
 @Mapper
 public interface DqRolePermissionMapper extends BaseMapper<DqRolePermission> {
-  @Select("select community.dq_role_permission.permission_name\n" +
-          "from dq_role_permission\n" +
-          "where community.dq_role_permission.role_name = any(select community.dq_user_role.role_name from dq_user_role where user_id=#{dqUserId})")
+  @Select("SELECT permission_name\n" +
+          "FROM dq_role_permission,\n" +
+          "     dq_user_role\n" +
+          "WHERE dq_user_role.user_id = #{dqUserId}\n" +
+          "  AND dq_role_permission.role_name = dq_user_role.role_name")
   List<String> selectPermissionNameById(@Param(value = "dqUserId") Long dqUserId);
+//  @Select("select community.dq_role_permission.permission_name\n" +
+//          "from dq_role_permission\n" +
+//          "where community.dq_role_permission.role_name = any(select community.dq_user_role.role_name from dq_user_role where user_id=#{dqUserId})")
+
 }

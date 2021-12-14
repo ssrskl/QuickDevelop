@@ -34,8 +34,4 @@ public class DqTagController extends BaseController {
         List<DqTag> dqTags = iDqTagService.selectDqTags(pageNum, pageSize, dqTag);
         return AjaxResult.success("查询成功", new PageInfo<>(dqTags));
     }
-
-
-
-
 }

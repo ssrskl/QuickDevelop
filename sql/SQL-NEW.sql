@@ -1,3 +1,7 @@
+drop database if exists community;
+create database community character set utf8mb4;
+USE community;
+
 -- ----------------------------
 -- 数据库设计
 -- ----------------------------
@@ -83,7 +87,9 @@ create table dq_user_role
 insert into dq_user_role
 values (1, '超级管理员', 1, 1, sysdate(), sysdate());
 insert into dq_user_role
-values (2, '普通用户', 2, 1, sysdate(), sysdate());
+values (2, '普通用户', 2, 0, sysdate(), sysdate());
+insert into dq_user_role
+values (3, '文章管理员', 2, 1, sysdate(), sysdate());
 -- ----------------------------
 -- 4、角色-权限对应表（多对多）
 -- ----------------------------
@@ -106,6 +112,12 @@ insert into dq_role_permission
 values (1, '超级管理员', '*', sysdate(), sysdate());
 insert into dq_role_permission
 values (2, '普通用户', 'user', sysdate(), sysdate());
+insert into dq_role_permission
+values (3, '文章管理员', 'admin-article', sysdate(), sysdate());
+insert into dq_role_permission
+values (4, '高级管理员', 'admin-*', sysdate(), sysdate());
+insert into dq_role_permission
+values (5, '学校管理员', 'admin-school', sysdate(), sysdate());
 -- ----------------------------
 -- 5、版块表
 -- ----------------------------
@@ -130,6 +142,10 @@ create table dq_section
 -- ----------------------------
 insert into dq_section
 values (1, '行思工作室', '河南理工大学最强工作室', 'logo', 'background', 1, 0, sysdate(), sysdate());
+insert into dq_section
+values (2, '英雄联盟', '最好玩的MOBA类游戏',
+        'https://tse1-mm.cn.bing.net/th/id/R-C.3f8dabc7aab1dab0a8e7b881d67879ca?rik=BY7xr597qzyPAw&riu=http%3a%2f%2fpic40.photophoto.cn%2f20160701%2f0007019992930239_b.jpg&ehk=ys6yzJOPHtmfIfLMtdvbqJU9DCpz5LhNpY5hkxPotJ4%3d&risl=&pid=ImgRaw&r=0'
+           , 'background', 1, 0, sysdate(), sysdate());
 
 -- ----------------------------
 -- 6、版块分类表
@@ -156,6 +172,10 @@ insert into dq_section_type
 values (1, '程序组', 1, 0, 0, 'url', sysdate(), sysdate());
 insert into dq_section_type
 values (2, '设计组', 1, 0, 0, 'url', sysdate(), sysdate());
+insert into dq_section_type
+values (3, '打法技巧', 2, 0, 0, 'url', sysdate(), sysdate());
+insert into dq_section_type
+values (4, '联盟福利', 2, 0, 0, 'url', sysdate(), sysdate());
 -- ----------------------------
 -- 2、版块关注表
 -- ----------------------------
@@ -176,7 +196,8 @@ create table dq_follow_interdqsection
 -- ----------------------------
 insert into dq_follow_interdqsection
 values (1, 1, 1, sysdate(), sysdate());
-
+insert into dq_follow_interdqsection
+values (2, 1, 2, sysdate(), sysdate());
 -- ----------------------------
 -- 2、学校表
 -- ----------------------------
@@ -184,7 +205,7 @@ drop table if exists dq_school;
 create table dq_school
 (
     school_id         bigint(255)  not null auto_increment comment '学校主键ID',
-    school_name       varchar(255) not null comment '学校名称',
+    school_name       varchar(255) not null unique comment '学校名称',
     school_introduce  text         not null comment '学校介绍',
     school_badge      varchar(255) not null comment '学校校徽',
     school_motto      varchar(255) not null comment '学校校训',
@@ -204,7 +225,10 @@ insert into dq_school
 values (1, '河南理工大学',
         '1909年，河南理工大学（简称“河南理工”；英文：Henan Polytechnic University，英文简称“HPU”）的前身——焦作路矿学堂，在黄河之滨、太行之阳的焦作诞生，成为我国第一所矿业高等学府和河南省建立最早的高等学校。学校历经福中矿务大学、私立焦作工学院、国立西北工学院、国立焦作工学院、焦作矿业学院（简称“焦作矿院”；英文：Jiaozuo Mining Institute，英文简称“JMI”）和焦作工学院（简称“焦工”；英文：Jiaozuo Institute of Technology，英文简称“JIT”）等重要历史时期，2004年更名河南理工大学，是中央与地方共建、以地方管理为主的河南省特色骨干大学，河南省人民政府与原国家安全生产监督管理总局共建高校，入选国家“中西部高校基础能力建设工程”高校。'
            , 'badge', '明德任责，好学力行', 'background', sysdate(), '河南省焦作市世纪路2001号', sysdate(), sysdate());
-
+insert into dq_school
+values (2, '韩山师范学院',
+        '韩山师范学院（HANSHAN NORMAL UNIVERSITY），简称“韩山师院、韩师（HSNU）”，是广东省属本科师范院校，是广东省与潮州市共建高校，联合国教科文组织中国创业教育联盟理事单位，位于国家历史文化名城潮州市。韩山师范学院创立于清光绪廿九年（1903年）的“惠潮嘉师范学堂”，其前身可追溯到宋元祐五年（公元1090年）潮人为纪念唐代大文学家韩愈而建立的“韩山书院”，1921年更名为省立第二师范学校，1935年更名为省立韩山师范学校，1949年更名为韩山师范学校，1958年升格为高等师范专科学校，1993年升格为本科师范学院。',
+        'badge', '韩山师范学院校训', 'background', sysdate(), 'address', sysdate(), sysdate());
 -- ----------------------------
 -- 2、文章表
 -- ----------------------------
@@ -232,6 +256,8 @@ create table dq_article
 -- ----------------------------
 insert into dq_article
 values (1, '第一篇文章', '# 欢迎您的到来', 'image', 1, 1, 1, 1, 0, sysdate(), sysdate());
+insert into dq_article
+values (2, '剑圣打法', '后入场，开大无脑砍就完了', 'image', 2, 1, 1, 1, 0, sysdate(), sysdate());
 
 -- ----------------------------
 -- 4、评论表
@@ -258,7 +284,10 @@ create table dq_comment
 -- ----------------------------
 insert into dq_comment
 values (1, 1, 'hello', 1, '1', 1, 0, 0, sysdate());
-
+insert into dq_comment
+values (2, 1, '第一条回复', 1, '1', 1, 1, 1, sysdate());
+insert into dq_comment
+values (3, 1, '第一条回复的回复', 1, '1', 1, 2, 1, sysdate());
 -- ----------------------------
 -- 4、收藏表
 -- ----------------------------

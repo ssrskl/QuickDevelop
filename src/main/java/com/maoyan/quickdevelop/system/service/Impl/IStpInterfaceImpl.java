@@ -50,8 +50,6 @@ public class IStpInterfaceImpl implements StpInterface {
 //        List<String> userPermissionList = Arrays.asList("user-query","user-query","user-update","user-delete",
 //                "user-comment-add","user-comment-delete",
 //                "user-ordinary");
-
-
         List<String> dqUserPermissions = dqRolePermissionMapper.selectPermissionNameById(Long.parseLong(String.valueOf(loginId)));
 //        List<String> list = new ArrayList<String>();
 //        //先将其转为String再转Long,直接(Long) loginId会报错，为啥，还得搜搜

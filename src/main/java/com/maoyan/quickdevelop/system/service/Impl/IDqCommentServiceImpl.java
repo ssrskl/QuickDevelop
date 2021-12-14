@@ -260,7 +260,7 @@ public class IDqCommentServiceImpl implements IDqCommentService {
       dqCommentLambdaQueryWrapper.eq(DqComment::getCommentId,dqCommentVO.getReplyId());
       DqComment previousDqComment = dqCommentMapper.selectOne(dqCommentLambdaQueryWrapper);
       if (StringUtils.isNull(previousDqComment)){
-        throw new CustomException("回复的评论不存在");
+        throw new CustomException("回复的评论不存在",HttpStatus.NOT_FOUND);
       }
       newDqComment.setToUserId(previousDqComment.getCommentUserId());
       newDqComment.setArticleId(previousDqComment.getArticleId());
