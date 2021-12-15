@@ -1,6 +1,7 @@
 package com.maoyan.quickdevelop.admin.controller.manage.dqsection;
 
 import com.maoyan.quickdevelop.common.annotation.Log;
+import com.maoyan.quickdevelop.common.annotation.SectionPower;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
 import com.maoyan.quickdevelop.common.core.domain.DqSection;
@@ -8,9 +9,7 @@ import com.maoyan.quickdevelop.common.enums.BusinessType;
 import com.maoyan.quickdevelop.system.service.manageservice.IDqSectionManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author 猫颜
@@ -31,8 +30,17 @@ public class DqSectionManageController {
    */
   @Log(title = "版块修改", businessType = BusinessType.UPDATE)
   @PostMapping(value = "/update")
-  public AjaxResult updateSection(DqSection dqSection) {
+  public AjaxResult updateSection(@RequestBody DqSection dqSection) {
+    System.out.println(dqSection.getSectionId() + "Hello");
     int i = iDqSectionManageService.updateSection(dqSection);
     return AjaxResult.success("更新成功", i);
   }
+
+  @Log(title = "删除板块", businessType = BusinessType.DELETE)
+  @GetMapping(value = "/delete")
+  public AjaxResult deleteSection(Long dqSectionId) {
+    int i = iDqSectionManageService.deleteSection(dqSectionId);
+    return AjaxResult.success("删除成功", i);
+  }
+
 }

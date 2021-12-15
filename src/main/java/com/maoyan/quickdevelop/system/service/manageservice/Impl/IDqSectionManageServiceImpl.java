@@ -1,6 +1,9 @@
 package com.maoyan.quickdevelop.system.service.manageservice.Impl;
 
+import cn.dev33.satoken.stp.StpUtil;
+import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqSection;
+import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.system.mapper.DqSectionMapper;
 import com.maoyan.quickdevelop.system.service.manageservice.IDqSectionManageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class IDqSectionManageServiceImpl implements IDqSectionManageService {
   @Autowired
   private DqSectionMapper dqSectionMapper;
+
   @Override
   public int updateSection(DqSection dqSection) {
-    // 去除参数
-    return 0;
+    // 权限校验
+//    StpUtil.checkPermissionOr("section-manage-"+dqSection.getSectionId());
+    int i = dqSectionMapper.updateById(dqSection);
+    if (i <= 0) {
+      throw new CustomException("更新失败", HttpStatus.ERROR);
+    }
+    return i;
   }
 
   @Override

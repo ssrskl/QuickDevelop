@@ -145,7 +145,7 @@ values (1, '行思工作室', '河南理工大学最强工作室', 'logo', 'back
 insert into dq_section
 values (2, '英雄联盟', '最好玩的MOBA类游戏',
         'https://tse1-mm.cn.bing.net/th/id/R-C.3f8dabc7aab1dab0a8e7b881d67879ca?rik=BY7xr597qzyPAw&riu=http%3a%2f%2fpic40.photophoto.cn%2f20160701%2f0007019992930239_b.jpg&ehk=ys6yzJOPHtmfIfLMtdvbqJU9DCpz5LhNpY5hkxPotJ4%3d&risl=&pid=ImgRaw&r=0'
-           , 'background', 1, 0, sysdate(), sysdate());
+           , 'background', 2, 0, sysdate(), sysdate());
 
 -- ----------------------------
 -- 6、版块分类表
