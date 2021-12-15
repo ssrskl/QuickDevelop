@@ -35,7 +35,7 @@ public interface IDqUserService {
      * @param dqUserId
      * @return
      */
-    public DqUser getDqUserById_Server(Long dqUserId);
+    public DqUserPostProcessor getDqUserById_Server(Long dqUserId);
 
     /**
      * 根据ID查询用户

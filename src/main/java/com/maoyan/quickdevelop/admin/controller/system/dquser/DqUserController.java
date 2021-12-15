@@ -81,8 +81,8 @@ public class DqUserController extends BaseController {
   @GetMapping("/{dqUserId}")
   public AjaxResult getInfo(@PathVariable Long dqUserId) {
     //后面可以根据缓存中先查询
-    DqUser dqUser = iUserService.getDqUserById_Server(dqUserId);
-    return AjaxResult.success("查询成功", dqUser);
+    DqUserPostProcessor dqUserById_server = iUserService.getDqUserById_Server(dqUserId);
+    return AjaxResult.success("查询成功", dqUserById_server);
   }
 
   /**
@@ -121,8 +121,8 @@ public class DqUserController extends BaseController {
   @ApiOperation(value = "获取当前登陆的用户")
   public AjaxResult getNowUser() {
     long nowUserId = StpUtil.getLoginIdAsLong();
-    DqUser dqUser = iUserService.getDqUserById_Server(nowUserId);
-    return AjaxResult.success("查询成功", dqUser);
+    DqUserPostProcessor nowDqUserPostProcessor = iUserService.getDqUserById_Server(nowUserId);
+    return AjaxResult.success("查询成功", nowDqUserPostProcessor);
   }
 
   @SaCheckLogin

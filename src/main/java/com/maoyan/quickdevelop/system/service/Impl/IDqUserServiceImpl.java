@@ -72,18 +72,18 @@ public class IDqUserServiceImpl implements IDqUserService {
   }
 
   @Override
-  public DqUser getDqUserById_Server(Long dqUserId) {
+  public DqUserPostProcessor getDqUserById_Server(Long dqUserId) {
     // 判断是否为空
     if (StringUtils.isNull(dqUserId)) {
       throw new CustomException("请传入用户ID", HttpStatus.ERROR);
     }
-    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(DqUser::getUserId, dqUserId);
-    DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
-    if (dqUser == null) {
-      throw new CustomException("未查询到此用户", HttpStatus.NOT_FOUND);
+    DqUser dqUser = new DqUser();
+    dqUser.setUserId(dqUserId);
+    List<DqUserPostProcessor> dqUserPostProcessors = dqUserPostProcessorMapper.selectDqUserPostProcesser(dqUser);
+    if (StringUtils.isEmpty(dqUserPostProcessors)){
+      throw new CustomException("未查询到用户", HttpStatus.NOT_FOUND);
     }
-    return dqUser;
+    return dqUserPostProcessors.get(0);
   }
 
   /**

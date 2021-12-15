@@ -13,6 +13,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author 猫颜
@@ -28,6 +30,13 @@ public class EmailCheck {
 
   @RabbitHandler
   public void receiver(String emailMessage) {
+    // 获取IP
+    InetAddress address = null;
+    try {
+      address = InetAddress.getLocalHost();
+    } catch (UnknownHostException e) {
+      e.printStackTrace();
+    }
     System.out.println("接收到的数据:" + emailMessage);
     // 解析JSON内容
     JSONObject jsonObject = JSONUtil.parseObj(emailMessage);
@@ -37,7 +46,7 @@ public class EmailCheck {
     // 邮件正文
     Context emailContext = new Context();
     emailContext.setVariable("toDqUser", dqUserUsername);
-    emailContext.setVariable("emailVerificationUrl", "http://localhost:8080/verification/" + emailVerificationCode);
+    emailContext.setVariable("emailVerificationUrl", "http://"+address+":8080/verification/" + emailVerificationCode);
     String emailContent = templateEngine.process("emailCheckTemplate", emailContext);
     try {
       dqMailUtil.sendMailByThymeleaf("邮箱验证", "1071352028@qq.com",
