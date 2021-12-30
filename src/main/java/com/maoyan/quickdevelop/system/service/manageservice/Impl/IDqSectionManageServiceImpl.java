@@ -1,10 +1,13 @@
 package com.maoyan.quickdevelop.system.service.manageservice.Impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqSection;
+import com.maoyan.quickdevelop.common.core.domain.DqSectionType;
 import com.maoyan.quickdevelop.common.exception.CustomException;
+import com.maoyan.quickdevelop.common.utils.DateUtils;
+import com.maoyan.quickdevelop.system.domain.DqSectionTypeVO;
 import com.maoyan.quickdevelop.system.mapper.DqSectionMapper;
+import com.maoyan.quickdevelop.system.mapper.DqSectionTypeMapper;
 import com.maoyan.quickdevelop.system.service.manageservice.IDqSectionManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class IDqSectionManageServiceImpl implements IDqSectionManageService {
   @Autowired
   private DqSectionMapper dqSectionMapper;
+  @Autowired
+  private DqSectionTypeMapper dqSectionTypeMapper;
 
   @Override
   public int updateSection(DqSection dqSection) {
@@ -33,6 +38,23 @@ public class IDqSectionManageServiceImpl implements IDqSectionManageService {
 
   @Override
   public int deleteSection(Long dqSectionId) {
+    return 0;
+  }
+
+  @Override
+  public int addSectionType(DqSectionTypeVO dqSectionTypeVO) {
+    DqSectionType dqSectionType = new DqSectionType();
+    dqSectionType.setSectionTypeName(dqSectionTypeVO.getSectionTypeName());
+    dqSectionType.setSectionId(dqSectionTypeVO.getSectionId());
+    dqSectionType.setSectionTypeWeight(dqSectionTypeVO.getSectionTypeWeight());
+    dqSectionType.setSectionTypeMold(dqSectionTypeVO.getSectionTypeMold());
+    dqSectionType.setSectionTypeNetwork(dqSectionTypeVO.getSectionTypeNetwork());
+    dqSectionType.setCreateTime(DateUtils.getNowDate());
+    dqSectionType.setUpdateTime(DateUtils.getNowDate());
+    int insert = dqSectionTypeMapper.insert(dqSectionType);
+    if (insert <= 0) {
+      throw new CustomException("添加失败", HttpStatus.ERROR);
+    }
     return 0;
   }
 }

@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.maoyan.quickdevelop.common.annotation.Log;
 import com.maoyan.quickdevelop.common.annotation.SectionPower;
 import com.maoyan.quickdevelop.common.core.domain.DqSection;
+import com.maoyan.quickdevelop.system.domain.DqSectionTypeVO;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
@@ -53,6 +54,12 @@ public class SectionControllerAspect {
 //        System.out.println("开始权限判定");
 //        System.out.println("板块ID"+dqSection.toString());
         StpUtil.checkPermissionOr("section-manage-" + dqSection.getSectionId(),"admin-section");
+      }
+      if (o instanceof DqSectionTypeVO) {
+        DqSectionTypeVO dqSectionTypeVO = (DqSectionTypeVO) o;
+//        System.out.println("开始权限判定");
+//        System.out.println("板块ID"+dqSection.toString());
+        StpUtil.checkPermissionOr("section-manage-" + dqSectionTypeVO.getSectionId(),"admin-section");
       }
     }
   }

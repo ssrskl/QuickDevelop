@@ -1,11 +1,10 @@
 package com.maoyan.quickdevelop.admin.controller.manage.dqsection;
 
 import com.maoyan.quickdevelop.common.annotation.Log;
-import com.maoyan.quickdevelop.common.annotation.SectionPower;
-import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
 import com.maoyan.quickdevelop.common.core.domain.DqSection;
 import com.maoyan.quickdevelop.common.enums.BusinessType;
+import com.maoyan.quickdevelop.system.domain.DqSectionTypeVO;
 import com.maoyan.quickdevelop.system.service.manageservice.IDqSectionManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -43,4 +42,10 @@ public class DqSectionManageController {
     return AjaxResult.success("删除成功", i);
   }
 
+  @Log(title = "添加板块类型", businessType = BusinessType.INSERT)
+  @PostMapping(value = "/add")
+  public AjaxResult addSectionType(@Validated @RequestBody DqSectionTypeVO dqSectionTypeVO) {
+    int i = iDqSectionManageService.addSectionType(dqSectionTypeVO);
+    return AjaxResult.success("添加成功", i);
+  }
 }
