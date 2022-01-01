@@ -221,3 +221,46 @@ QuickDevelop是一个面向全国大学生的在线社区，大学生可以选�
 
 ```
 
+## 部署
+## Docker 部署
+1. pull 项目镜像
+```shell
+sudo docker pull oimaoyanio/quickdevelop
+```
+2. 运行容器
+```shell
+sudo docker run -d -p 8080:8080 \
+-e SERVER_PORT=8080 \
+-e MYSQL_USERNAME=root \
+-e MYSQL_PASSWORD=ar352878987 \
+-e MYSQL_ADDRESS=172.17.0.1 \
+-e MYSQL_PORT=3306 \
+-e REDIS_ADDRESS=172.17.0.1 \
+-e REDIS_PORT=6379 \
+-e REDIS_PASSWORD=ar352878987 \
+-e MAIL_USERNAME=1071352028@qq.com \
+-e MAIL_PASSWORD=wxmvjoivirfebfcc \
+-e RABBITMQ_ADDRESS=172.17.0.1 \
+-e RABBITMQ_PORT=5672 \
+-e RABBITMQ_USERNAME=guest \
+-e RABBITMQ_PASSWORD=guest \
+--name quickdevelop quickdevelop:v1.0
+```
+**参数解释**
+${SERVER_PORT}
+
++ MYSQL_USERNAME ：MySQL用户名（default：root）
++ MYSQL_PASSWORD ：MySQL密码
++ MYSQL_ADDRESS ：MySQL地址（default：localhost）
++ MYSQL_PORT ： MySQL端口（default：3306）
++ REDIS_ADDRESS ：Redis 地址 （default：localhost）
++ REDIS_PORT : Redis端口（default：6379）
++ REDIS_PASSWORD ：Redis密碼
+
++ MAIL_USERNAME ：邮箱
++ MAIL_PASSWORD ：邮箱授权码
+
++ RABBITMQ_ADDRESS ：RabbitMQ地址（default:localhost）
++ RABBITMQ_PORT　：RabbitMQ端口 (default:5672)
++ RABBITMQ_USERNAME : RabbitMQ用户名(default:guest)
++ RABBITMQ_PASSWORD : RabbitMQ密码(default:guest)

@@ -1,3 +1,22 @@
+#相关参数
+# ${SERVER_PORT}
+
+# ${MYSQL_USERNAME}
+# ${MYSQL_PASSWORD}
+# ${MYSQL_ADDRESS}
+# ${MYSQL_PORT}
+
+# ${REDIS_ADDRESS}
+# ${REDIS_PORT}
+# ${REDIS_PASSWORD}
+
+# ${MAIL_USERNAME}
+# ${MAIL_PASSWORD}
+
+# ${RABBITMQ_ADDRESS}
+# ${RABBITMQ_PORT}
+# ${RABBITMQ_USERNAME}
+# ${RABBITMQ_PASSWORD}
 # 项目相关配置
 dqframework:
   # 名称
@@ -19,7 +38,7 @@ dqframework:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 8080
+  port: ${SERVER_PORT}
   servlet:
     # 应用的访问路径
     context-path: /
@@ -46,7 +65,7 @@ spring:
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     # 这里使用mysql8(3306为mysql5.7.37 3307为mysql8)
-    url: jdbc:mysql://localhost:3306/community?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://${MYSQL_ADDRESS}:${MYSQL_PORT}/community?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
   #    url: jdbc:mysql://localhost:3306/developq?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
   # 资源信息
   messages:
@@ -64,9 +83,9 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: localhost
+    host: ${REDIS_ADDRESS}
     # 端口，默认为6379
-    port: 6379
+    port: ${REDIS_PORT}
     # 数据库索引
     database: 0
     # 密码
@@ -104,13 +123,15 @@ spring:
     isOpen: true
   # 邮箱配置
   mail:
-    username: 1071352028@qq.com
+    username: ${MAIL_USERNAME}
     # 不是密码而是授权码
-    password: wxmvjoivirfebfcc
+    password: ${MAIL_PASSWORD}
+#    password: wxmvjoivirfebfcc
     host: smtp.qq.com
   rabbitmq:
-    host: localhost
-    port: 5672
+    host: ${RABBITMQ_ADDRESS}
+    # default 5672
+    port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
 
