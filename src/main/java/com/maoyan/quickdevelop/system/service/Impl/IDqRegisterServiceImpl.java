@@ -17,15 +17,23 @@ import com.maoyan.quickdevelop.system.service.IDqRegisterService;
 import com.maoyan.quickdevelop.system.service.IDqUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * @author 猫颜
+ * @date 2021/1/2
+ */
 @Transactional
 @Service
 @Slf4j
 public class IDqRegisterServiceImpl implements IDqRegisterService {
+  @Autowired
+  private RedisTemplate redisTemplate;
   @Autowired
   private IDqUserService iUserService;
   @Autowired
@@ -54,19 +62,27 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
     newDqUser.setSchoolId(0L);
     newDqUser.setCreateTime(DateUtils.getNowDate());
     newDqUser.setUpdateTime(DateUtils.getNowDate());
-    // 判断用户是否在未激活状态，且有重复信息，是则删除用户
+    // 判断用户是否已经验证过
     LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(DqUser::getUserName, newDqUser.getUserName())
-            .or()
-            .eq(DqUser::getEmail, newDqUser.getEmail())
-            .or()
-            .eq(DqUser::getPhoneNumber, newDqUser.getPhoneNumber());
+    dqUserLambdaQueryWrapper
+        .eq(DqUser::getEmail, newDqUser.getEmail())
+        .eq(DqUser::getCheckStatus,"1");
     DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
     if (StringUtils.isNotNull((dqUser))) {
-      int i1 = dqUserMapper.deleteById(dqUser);
-      if (i1 <= 0) {
-        throw new CustomException("注册失败", HttpStatus.ERROR);
-      }
+        throw new CustomException("此用户已存在", HttpStatus.ERROR);
+    }
+    // 判断用户5min之内是否已经发送了验证码
+    /**
+     * key：用户邮箱
+     * value：验证码
+     */
+    if(redisTemplate.hasKey(newDqUser.getEmail())){
+      // 已经发送过邮箱验证码了
+      throw new CustomException("操作频繁",HttpStatus.ERROR);
+    }else {
+      // 向Redis发送验证码，设置5min过期
+      redisTemplate.opsForValue().append(newDqUser.getEmail(),random);
+      redisTemplate.expire(newDqUser.getEmail(),5, TimeUnit.MINUTES);
     }
     //注册
     int i = iUserService.insertDqUser(newDqUser);

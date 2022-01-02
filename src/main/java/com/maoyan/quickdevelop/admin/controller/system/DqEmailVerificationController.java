@@ -16,9 +16,9 @@ public class DqEmailVerificationController {
   @Autowired
   private IDqUserService iDqUserService;
 
-  @GetMapping("/verification/{emailVerificationCode}")
-  public AjaxResult verification(@PathVariable String emailVerificationCode) {
-    int i = iDqUserService.emailVerification(emailVerificationCode);
+  @GetMapping("/verification/{dqUserMail}/{emailVerificationCode}")
+  public AjaxResult verification(@PathVariable String dqUserMail,String emailVerificationCode) {
+    int i = iDqUserService.emailVerification(dqUserMail,emailVerificationCode);
     return AjaxResult.success("验证成功", i);
   }
 }

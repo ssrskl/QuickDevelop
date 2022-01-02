@@ -21,6 +21,7 @@ import com.maoyan.quickdevelop.system.mapper.postprocessor.DqUserPostProcessorMa
 import com.maoyan.quickdevelop.system.service.IDqUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,8 @@ import java.util.List;
 @Slf4j
 public class IDqUserServiceImpl implements IDqUserService {
 
+  @Autowired
+  private RedisTemplate redisTemplate;
   @Autowired
   private DqUserMapper dqUserMapper;
   @Autowired
@@ -167,22 +170,32 @@ public class IDqUserServiceImpl implements IDqUserService {
     return i;
   }
 
+  /**
+   * 邮箱校验
+   * @param emailVerificationCode
+   * @return
+   */
   @Override
-  public int emailVerification(String emailVerificationCode) {
+  public int emailVerification(String dqUserMail,String emailVerificationCode) {
+    // 用户是否存在判定
     LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper.eq(DqUser::getCheckParam, emailVerificationCode);
+    dqUserLambdaQueryWrapper.eq(DqUser::getEmail,dqUserMail);
     DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
     if (StringUtils.isNull(dqUser)) {
       throw new CustomException("不存在此用户");
     }
-    if (StringUtils.equals(dqUser.getCheckParam(), "1")) {
-      throw new CustomException("该用户邮箱已验证");
+    // 从Redis获取验证码,就是获取value，然后通过value获取key，key是用户的邮箱，再来激活邮箱
+    // 验证码空判断
+    Object o = redisTemplate.opsForValue().get(dqUserMail);
+    if (StringUtils.isNull(o)){
+      throw new CustomException("验证码不存在",HttpStatus.ERROR);
     }
-    dqUser.setCheckStatus("1");
-    int i = dqUserMapper.updateById(dqUser);
-    if (i <= 0) {
-      throw new CustomException("邮箱验证失败");
+    String  emailVerificationCodeFromRedis= o.toString();
+    if (!StringUtils.equals(emailVerificationCode,emailVerificationCodeFromRedis)){
+      // 邮箱验证失败
+      throw new CustomException("验证码错误",HttpStatus.ERROR);
     }
-    return i;
+    // 邮箱验证成功
+    return HttpStatus.SUCCESS;
   }
 }

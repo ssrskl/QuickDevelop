@@ -46,7 +46,7 @@ public class EmailCheck {
     // 邮件正文
     Context emailContext = new Context();
     emailContext.setVariable("toDqUser", dqUserUsername);
-    emailContext.setVariable("emailVerificationUrl", "http://"+address+":8080/verification/" + emailVerificationCode);
+    emailContext.setVariable("emailVerificationUrl", "http://"+address+":8080/verification/" + dqUserEmail+"/"+emailVerificationCode);
     String emailContent = templateEngine.process("emailCheckTemplate", emailContext);
     try {
       dqMailUtil.sendMailByThymeleaf("邮箱验证", "1071352028@qq.com",

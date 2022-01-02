@@ -77,5 +77,5 @@ public interface IDqUserService {
      * @param emailVerificationCode
      * @return
      */
-    public int emailVerification(String emailVerificationCode);
+    public int emailVerification(String dqUserMail,String emailVerificationCode);
 }
