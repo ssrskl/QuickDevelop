@@ -72,6 +72,7 @@ drop table if exists dq_user_role;
 create table dq_user_role
 (
     user_role_id bigint(255)  not null auto_increment comment '主键',
+
     role_name    varchar(255) not null default '普通用户' comment '角色名称',
     user_id      bigint(255)  not null default 1 comment '所拥有该角色的用户ID',
     role_status  char(1)      not null default 0 comment '当前角色是否激活（0-否，1-是）',

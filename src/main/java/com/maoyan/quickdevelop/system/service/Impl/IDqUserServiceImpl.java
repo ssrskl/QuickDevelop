@@ -61,6 +61,9 @@ public class IDqUserServiceImpl implements IDqUserService {
     dqUserLambdaQueryWrapper.eq(StringUtils.isNotEmpty(email), DqUser::getEmail, email)
             .eq(StringUtils.isNotEmpty(password), DqUser::getPassword, password);
     DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
+    if(StringUtils.isNull(dqUser)){
+      throw new CustomException("用户名密码错误",HttpStatus.ERROR);
+    }
     return dqUser;
   }
 
