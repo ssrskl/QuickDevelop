@@ -20,5 +20,5 @@ ENV RABBITMQ_PORT 5672
 ENV RABBITMQ_USERNAME guest
 ENV RABBITMQ_PASSWORD guest
 # 复制到Docker Linux中的根目录下的QuickDevelop.jar
-COPY target/*.jar /QuickDevelop.jar
+COPY target/*.jar /QuickDevelop-0.0.1-SNAPSHOT.jar
 ENTRYPOINT ["java","-jar","/QuickDevelop.jar"]

@@ -112,13 +112,16 @@ create table dq_role_permission
 insert into dq_role_permission
 values (1, '超级管理员', '*', sysdate(), sysdate());
 insert into dq_role_permission
-values (2, '普通用户', 'user', sysdate(), sysdate());
+values (2, '普通用户', 'user*', sysdate(), sysdate());
 insert into dq_role_permission
 values (3, '文章管理员', 'admin-article', sysdate(), sysdate());
 insert into dq_role_permission
 values (4, '高级管理员', 'admin-*', sysdate(), sysdate());
 insert into dq_role_permission
 values (5, '学校管理员', 'admin-school', sysdate(), sysdate());
+insert into dq_role_permission
+values (6, '被封禁用户', 'user-article-query,user-article-delete,', sysdate(), sysdate());
+
 -- ----------------------------
 -- 5、版块表
 -- ----------------------------

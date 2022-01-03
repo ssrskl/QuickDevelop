@@ -15,10 +15,10 @@ user
 板块管理员：
 
 用户文章权限
-用户查询文章权限：user-query
-用户添加文章权限：user-add
-用户更新文章权限：user-update
-用户删除文章权限：user-delete
+用户查询文章权限：user-article-query
+用户添加文章权限：user-article-add
+用户更新文章权限：user-article-update
+用户删除文章权限：user-article-delete
 
 用户评论权限
 用户发表评论权限：user-comment-add
