@@ -4,14 +4,14 @@
 例如一个人添加了普通用户的角色和文章管理员的角色，则不需要让文章管理员的权限覆盖用户权限。
 
 角色：
-普通用户：
-user
-超级管理员：
-文章管理员：
-用户管理员：
-板块管理员：
+普通用户：user*
+超级管理员：*
+文章管理员：admin-article
+用户管理员：admin-user
+板块管理员：admin-section
+高级管理员：admin-*
 
-板主：
+板主：section-1-*
 板块管理员：
 
 用户文章权限
@@ -23,7 +23,6 @@ user
 用户评论权限
 用户发表评论权限：user-comment-add
 用户删除评论权限：user-comment-delete
-
 用户通用权限：user-ordinary(user*)
 
 版块权限（例如版块ID为1）

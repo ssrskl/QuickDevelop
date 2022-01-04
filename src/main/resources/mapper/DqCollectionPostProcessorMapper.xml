@@ -9,7 +9,7 @@
         <result property="articleId" column="article_id" jdbcType="BIGINT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <association property="dqArticlePostProcesser"
+        <association property="dqArticle"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser"
                      resultMap="DqArticleResult"/>
     </resultMap>
@@ -29,7 +29,7 @@
         <result property="collectionNum" column="collection_num" jdbcType="BIGINT"/>
         <result property="commentNum" column="comment_num" jdbcType="BIGINT"/>
 
-        <association property="dqSectionPostProcessor"
+        <association property="dqSection"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
                      resultMap="DqSectionResult"/>
         <association property="dqSectionType" javaType="com.maoyan.quickdevelop.common.core.domain.DqSectionType"
@@ -52,7 +52,7 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="articleNum" column="article_num" jdbcType="BIGINT"/>
         <result property="followNum" column="follow_num" jdbcType="BIGINT"/>
-        <association property="dqUserPostProcessor"
+        <association property="dqSectionAdmin"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
                      resultMap="DqUserPostProcessorResult"/>
 

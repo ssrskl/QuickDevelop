@@ -80,7 +80,7 @@ public class DqCommentPostProcesser implements Serializable {
   private Date createTime;
 
   //-----------增强内容---------------
-  private DqUserPostProcessor commentDqUserPostProcessor;
+  private DqUserPostProcessor commentDqUser;
   private DqUser toDqUser;
   // 显示三条子评论
 //  private List<DqCommentPostProcesser> threeChildDqCommentPostProcessers;

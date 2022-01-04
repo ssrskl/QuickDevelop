@@ -17,7 +17,7 @@
         <result property="collectionNum" column="collection_num" jdbcType="BIGINT"/>
         <result property="commentNum" column="comment_num" jdbcType="BIGINT"/>
 
-        <association property="dqSectionPostProcessor"
+        <association property="dqSection"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
                      resultMap="DqSectionResult"/>
         <association property="dqSectionType" javaType="com.maoyan.quickdevelop.common.core.domain.DqSectionType"
@@ -40,7 +40,7 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="articleNum" column="article_num" jdbcType="BIGINT"/>
         <result property="followNum" column="follow_num" jdbcType="BIGINT"/>
-        <association property="dqUserPostProcessor"
+        <association property="dqSectionAdmin"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
                      resultMap="DqUserPostProcessorResult"/>
 
@@ -181,11 +181,11 @@
 
                 </otherwise>
             </choose>
-<!--            <if test="dqArticlePostProcesser.articleSortWay != null and dqArticlePostProcesser.articleSortWay != ''">-->
-<!--                <if test="dqArticlePostProcesser.articleSortWay == '1'">-->
-<!--                    order by dq_article.article_id asc-->
-<!--                </if>-->
-<!--            </if>-->
+            <!--            <if test="dqArticlePostProcesser.articleSortWay != null and dqArticlePostProcesser.articleSortWay != ''">-->
+            <!--                <if test="dqArticlePostProcesser.articleSortWay == '1'">-->
+            <!--                    order by dq_article.article_id asc-->
+            <!--                </if>-->
+            <!--            </if>-->
         </where>
     </select>
 </mapper>

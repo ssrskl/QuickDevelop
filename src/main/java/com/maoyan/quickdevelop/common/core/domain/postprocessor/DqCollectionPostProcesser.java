@@ -53,5 +53,5 @@ public class DqCollectionPostProcesser implements Serializable {
 
     //------------增强--------------
     // 关于展示用户，只需要展示收藏内容，不太需要展示收藏者
-    private DqArticlePostProcesser dqArticlePostProcesser;
+    private DqArticlePostProcesser dqArticle;
 }

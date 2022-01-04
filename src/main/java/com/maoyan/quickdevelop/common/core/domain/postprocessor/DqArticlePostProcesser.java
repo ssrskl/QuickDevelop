@@ -96,7 +96,7 @@ public class DqArticlePostProcesser implements Serializable {
     private Long commentNum;
     private Long collectionNum;
     //--------增强内容------------------
-    private DqSectionPostProcessor dqSectionPostProcessor;
-    private DqSectionType dqSectionType;
     private DqUserPostProcessor dqArticleAuthor;
+    private DqSectionPostProcessor dqSection;
+    private DqSectionType dqSectionType;
 }

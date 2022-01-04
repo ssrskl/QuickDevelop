@@ -62,7 +62,7 @@ public class DqSectionPostProcessor implements Serializable {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date updateTime;
   // -------------增强内容------------------
-  private DqUserPostProcessor dqUserPostProcessor;
+  private DqUserPostProcessor dqSectionAdmin;
   private Long articleNum;
   private Long followNum;
 }

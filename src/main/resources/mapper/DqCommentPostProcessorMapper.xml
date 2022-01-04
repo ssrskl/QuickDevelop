@@ -14,7 +14,7 @@
         <result property="rootId" column="root_id" jdbcType="BIGINT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="childCommentNum" column="child_comment_num" jdbcType="BIGINT"/>
-        <association property="commentDqUserPostProcessor"
+        <association property="commentDqUser"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
                      resultMap="DqUserPostProcessorResult"/>
         <association property="toDqUser"
