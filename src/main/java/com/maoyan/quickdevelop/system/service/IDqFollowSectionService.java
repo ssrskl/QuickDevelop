@@ -1,5 +1,6 @@
 package com.maoyan.quickdevelop.system.service;
 
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowSectionPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 
@@ -13,7 +14,7 @@ public interface IDqFollowSectionService {
    * @param dqUserId
    * @return
    */
-  List<DqSectionPostProcessor> selectFollowedDqSectionByUserId(int pageNum, int pageSize, Long dqUserId);
+  List<DqFollowSectionPostProcesser> selectFollowedDqSectionByUserId(int pageNum, int pageSize, Long dqUserId);
 
   /**
    * 根据版块ID查询关注这个版块的用户
@@ -22,7 +23,7 @@ public interface IDqFollowSectionService {
    * @param dqSectionId
    * @return
    */
-  List<DqUserPostProcessor> selectFollowerBySectionId(int pageNum, int pageSize, Long dqSectionId);
+  List<DqFollowSectionPostProcesser> selectFollowerBySectionId(int pageNum, int pageSize, Long dqSectionId);
 
   /**
    * 当前用户关注指定版块

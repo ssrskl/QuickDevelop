@@ -6,6 +6,7 @@ import com.maoyan.quickdevelop.admin.controller.system.BaseController;
 import com.maoyan.quickdevelop.common.annotation.Log;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowSectionPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.enums.BusinessType;
@@ -30,8 +31,8 @@ public class DqFollowSectionController extends BaseController {
   public AjaxResult follow(@RequestParam(defaultValue = "1") int pageNum,
                            @RequestParam(defaultValue = "10") int pageSize,
                            Long dqUserId) {
-    List<DqSectionPostProcessor> dqSectionPostProcessors = iDqFollowSectionService.selectFollowedDqSectionByUserId(pageNum, pageSize, dqUserId);
-    PageInfo<DqSectionPostProcessor> pageInfo = new PageInfo<>(dqSectionPostProcessors);
+    List<DqFollowSectionPostProcesser> dqFollowSectionPostProcesserList = iDqFollowSectionService.selectFollowedDqSectionByUserId(pageNum, pageSize, dqUserId);
+    PageInfo<DqFollowSectionPostProcesser> pageInfo = new PageInfo<>(dqFollowSectionPostProcesserList);
     return AjaxResult.success("查询成功", pageInfo);
   }
 
@@ -40,8 +41,8 @@ public class DqFollowSectionController extends BaseController {
   public AjaxResult fans(@RequestParam(defaultValue = "1") int pageNum,
                          @RequestParam(defaultValue = "10") int pageSize,
                          Long dqSectionId) {
-    List<DqUserPostProcessor> dqUserPostProcessors = iDqFollowSectionService.selectFollowerBySectionId(pageNum, pageSize, dqSectionId);
-    PageInfo<DqUserPostProcessor> pageInfo = new PageInfo<>(dqUserPostProcessors);
+    List<DqFollowSectionPostProcesser> dqFollowSectionPostProcesserList = iDqFollowSectionService.selectFollowerBySectionId(pageNum, pageSize, dqSectionId);
+    PageInfo<DqFollowSectionPostProcesser> pageInfo = new PageInfo<>(dqFollowSectionPostProcesserList);
     return AjaxResult.success("查询成功", pageInfo);
   }
 

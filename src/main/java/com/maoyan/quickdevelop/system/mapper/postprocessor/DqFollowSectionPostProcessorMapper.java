@@ -1,6 +1,7 @@
 package com.maoyan.quickdevelop.system.mapper.postprocessor;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowSectionPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import org.apache.ibatis.annotations.Mapper;
@@ -58,7 +59,7 @@ public interface DqFollowSectionPostProcessorMapper {
 //          "where section_id = any (select community.dq_follow_interdqsection.followed_dqsection_id\n" +
 //          "                        from dq_follow_interdqsection\n" +
 //          "                        where give_follow_dquser_id = #{dqUserId})")
-  List<DqSectionPostProcessor> selectFollowedSectionByUserId(@Param(value = "dqUserId") Long dqUserId);
+  List<DqFollowSectionPostProcesser> selectFollowedSectionByUserId(@Param(value = "dqUserId") Long dqUserId);
 
   /**
    * 根据版块ID查询关注这个版块的用户
@@ -95,6 +96,6 @@ public interface DqFollowSectionPostProcessorMapper {
 //          "where dq_user.user_id = any (select community.dq_follow_interdqsection.give_follow_dquser_id\n" +
 //          "                             from dq_follow_interdqsection\n" +
 //          "                             where followed_dqsection_id = #{dqSectionId})")
-  List<DqUserPostProcessor> selectGiveFollowDqUserBySectionId(@Param(value = "dqSectionId") Long dqSectionId);
+  List<DqFollowSectionPostProcesser> selectGiveFollowDqUserBySectionId(@Param(value = "dqSectionId") Long dqSectionId);
 
 }

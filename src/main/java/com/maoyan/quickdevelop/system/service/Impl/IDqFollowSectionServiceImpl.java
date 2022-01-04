@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqFollowSection;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowSectionPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.exception.CustomException;
@@ -30,23 +31,23 @@ public class IDqFollowSectionServiceImpl implements IDqFollowSectionService {
   private DqFollowSectionMapper dqFollowSectionMapper;
 
   @Override
-  public List<DqSectionPostProcessor> selectFollowedDqSectionByUserId(int pageNum, int pageSize, Long dqUserId) {
+  public List<DqFollowSectionPostProcesser> selectFollowedDqSectionByUserId(int pageNum, int pageSize, Long dqUserId) {
     PageHelper.startPage(pageNum, pageSize);
-    List<DqSectionPostProcessor> dqSectionPostProcessors = dqFollowSectionPostProcessorMapper.selectFollowedSectionByUserId(dqUserId);
-    if (StringUtils.isEmpty(dqSectionPostProcessors)) {
+    List<DqFollowSectionPostProcesser> dqFollowSectionPostProcesserList = dqFollowSectionPostProcessorMapper.selectFollowedSectionByUserId(dqUserId);
+    if (StringUtils.isEmpty(dqFollowSectionPostProcesserList)) {
       throw new CustomException("该用户没有关注版块", HttpStatus.NOT_FOUND);
     }
-    return dqSectionPostProcessors;
+    return dqFollowSectionPostProcesserList;
   }
 
   @Override
-  public List<DqUserPostProcessor> selectFollowerBySectionId(int pageNum, int pageSize, Long dqSectionId) {
+  public List<DqFollowSectionPostProcesser> selectFollowerBySectionId(int pageNum, int pageSize, Long dqSectionId) {
     PageHelper.startPage(pageNum, pageSize);
-    List<DqUserPostProcessor> dqUserPostProcessors = dqFollowSectionPostProcessorMapper.selectGiveFollowDqUserBySectionId(dqSectionId);
-    if (StringUtils.isEmpty(dqUserPostProcessors)) {
+    List<DqFollowSectionPostProcesser> dqFollowSectionPostProcesserList = dqFollowSectionPostProcessorMapper.selectGiveFollowDqUserBySectionId(dqSectionId);
+    if (StringUtils.isEmpty(dqFollowSectionPostProcesserList)) {
       throw new CustomException("该版块还没有关注者", HttpStatus.NOT_FOUND);
     }
-    return dqUserPostProcessors;
+    return dqFollowSectionPostProcesserList;
   }
 
   @Override
@@ -69,10 +70,10 @@ public class IDqFollowSectionServiceImpl implements IDqFollowSectionService {
   public int cancelFollowDqSectionBySectionId(Long dqSectionId) {
     LambdaQueryWrapper<DqFollowSection> dqFollowSectionLambdaQueryWrapper = new LambdaQueryWrapper<>();
     dqFollowSectionLambdaQueryWrapper.eq(DqFollowSection::getFollowedDqsectionId, dqSectionId)
-            .eq(DqFollowSection::getGiveFollowDqUserId, StpUtil.getLoginIdAsLong());
+        .eq(DqFollowSection::getGiveFollowDqUserId, StpUtil.getLoginIdAsLong());
     int delete = dqFollowSectionMapper.delete(dqFollowSectionLambdaQueryWrapper);
     if (delete <= 0) {
-      throw new CustomException("取消关注失败",HttpStatus.ERROR);
+      throw new CustomException("取消关注失败", HttpStatus.ERROR);
     }
     return delete;
   }

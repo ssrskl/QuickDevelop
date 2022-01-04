@@ -13,6 +13,7 @@
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser"
                      resultMap="DqArticleResult"/>
     </resultMap>
+
     <resultMap id="DqArticleResult"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser">
         <id property="articleId" column="article_id" jdbcType="BIGINT"/>
@@ -28,34 +29,9 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="collectionNum" column="collection_num" jdbcType="BIGINT"/>
         <result property="commentNum" column="comment_num" jdbcType="BIGINT"/>
-
-        <association property="dqSection"
-                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
-                     resultMap="DqSectionResult"/>
-        <association property="dqSectionType" javaType="com.maoyan.quickdevelop.common.core.domain.DqSectionType"
-                     resultMap="DqSectionTypeResult"/>
         <association property="dqArticleAuthor"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
                      resultMap="DqUserPostProcessorResult"/>
-    </resultMap>
-
-    <resultMap id="DqSectionResult"
-               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor">
-        <id property="sectionId" column="section_id" jdbcType="BIGINT"/>
-        <result property="sectionName" column="section_name" jdbcType="VARCHAR"/>
-        <result property="sectionIntroduce" column="section_introduce" jdbcType="VARCHAR"/>
-        <result property="sectionLogo" column="section_logo" jdbcType="VARCHAR"/>
-        <result property="sectionBackground" column="section_background" jdbcType="VARCHAR"/>
-        <result property="sectionAdminUserId" column="section_admin_user_id" jdbcType="VARCHAR"/>
-        <result property="sectionWeight" column="section_weight" jdbcType="BIGINT"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="articleNum" column="article_num" jdbcType="BIGINT"/>
-        <result property="followNum" column="follow_num" jdbcType="BIGINT"/>
-        <association property="dqSectionAdmin"
-                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
-                     resultMap="DqUserPostProcessorResult"/>
-
     </resultMap>
 
     <resultMap id="DqUserPostProcessorResult"
@@ -78,29 +54,7 @@
         <!--        <result property="status" column="status" jdbcType="CHAR"/>-->
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <collection property="dqUserRoleList" javaType="java.util.List"
-                    ofType="com.maoyan.quickdevelop.common.core.domain.DqUserRole" resultMap="RolesResult"/>
     </resultMap>
-    <resultMap id="RolesResult" type="com.maoyan.quickdevelop.common.core.domain.DqUserRole">
-        <id property="userRoleId" column="user_role_id" jdbcType="BIGINT"/>
-        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
-        <result property="userId" column="user_id" jdbcType="BIGINT"/>
-        <result property="roleStatus" column="role_status" jdbcType="CHAR"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <resultMap id="DqSectionTypeResult" type="com.maoyan.quickdevelop.common.core.domain.DqSectionType">
-        <id property="sectionTypeId" column="section_type_id" jdbcType="BIGINT"/>
-        <result property="sectionTypeName" column="section_type_name" jdbcType="VARCHAR"/>
-        <result property="sectionId" column="section_id" jdbcType="BIGINT"/>
-        <result property="sectionTypeWeight" column="section_type_weight" jdbcType="BIGINT"/>
-        <result property="sectionTypeMold" column="section_type_mold" jdbcType="VARCHAR"/>
-        <result property="sectionTypeNetwork" column="section_type_network" jdbcType="VARCHAR"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
     <sql id="selectDqCollectionPostProcessorVO">
         select dq_collection.collection_id,
                dq_collection.user_id,
@@ -116,25 +70,9 @@
                da.author_id,
                da.status,
                da.article_weight,
+               da.delete_flag,
                da.create_time,
                da.update_time,
-               ds.section_id,
-               ds.section_name,
-               ds.section_introduce,
-               ds.section_logo,
-               ds.section_background,
-               ds.section_admin_user_id,
-               ds.section_weight,
-               ds.create_time,
-               ds.update_time,
-               dst.section_type_id,
-               dst.section_type_name,
-               dst.section_id,
-               dst.section_type_weight,
-               dst.section_type_mold,
-               dst.section_type_network,
-               dst.create_time,
-               dst.update_time,
                du.user_id,
                du.user_name,
                du.email,
@@ -147,26 +85,12 @@
                du.signature,
                du.grade,
                du.experience,
-               du.check_status,
                du.school_id,
                du.create_time,
-               du.update_time,
-               dur.user_role_id,
-               dur.role_name,
-               dur.user_id,
-               dur.role_status,
-               dur.create_time,
-               dur.update_time,
-               (select count(*) from dq_comment where dq_comment.article_id = da.article_id) as comment_num,
-               (select count(*)
-                from dq_collection
-                where dq_collection.article_id = da.article_id)                              as collection_num
+               du.update_time
         from dq_collection
                  left join dq_article da on da.article_id = dq_collection.article_id
-                 left join dq_section ds on da.section_id = ds.section_id
-                 left join dq_section_type dst on da.section_type_id = dst.section_type_id
                  left join dq_user du on da.author_id = du.user_id
-                 left join dq_user_role dur on du.user_id = dur.user_id
     </sql>
     <select id="selectDqCollectionPostProcessor"
             parameterType="com.maoyan.quickdevelop.system.domain.queryvo.DqCollectionQueryVO"
