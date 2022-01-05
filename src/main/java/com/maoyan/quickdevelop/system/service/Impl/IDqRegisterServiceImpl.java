@@ -62,7 +62,6 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
     newDqUser.setSignature(StringUtils.isNotEmpty(registerVO.getSignature()) ? registerVO.getSignature() : "个性签名");
     newDqUser.setGrade(1L);
     newDqUser.setExperience(0L);
-    newDqUser.setCheckParam(random);
     newDqUser.setCheckStatus("0");
     newDqUser.setSchoolId(0L);
     newDqUser.setCreateTime(DateUtils.getNowDate());

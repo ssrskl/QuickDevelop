@@ -76,6 +76,12 @@ public class DqArticle extends DqStatusDispose implements Serializable {
   private Long articleWeight;
 
   /**
+   * 删除标志
+   */
+  @TableField(value = "delete_flag")
+  private Long deleteFlag;
+
+  /**
    * 创建时间
    */
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

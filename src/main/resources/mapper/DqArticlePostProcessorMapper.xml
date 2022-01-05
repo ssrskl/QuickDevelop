@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqArticlePostProcessorMapper">
+
     <resultMap id="DqArticleResult"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser">
         <id property="articleId" column="article_id" jdbcType="BIGINT"/>
@@ -16,34 +17,11 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="collectionNum" column="collection_num" jdbcType="BIGINT"/>
         <result property="commentNum" column="comment_num" jdbcType="BIGINT"/>
-
-        <association property="dqSection"
-                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
-                     resultMap="DqSectionResult"/>
         <association property="dqSectionType" javaType="com.maoyan.quickdevelop.common.core.domain.DqSectionType"
                      resultMap="DqSectionTypeResult"/>
         <association property="dqArticleAuthor"
                      javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
                      resultMap="DqUserPostProcessorResult"/>
-    </resultMap>
-
-    <resultMap id="DqSectionResult"
-               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor">
-        <id property="sectionId" column="section_id" jdbcType="BIGINT"/>
-        <result property="sectionName" column="section_name" jdbcType="VARCHAR"/>
-        <result property="sectionIntroduce" column="section_introduce" jdbcType="VARCHAR"/>
-        <result property="sectionLogo" column="section_logo" jdbcType="VARCHAR"/>
-        <result property="sectionBackground" column="section_background" jdbcType="VARCHAR"/>
-        <result property="sectionAdminUserId" column="section_admin_user_id" jdbcType="VARCHAR"/>
-        <result property="sectionWeight" column="section_weight" jdbcType="BIGINT"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="articleNum" column="article_num" jdbcType="BIGINT"/>
-        <result property="followNum" column="follow_num" jdbcType="BIGINT"/>
-        <association property="dqSectionAdmin"
-                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor"
-                     resultMap="DqUserPostProcessorResult"/>
-
     </resultMap>
 
     <resultMap id="DqUserPostProcessorResult"
@@ -90,32 +68,25 @@
     </resultMap>
 
     <sql id="selectDqArticlePostProcessorVO">
-        select dq_article.article_id,
-               dq_article.article_title,
-               dq_article.article_content,
-               dq_article.article_image,
-               dq_article.section_id,
-               dq_article.section_type_id,
-               dq_article.author_id,
-               dq_article.status,
-               dq_article.article_weight,
-               dq_article.create_time,
-               dq_article.update_time,
-               ds.section_id,
-               ds.section_name,
-               ds.section_introduce,
-               ds.section_logo,
-               ds.section_background,
-               ds.section_admin_user_id,
-               ds.section_weight,
-               ds.create_time,
-               ds.update_time,
+        select da.article_id,
+               da.article_title,
+               da.article_content,
+               da.article_image,
+               da.section_id,
+               da.section_type_id,
+               da.author_id,
+               da.status,
+               da.article_weight,
+               da.delete_flag,
+               da.create_time,
+               da.update_time,
                dst.section_type_id,
                dst.section_type_name,
                dst.section_id,
                dst.section_type_weight,
                dst.section_type_mold,
                dst.section_type_network,
+               dst.delete_flag,
                dst.create_time,
                dst.update_time,
                du.user_id,
@@ -140,15 +111,15 @@
                dur.role_status,
                dur.create_time,
                dur.update_time,
-               (select count(*) from dq_comment where dq_comment.article_id = dq_article.article_id) as comment_num,
                (select count(*)
-                from dq_collection
-                where dq_collection.article_id = dq_article.article_id)                              as collection_num
-        from dq_article
-                 left join dq_section ds on dq_article.section_id = ds.section_id
-                 left join dq_section_type dst on dq_article.section_type_id = dst.section_type_id
-                 left join dq_user du on dq_article.author_id = du.user_id
-                 left join dq_user_role dur on du.user_id = dur.user_id
+                from dq_comment
+                where dq_comment.article_id = da.article_id
+                  AND da.delete_flag = 0)                                                          as comment_num,
+               (select count(*) from dq_collection where dq_collection.article_id = da.article_id) as collection_num
+        from dq_article as da
+                 left join dq_section_type dst on da.section_type_id = dst.section_type_id
+                 left join dq_user du on du.user_id = da.author_id
+                 left join dq_user_role dur on dur.user_id = du.user_id
     </sql>
     <select id="selectAllDqArticlePostProcesser"
             parameterType="com.maoyan.quickdevelop.system.domain.queryvo.DqArticleQueryVO"
@@ -156,22 +127,23 @@
         <include refid="selectDqArticlePostProcessorVO"></include>
         <where>
             <if test="dqArticleQueryVO.articleId != null and dqArticleQueryVO.articleId != ''">
-                AND dq_article.article_Id = #{dqArticleQueryVO.articleId}
+                AND da.article_Id = #{dqArticleQueryVO.articleId}
             </if>
             <if test="dqArticleQueryVO.articleTitle != null and dqArticleQueryVO.articleTitle != ''">
-                AND dq_article.article_title like concat('%',#{dqArticleQueryVO.articleTitle},'%')
+                AND da.article_title like concat('%',#{dqArticleQueryVO.articleTitle},'%')
             </if>
             <if test="dqArticleQueryVO.sectionId != null and dqArticleQueryVO.sectionId != ''">
-                AND dq_article.section_id = #{dqArticleQueryVO.sectionId}
+                AND da.section_id = #{dqArticleQueryVO.sectionId}
             </if>
             <if test="dqArticleQueryVO.sectionTypeId != null and dqArticleQueryVO.sectionTypeId != ''">
-                AND dq_article.section_type_id = #{dqArticleQueryVO.sectionTypeId}
+                AND da.section_type_id = #{dqArticleQueryVO.sectionTypeId}
             </if>
             <if test="dqArticleQueryVO.authorId != null and dqArticleQueryVO.authorId != ''">
-                AND dq_article.author_id = #{dqArticleQueryVO.authorId}
+                AND da.author_id = #{dqArticleQueryVO.authorId}
             </if>
             <if test="true">
-                AND dq_article.status = 1
+                AND da.status = 1
+                AND da.delete_flag = 0
             </if>
             <choose>
                 <when test="dqArticleQueryVO.articleSortWay == '1'">

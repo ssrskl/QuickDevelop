@@ -5,18 +5,18 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
-import com.maoyan.quickdevelop.common.core.domain.DqSectionType;
-import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqArticle;
+import com.maoyan.quickdevelop.common.core.domain.DqSectionType;
 import com.maoyan.quickdevelop.common.core.domain.DqType;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqArticlePostProcesser;
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.MyQueryWrapper;
-import com.maoyan.quickdevelop.system.domain.queryvo.DqArticleQueryVO;
+import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.system.domain.DqArticleVO;
+import com.maoyan.quickdevelop.system.domain.queryvo.DqArticleQueryVO;
 import com.maoyan.quickdevelop.system.mapper.DqArticleMapper;
 import com.maoyan.quickdevelop.system.mapper.DqSectionTypeMapper;
 import com.maoyan.quickdevelop.system.mapper.DqTypeMapper;
@@ -56,7 +56,7 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   /**
    * 统一的查询方法
    *
-   * @param dqArticlePostProcesser
+   * @param dqArticleQueryVO
    * @return
    */
   @Override
@@ -101,8 +101,8 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   public List<DqArticle> selectDqArticlesByTypeId(int pageNum, int pageSize, Long typeId) {
     /** 对typeid校验,将Long转换为String **/
     queryWrapper.lambda()
-            .eq(DqArticle::getStatus, "0")
-            .orderByDesc(DqArticle::getArticleId);
+        .eq(DqArticle::getStatus, "0")
+        .orderByDesc(DqArticle::getArticleId);
 //        MyQueryWrapper<DqArticle> myQueryWrapper = new MyQueryWrapper<>();
 //        myQueryWrapper.statuseq("type_id", String.valueOf(typeId));
     DqType dqType = dqTypeMapper.selectById(typeId);
@@ -179,11 +179,12 @@ public class IDqArticleServiceImpl implements IDqArticleService {
     dqArticle.setAuthorId(StpUtil.getLoginIdAsLong());
     dqArticle.setStatus("1");
     dqArticle.setArticleWeight(0L);
+    dqArticle.setDeleteFlag(0L);
     dqArticle.setCreateTime(DateUtil.date());
     dqArticle.setUpdateTime(DateUtil.date());
     int insert = dqArticleMapper.insert(dqArticle);
     if (insert <= 0) {
-      throw new CustomException("发表失败",HttpStatus.ERROR);
+      throw new CustomException("发表失败", HttpStatus.ERROR);
     }
     return insert;
   }
@@ -191,8 +192,10 @@ public class IDqArticleServiceImpl implements IDqArticleService {
   @Override
   public int updateDqArticle(DqArticle newdqArticle) {
     // 获取文章ID
-    Long articleId = newdqArticle.getArticleId();
-    DqArticle dqArticle = dqArticleMapper.selectById(articleId);
+    LambdaQueryWrapper<DqArticle> dqArticleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqArticleLambdaQueryWrapper.eq(DqArticle::getArticleId, newdqArticle.getArticleId())
+        .eq(DqArticle::getDeleteFlag, 0);
+    DqArticle dqArticle = dqArticleMapper.selectOne(dqArticleLambdaQueryWrapper);
     if (dqArticle == null) {
       throw new CustomException("没有此文章", HttpStatus.NOT_FOUND);
     }
@@ -215,16 +218,24 @@ public class IDqArticleServiceImpl implements IDqArticleService {
 
   @Override
   public int deleteDqArticleById(Long dqArticleId) {
-    DqArticle dqArticle = dqArticleMapper.selectById(dqArticleId);
+    // 查询文章
+    LambdaQueryWrapper<DqArticle> dqArticleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqArticleLambdaQueryWrapper.eq(DqArticle::getArticleId, dqArticleId)
+        .eq(DqArticle::getDeleteFlag, 0);
+    DqArticle dqArticle = dqArticleMapper.selectOne(dqArticleLambdaQueryWrapper);
+    // 文章不存在或者已经被删除
     if (dqArticle == null) {
       throw new CustomException("未查询到此文章", HttpStatus.NOT_FOUND);
     }
+    // 对比文章ID，看是否是本人的
     Long autorId = dqArticle.getAuthorId();
     if (StpUtil.getLoginIdAsLong() != autorId) {
       throw new CustomException("不能删除其他人的文章", HttpStatus.ERROR);
     }
-    // 删除文章
-    int i = dqArticleMapper.deleteById(dqArticleId);
+    // 删除文章，就是改删除标志
+    dqArticle.setDeleteFlag(dqArticleId);
+    int i = dqArticleMapper.updateById(dqArticle);
+    // int i = dqArticleMapper.deleteById(dqArticleId);
     // 删除收藏信息
     if (i > 0) {
       return i;

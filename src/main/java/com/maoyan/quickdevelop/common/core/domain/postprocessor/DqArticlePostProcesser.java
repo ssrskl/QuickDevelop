@@ -91,12 +91,11 @@ public class DqArticlePostProcesser implements Serializable {
      * 什么都不添则默认排序
      * 1-按照热度（评论数量排序）
      */
-    private String articleSortWay;
+    // private String articleSortWay;
     //---------数量相关-----------------
     private Long commentNum;
     private Long collectionNum;
     //--------增强内容------------------
     private DqUserPostProcessor dqArticleAuthor;
-    private DqSectionPostProcessor dqSection;
     private DqSectionType dqSectionType;
 }

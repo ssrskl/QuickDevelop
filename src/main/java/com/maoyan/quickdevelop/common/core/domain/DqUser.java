@@ -119,11 +119,6 @@ public class DqUser extends DqStatusDispose implements Serializable {
    *     check_status  char(1) comment '邮箱校验的状态(1-通过，0-未通过)',
    */
   /**
-   * 邮箱校验的参数（也可以当作盐值加密的参数）
-   */
-  @TableField(value = "check_param")
-  private String checkParam;
-  /**
    * 邮箱校验的状态(1-通过，0-未通过)'
    */
   @TableField(value = "check_status")
