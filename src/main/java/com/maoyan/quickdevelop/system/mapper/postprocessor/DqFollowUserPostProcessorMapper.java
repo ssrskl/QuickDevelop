@@ -3,6 +3,7 @@ package com.maoyan.quickdevelop.system.mapper.postprocessor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.maoyan.quickdevelop.common.core.domain.DqFollowUser;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowDqUserPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -46,12 +47,12 @@ public interface DqFollowUserPostProcessorMapper extends BaseMapper<DqFollowUser
 //          "where dq_user.user_id = any(select community.dq_follow_interdquser.followed_dquser_id\n" +
 //          "                         from dq_follow_interdquser\n" +
 //          "                         where give_follow_dquser_id = #{dqUserId})")
-  List<DqUserPostProcessor> selectFollowedDqUserByUserId(@Param(value = "dqUserId") Long dqUserId);
+  List<DqFollowDqUserPostProcesser> selectFollowedDqUserByUserId(@Param(value = "dqUserId") Long dqUserId);
 
   /**
    * 查询指定用户的粉丝
    * @param dqUserId
    * @return
    */
-  List<DqUserPostProcessor> selectGiveFollowDqUserByUserId(@Param(value = "dqUserId") Long dqUserId);
+  List<DqFollowDqUserPostProcesser> selectGiveFollowDqUserByUserId(@Param(value = "dqUserId") Long dqUserId);
 }

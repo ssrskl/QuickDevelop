@@ -6,6 +6,7 @@ import com.maoyan.quickdevelop.admin.controller.system.BaseController;
 import com.maoyan.quickdevelop.common.annotation.Log;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.AjaxResult;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowDqUserPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.enums.BusinessType;
 import com.maoyan.quickdevelop.system.service.IDqFollowUserService;
@@ -29,8 +30,9 @@ public class DqFollowUserController extends BaseController {
   public AjaxResult follow(@RequestParam(defaultValue = "1") int pageNum,
                            @RequestParam(defaultValue = "10") int pageSize,
                            Long dqUserId) {
-    List<DqUserPostProcessor> dqUserPostProcessors = iDqFollowUserService.selectFollowedDqUserByUserId(pageNum, pageSize, dqUserId);
-    PageInfo<DqUserPostProcessor> pageInfo = new PageInfo<>(dqUserPostProcessors);
+    List<DqFollowDqUserPostProcesser> dqUserPostProcessors = iDqFollowUserService.selectFollowedDqUserByUserId(pageNum, pageSize, dqUserId);
+    //TODO 查询的方法出问题了
+    PageInfo<DqFollowDqUserPostProcesser> pageInfo = new PageInfo<>(dqUserPostProcessors);
     return AjaxResult.success("查询成功", pageInfo);
   }
   @ApiOperation(value = "查询指定用户的粉丝")
@@ -38,8 +40,8 @@ public class DqFollowUserController extends BaseController {
   public AjaxResult fans(@RequestParam(defaultValue = "1") int pageNum,
                            @RequestParam(defaultValue = "10") int pageSize,
                            Long dqUserId) {
-    List<DqUserPostProcessor> dqUserPostProcessors = iDqFollowUserService.selectFansByUserId(pageNum, pageSize, dqUserId);
-    PageInfo<DqUserPostProcessor> pageInfo = new PageInfo<>(dqUserPostProcessors);
+    List<DqFollowDqUserPostProcesser> dqUserPostProcessors = iDqFollowUserService.selectFansByUserId(pageNum, pageSize, dqUserId);
+    PageInfo<DqFollowDqUserPostProcesser> pageInfo = new PageInfo<>(dqUserPostProcessors);
     return AjaxResult.success("查询成功", pageInfo);
   }
   @SaCheckLogin

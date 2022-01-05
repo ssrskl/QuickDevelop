@@ -2,9 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.maoyan.quickdevelop.system.mapper.postprocessor.DqFollowSectionPostProcessorMapper">
 
-    <resultMap id="DqSectionResult"
+    <resultMap id="selectFollowedSectionMap"
                type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowSectionPostProcesser">
-        <!--        TODO 完善关注板块更新-->
+        <id property="followId" column="follow_id" jdbcType="BIGINT"/>
+        <result property="giveFollowDqUserId" column="give_follow_dquser_id" jdbcType="BIGINT"/>
+        <result property="followedDqsectionId" column="followed_dqsection_id" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <association property="followedSection"
+                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
+                     resultMap="DqSectionMap"/>
+    </resultMap>
+    <resultMap id="selectGiveFollowDqUserMap"
+               type="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowSectionPostProcesser">
         <id property="followId" column="follow_id" jdbcType="BIGINT"/>
         <result property="giveFollowDqUserId" column="give_follow_dquser_id" jdbcType="BIGINT"/>
         <result property="followedDqsectionId" column="followed_dqsection_id" jdbcType="BIGINT"/>
@@ -13,10 +23,8 @@
         <association property="followUser"
                      javaType="com.maoyan.quickdevelop.common.core.domain.DqUser"
                      resultMap="DqUserMap"/>
-        <association property="followedSection"
-                     javaType="com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor"
-                     resultMap="DqSectionMap"/>
     </resultMap>
+
     <resultMap id="DqUserMap" type="com.maoyan.quickdevelop.common.core.domain.DqUser">
         <id property="userId" column="user_id" jdbcType="BIGINT"/>
         <result property="userName" column="user_name" jdbcType="VARCHAR"/>
@@ -49,7 +57,10 @@
         <result property="articleNum" column="article_num" jdbcType="BIGINT"/>
         <result property="followNum" column="follow_num" jdbcType="BIGINT"/>
     </resultMap>
-    <sql id="selectfollowSectionVO">
+
+
+
+    <sql id="selectFollowedSectionByUserIdVO">
         select dq_follow_interdqsection.follow_id,
                dq_follow_interdqsection.give_follow_dquser_id,
                dq_follow_interdqsection.followed_dqsection_id,
@@ -66,6 +77,24 @@
                ds.delete_flag,
                ds.create_time,
                ds.update_time,
+               (select count(*)
+                from dq_article
+                         inner join dq_section on dq_section.section_id = dq_article.section_id
+               )                                                                                         as article_num,
+               (select count(*)
+                from dq_follow_interdqsection
+                         inner join dq_user
+                                    on dq_user.user_id = dq_follow_interdqsection.give_follow_dquser_id) as follow_num
+        from dq_follow_interdqsection
+    </sql>
+
+    <sql id="selectGiveFollowDqUserBySectionIdVO">
+        select dq_follow_interdqsection.follow_id,
+               dq_follow_interdqsection.give_follow_dquser_id,
+               dq_follow_interdqsection.followed_dqsection_id,
+               dq_follow_interdqsection.delete_flag,
+               dq_follow_interdqsection.create_time,
+               dq_follow_interdqsection.update_time,
                du.user_id,
                du.user_name,
                du.email,
@@ -91,24 +120,27 @@
                          inner join dq_user
                                     on dq_user.user_id = dq_follow_interdqsection.give_follow_dquser_id) as follow_num
         from dq_follow_interdqsection
-                 left join dq_section ds on ds.section_id = dq_follow_interdqsection.followed_dqsection_id
-                 left join dq_user du on du.user_id = dq_follow_interdqsection.give_follow_dquser_id
     </sql>
+
 
     <!--被指定用户关注的板块-->
     <select id="selectFollowedSectionByUserId"
             parameterType="java.lang.Long"
-            resultMap="DqSectionResult">
-        <include refid="selectfollowSectionVO"></include>
+            resultMap="selectFollowedSectionMap">
+        <include refid="selectFollowedSectionByUserIdVO"></include>
+        left join dq_section ds on ds.section_id = dq_follow_interdqsection.followed_dqsection_id
         <where>
-            dq_follow_interdqsection.give_follow_dquser_id =#{dqUserId}
+            <if test="dqUserId != null and dqUserId != ''">
+                dq_follow_interdqsection.give_follow_dquser_id =#{dqUserId}
+            </if>
         </where>
     </select>
     <!--    指定板块被哪些用户关注-->
     <select id="selectGiveFollowDqUserBySectionId"
             parameterType="java.lang.Long"
-            resultMap="DqSectionResult">
-        <include refid="selectfollowSectionVO"></include>
+            resultMap="selectGiveFollowDqUserMap">
+        <include refid="selectGiveFollowDqUserBySectionIdVO"></include>
+        left join dq_user du on du.user_id = dq_follow_interdqsection.give_follow_dquser_id
         <where>
             <if test="dqSectionId != null and dqSectionId != ''">
                 followed_dqsection_id = #{dqSectionId}

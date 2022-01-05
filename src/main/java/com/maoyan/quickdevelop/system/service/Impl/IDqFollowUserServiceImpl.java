@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqFollowUser;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowDqUserPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
@@ -29,9 +30,9 @@ public class IDqFollowUserServiceImpl implements IDqFollowUserService {
   private DqFollowUserMapper dqFollowUserMapper;
 
   @Override
-  public List<DqUserPostProcessor> selectFollowedDqUserByUserId(int pageNum, int pageSize, Long dqUserId) {
+  public List<DqFollowDqUserPostProcesser> selectFollowedDqUserByUserId(int pageNum, int pageSize, Long dqUserId) {
     PageHelper.startPage(pageNum, pageSize);
-    List<DqUserPostProcessor> dqUserPostProcessors = dqFollowUserPostProcessorMapper.selectFollowedDqUserByUserId(dqUserId);
+    List<DqFollowDqUserPostProcesser> dqUserPostProcessors = dqFollowUserPostProcessorMapper.selectFollowedDqUserByUserId(dqUserId);
     if (StringUtils.isEmpty(dqUserPostProcessors)) {
       throw new CustomException("该用户没有关注任何人", HttpStatus.NOT_FOUND);
     }
@@ -39,8 +40,8 @@ public class IDqFollowUserServiceImpl implements IDqFollowUserService {
   }
 
   @Override
-  public List<DqUserPostProcessor> selectFansByUserId(int pageNum, int pageSize, Long dqUserId) {
-    List<DqUserPostProcessor> dqUserPostProcessors = dqFollowUserPostProcessorMapper.selectGiveFollowDqUserByUserId(dqUserId);
+  public List<DqFollowDqUserPostProcesser> selectFansByUserId(int pageNum, int pageSize, Long dqUserId) {
+    List<DqFollowDqUserPostProcesser> dqUserPostProcessors = dqFollowUserPostProcessorMapper.selectGiveFollowDqUserByUserId(dqUserId);
     if (StringUtils.isEmpty(dqUserPostProcessors)) {
       throw new CustomException("该用户没有粉丝", HttpStatus.NOT_FOUND);
     }

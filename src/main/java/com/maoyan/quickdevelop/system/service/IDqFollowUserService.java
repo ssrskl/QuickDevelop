@@ -1,5 +1,6 @@
 package com.maoyan.quickdevelop.system.service;
 
+import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowDqUserPostProcesser;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface IDqFollowUserService {
    * @param dqUserId
    * @return
    */
-  List<DqUserPostProcessor> selectFollowedDqUserByUserId(int pageNum, int pageSize, Long dqUserId);
+  List<DqFollowDqUserPostProcesser> selectFollowedDqUserByUserId(int pageNum, int pageSize, Long dqUserId);
 
   /**
    * 查询指定用户的粉丝信息
@@ -23,7 +24,7 @@ public interface IDqFollowUserService {
    * @param dqUserId
    * @return
    */
-  List<DqUserPostProcessor> selectFansByUserId(int pageNum, int pageSize, Long dqUserId);
+  List<DqFollowDqUserPostProcesser> selectFansByUserId(int pageNum, int pageSize, Long dqUserId);
 
   /**
    * 当前用户关注指定用户
