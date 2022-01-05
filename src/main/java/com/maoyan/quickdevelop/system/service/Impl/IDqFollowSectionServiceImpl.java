@@ -7,8 +7,6 @@ import com.github.pagehelper.PageHelper;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqFollowSection;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqFollowSectionPostProcesser;
-import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqSectionPostProcessor;
-import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqUserPostProcessor;
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
@@ -52,8 +50,14 @@ public class IDqFollowSectionServiceImpl implements IDqFollowSectionService {
 
   @Override
   public int followDqSectionBySectionId(Long dqSectionId) {
-    // 检查是否已经关注
-
+    // 检查是否已经关注,并且在数据库中设置联合约束
+    LambdaQueryWrapper<DqFollowSection> dqFollowSectionLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqFollowSectionLambdaQueryWrapper.eq(DqFollowSection::getFollowedDqsectionId, dqSectionId)
+        .eq(DqFollowSection::getGiveFollowDqUserId, StpUtil.getLoginIdAsLong());
+    DqFollowSection checkDqFollowSection = dqFollowSectionMapper.selectOne(dqFollowSectionLambdaQueryWrapper);
+    if (StringUtils.isNotNull(checkDqFollowSection)){
+      throw new CustomException("您已经关注了这个板块",HttpStatus.ERROR);
+    }
     DqFollowSection dqFollowSection = new DqFollowSection();
     dqFollowSection.setFollowedDqsectionId(dqSectionId);
     dqFollowSection.setGiveFollowDqUserId(StpUtil.getLoginIdAsLong());

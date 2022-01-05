@@ -23,7 +23,6 @@ create table dq_user
     signature    varchar(255) default '无' comment '个性签名',
     grade        bigint(255)  default 1 comment '用户等级',
     experience   bigint(255)  default 0 comment '用户经验值',
-    check_param  varchar(255) unique comment '邮箱校验的参数（也可以当作盐值加密的参数）',
     check_status char(1) comment '邮箱校验的状态(1-通过，0-未通过)',
     school_id    bigint(255)  default 0 comment '用户所在学校ID',
     delete_flag  bigint(255)  default 0 comment '删除标志(不为0则删除,否则等于id)',
@@ -33,18 +32,25 @@ create table dq_user
 ) engine = innodb
   auto_increment = 1
   CHARACTER SET = utf8mb4 comment = '用户表';
+# 添加联合唯一键
+alter table dq_user
+    add unique key (user_id, delete_flag);
 -- ----------------------------
 -- 初始化-用户表
 -- ----------------------------
 insert into dq_user
 values (1, '猫颜', '1071352028@qq.com', '17104344673', '0',
         'https://img2.woyaogexing.com/2020/03/01/63dba6d27b79483ea51f51c42c0604cd!400x400.jpeg',
-        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 'maoyan', 1, 1, 0,
+        'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1', sysdate(), '提笔,写忧伤，停笔，心怅然', 1, 0, 1, 1, 0,
         sysdate(),
         sysdate());
 insert into dq_user
 values (2, 'maoyan', '820244680@qq.com', '110', '0', 'logo', 'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1',
-        sysdate(), 'wu', 1, 0, 'maoyan2', 1, 1, 0, sysdate(), sysdate());
+        sysdate(), 'wu', 1, 0, 1, 1, 0, sysdate(), sysdate());
+insert into dq_user
+values (3, '张三', 'oimaoyanio@163.com', '119', '2', 'avter', 'd93a5def7511da3d0f2d171d9c344e91', '1', '127.0.0.1',
+        sysdate(), 'wu', 1, 0, '1', 1, 0, sysdate(), sysdate());
+
 -- ----------------------------
 -- 2、用户关注表
 -- ----------------------------
@@ -54,7 +60,6 @@ create table dq_follow_interdquser
     follow_id             bigint(255) not null auto_increment comment '主键ID',
     give_follow_dquser_id bigint(255) not null default 1 comment '发起关注的用户的ID',
     followed_dquser_id    bigint(255) not null default 1 comment '被关注的用户的ID',
-    delete_flag           bigint(255)          default 0 comment '删除标志(不为0则删除,否则等于id)',
     create_time           datetime comment '创建时间',
     update_time           datetime comment '更新时间',
     primary key (follow_id)
@@ -65,7 +70,9 @@ create table dq_follow_interdquser
 -- 初始化-用户关注表
 -- ----------------------------
 insert into dq_follow_interdquser
-values (1, 1, 1, 0, sysdate(), sysdate());
+values (1, 1, 1, sysdate(), sysdate());
+insert into dq_follow_interdquser
+values (2, 3, 1, sysdate(), sysdate());
 
 -- ----------------------------
 -- 3、用户-角色表(多对多)
@@ -93,6 +100,9 @@ insert into dq_user_role
 values (2, '普通用户', 2, 0, sysdate(), sysdate());
 insert into dq_user_role
 values (3, '文章管理员', 2, 1, sysdate(), sysdate());
+insert into dq_user_role
+values (4, '普通用户', 3, 0, sysdate(), sysdate());
+
 -- ----------------------------
 -- 4、角色-权限对应表（多对多）
 -- ----------------------------
@@ -144,6 +154,9 @@ create table dq_section
 ) engine = innodb
   auto_increment = 1
   CHARACTER SET = utf8mb4 comment = '版块表';
+# 建立联合唯一键
+alter table dq_section
+    add unique key (section_id, delete_flag);
 -- ----------------------------
 -- 初始化-版块表
 -- ----------------------------
@@ -173,6 +186,9 @@ create table dq_section_type
 ) engine = innodb
   auto_increment = 1
   CHARACTER SET = utf8mb4 comment = '版块分类表';
+# 建立联合唯一键
+alter table dq_section_type
+    add unique key (section_type_id, delete_flag);
 -- ----------------------------
 -- 初始化-版块分类表
 -- ----------------------------
@@ -184,6 +200,7 @@ insert into dq_section_type
 values (3, '打法技巧', 2, 0, 0, 'url', 0, sysdate(), sysdate());
 insert into dq_section_type
 values (4, '联盟福利', 2, 0, 0, 'url', 0, sysdate(), sysdate());
+
 -- ----------------------------
 -- 2、版块关注表
 -- ----------------------------
@@ -193,7 +210,6 @@ create table dq_follow_interdqsection
     follow_id             bigint(255) not null auto_increment comment '主键ID',
     give_follow_dquser_id bigint(255) not null comment '发起关注的用户的ID',
     followed_dqsection_id bigint(255) not null comment '被关注的版块的ID',
-    delete_flag           bigint(255) default 0 comment '删除标志(不为0则删除,否则等于id)',
     create_time           datetime comment '创建时间',
     update_time           datetime comment '更新时间',
     primary key (follow_id)
@@ -204,9 +220,10 @@ create table dq_follow_interdqsection
 -- 初始化-版块关注表
 -- ----------------------------
 insert into dq_follow_interdqsection
-values (1, 1, 1, 0, sysdate(), sysdate());
+values (1, 1, 1, sysdate(), sysdate());
 insert into dq_follow_interdqsection
-values (2, 1, 2, 0, sysdate(), sysdate());
+values (2, 1, 2, sysdate(), sysdate());
+
 -- ----------------------------
 -- 2、学校表
 -- ----------------------------
@@ -228,6 +245,9 @@ create table dq_school
 ) engine = innodb
   auto_increment = 1
   CHARACTER SET = utf8mb4 comment = '学校表';
+# 建立联合唯一键
+alter table dq_school
+    add unique key (school_id, delete_flag);
 -- ----------------------------
 -- 初始化-学校表
 -- ----------------------------
@@ -239,6 +259,7 @@ insert into dq_school
 values (2, '韩山师范学院',
         '韩山师范学院（HANSHAN NORMAL UNIVERSITY），简称“韩山师院、韩师（HSNU）”，是广东省属本科师范院校，是广东省与潮州市共建高校，联合国教科文组织中国创业教育联盟理事单位，位于国家历史文化名城潮州市。韩山师范学院创立于清光绪廿九年（1903年）的“惠潮嘉师范学堂”，其前身可追溯到宋元祐五年（公元1090年）潮人为纪念唐代大文学家韩愈而建立的“韩山书院”，1921年更名为省立第二师范学校，1935年更名为省立韩山师范学校，1949年更名为韩山师范学校，1958年升格为高等师范专科学校，1993年升格为本科师范学院。',
         'badge', '韩山师范学院校训', 'background', sysdate(), 'address', 0, sysdate(), sysdate());
+
 -- ----------------------------
 -- 2、文章表
 -- ----------------------------
@@ -261,7 +282,9 @@ create table dq_article
 ) engine = innodb
   auto_increment = 1
   CHARACTER SET = utf8mb4 comment = '文章表';
-
+# 建立联合唯一键
+alter table dq_article
+    add unique key (article_id, delete_flag);
 -- ----------------------------
 -- 初始化-文章表数据
 -- ----------------------------
@@ -290,7 +313,9 @@ create table dq_comment
 ) engine = innodb
   auto_increment = 1
   CHARACTER SET = utf8mb4 comment = '评论表';
-
+# 建立联合唯一键
+alter table dq_comment
+    add unique key (comment_id, delete_flag);
 -- ----------------------------
 -- 初始化-评论表数据
 -- ----------------------------
@@ -300,6 +325,7 @@ insert into dq_comment
 values (2, 1, '第一条回复', 1, '1', 1, 1, 1, 0, sysdate());
 insert into dq_comment
 values (3, 1, '第一条回复的回复', 1, '1', 1, 2, 1, 0, sysdate());
+
 -- ----------------------------
 -- 4、收藏表
 -- ----------------------------
@@ -365,5 +391,7 @@ values (3, '文章', 1, 'addDqArticle', 'POST', 'maoyan', 'localhost', '127.0.0.
 -- ----------------------------
 alter table dq_follow_interdquser
     add unique key (give_follow_dquser_id, followed_dquser_id);
+alter table dq_follow_interdqsection
+    add unique key (give_follow_dquser_id, followed_dqsection_id);
 alter table dq_collection
     add unique key (user_id, article_id);
