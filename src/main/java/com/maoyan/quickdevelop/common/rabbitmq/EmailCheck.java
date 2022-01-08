@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.context.IContext;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import java.net.InetAddress;
@@ -26,30 +29,26 @@ public class EmailCheck {
   @Autowired
   private DqMailUtil dqMailUtil;
   @Autowired
-  private TemplateEngine templateEngine;
+  private SpringTemplateEngine templateEngine;
 
   @RabbitHandler
   public void receiver(String emailMessage) {
-    // 获取IP
-    InetAddress address = null;
-    try {
-      address = InetAddress.getLocalHost();
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-    }
     System.out.println("接收到的数据:" + emailMessage);
     // 解析JSON内容
     JSONObject jsonObject = JSONUtil.parseObj(emailMessage);
-    String dqUserUsername = (String) jsonObject.get("DqUserUsername");
+    // String dqUserUsername = (String) jsonObject.get("DqUserUsername");
     String dqUserEmail = (String) jsonObject.get("DqUserEmail");
     String emailVerificationCode = (String) jsonObject.get("EmailVerificationCode");
     // 邮件正文
     Context emailContext = new Context();
-    emailContext.setVariable("toDqUser", dqUserUsername);
-    emailContext.setVariable("emailVerificationUrl", "http://"+address+":8080/verification/" + dqUserEmail+"/"+emailVerificationCode);
+    emailContext.setVariable("dqUserEmail",dqUserEmail);
+    emailContext.setVariable("emailVerificationCode",emailVerificationCode);
+    // emailContext.setVariable("toDqUser", dqUserUsername);
+    // emailContext.setVariable("emailVerificationUrl", "http://"+address+":8080/verification/" + dqUserEmail+"/"+emailVerificationCode);
+    System.out.println("分界线-------------------");
     String emailContent = templateEngine.process("emailCheckTemplate", emailContext);
     try {
-      dqMailUtil.sendMailByThymeleaf("邮箱验证", "1071352028@qq.com",
+      dqMailUtil.sendMailByThymeleaf("邮箱验证", dqUserEmail,
               emailContent);
     } catch (MessagingException e) {
       throw new CustomException("邮件发送失败", HttpStatus.ERROR);

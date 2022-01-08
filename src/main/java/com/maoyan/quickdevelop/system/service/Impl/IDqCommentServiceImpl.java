@@ -4,18 +4,15 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
-import com.maoyan.quickdevelop.common.rabbitmq.ProucerUtil;
-import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 import com.maoyan.quickdevelop.common.core.domain.DqArticle;
 import com.maoyan.quickdevelop.common.core.domain.DqComment;
 import com.maoyan.quickdevelop.common.core.domain.DqUser;
-import com.maoyan.quickdevelop.common.core.domain.dqabstract.DqStatusDispose;
 import com.maoyan.quickdevelop.common.core.domain.postprocessor.DqCommentPostProcesser;
 import com.maoyan.quickdevelop.common.exception.CustomException;
 import com.maoyan.quickdevelop.common.utils.DateUtils;
-import com.maoyan.quickdevelop.common.utils.DqStatusDisposrUtils;
 import com.maoyan.quickdevelop.common.utils.MyQueryWrapper;
+import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.utils.mail.DqMailUtil;
 import com.maoyan.quickdevelop.system.domain.DqCommentVO;
 import com.maoyan.quickdevelop.system.mapper.DqArticleMapper;
@@ -27,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -59,11 +53,11 @@ public class IDqCommentServiceImpl implements IDqCommentService {
   QueryWrapper<DqUser> userQueryWrapper = new QueryWrapper<>();
 
   @Override
-  public List<DqCommentPostProcesser> commonSelectDqCommentPostProcesser(int pageNum, int pageSize, DqComment dqComment){
+  public List<DqCommentPostProcesser> commonSelectDqCommentPostProcesser(int pageNum, int pageSize, DqComment dqComment) {
     PageHelper.startPage(pageNum, pageSize);
     List<DqCommentPostProcesser> dqCommentPostProcessers = dqCommentPostProcessorMapper.commonSelectDqCommentPostProcesser(dqComment);
-    if (StringUtils.isEmpty(dqCommentPostProcessers)){
-      throw new CustomException("未查询到评论",HttpStatus.NOT_FOUND);
+    if (StringUtils.isEmpty(dqCommentPostProcessers)) {
+      throw new CustomException("未查询到评论", HttpStatus.NOT_FOUND);
     }
     return dqCommentPostProcessers;
   }
@@ -245,22 +239,23 @@ public class IDqCommentServiceImpl implements IDqCommentService {
     newDqComment.setArticleId(dqCommentVO.getArticleId());
     newDqComment.setReplyId(dqCommentVO.getReplyId());
     newDqComment.setStatus("1");
+    newDqComment.setDeleteFlag(0L);
     newDqComment.setCreateTime(DateUtils.getNowDate());
     int insert = 0;
     // 判断是评论还是回复
-    if (dqCommentVO.getReplyId() == 0){
+    if (dqCommentVO.getReplyId() == 0) {
       // 为评论
       newDqComment.setRootId(0L);
       newDqComment.setToUserId(dqArticle.getAuthorId());
       insert = dqCommentMapper.insert(newDqComment);
 
-    }else {
+    } else {
       // 为回复,获得上级回复
       LambdaQueryWrapper<DqComment> dqCommentLambdaQueryWrapper = new LambdaQueryWrapper<>();
-      dqCommentLambdaQueryWrapper.eq(DqComment::getCommentId,dqCommentVO.getReplyId());
+      dqCommentLambdaQueryWrapper.eq(DqComment::getCommentId, dqCommentVO.getReplyId());
       DqComment previousDqComment = dqCommentMapper.selectOne(dqCommentLambdaQueryWrapper);
-      if (StringUtils.isNull(previousDqComment)){
-        throw new CustomException("回复的评论不存在",HttpStatus.NOT_FOUND);
+      if (StringUtils.isNull(previousDqComment)) {
+        throw new CustomException("回复的评论不存在", HttpStatus.NOT_FOUND);
       }
       newDqComment.setToUserId(previousDqComment.getCommentUserId());
       newDqComment.setArticleId(previousDqComment.getArticleId());
@@ -348,19 +343,28 @@ public class IDqCommentServiceImpl implements IDqCommentService {
 
   /**
    * (直接删除的话，后面还会有很多的评论等等，所以采用逻辑删除)
+   *
    * @param dqCommentId
    * @return
    */
   @Override
   public int deleteDqCommentById(Long dqCommentId) {
+    // 查询评论或者回复
+    LambdaQueryWrapper<DqComment> dqCommentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqCommentLambdaQueryWrapper.eq(DqComment::getCommentId, dqCommentId)
+        .eq(DqComment::getDeleteFlag, 0);
     DqComment dqComment = dqCommentMapper.selectById(dqCommentId);
+    // 不存在或者被删除
     if (StringUtils.isNull(dqComment)) {
       throw new CustomException("此评论不存在", HttpStatus.ERROR);
     }
+    // 判断是否是自己的评论
     Long dqCommentUserId = dqComment.getCommentUserId();
     if (StpUtil.getLoginIdAsLong() != dqCommentUserId) {
       throw new CustomException("不能删除他人的评论", HttpStatus.FORBIDDEN);
     }
+    // 删除评论，修改删除标志
+    dqComment.setDeleteFlag(dqCommentId);
     dqComment.setStatus("0");
     int i = dqCommentMapper.updateById(dqComment);
 //    int i = dqCommentMapper.deleteById(dqCommentId);

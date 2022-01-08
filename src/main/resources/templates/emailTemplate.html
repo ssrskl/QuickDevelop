@@ -1,18 +1,108 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="zh" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h3>-->
+<!--    尊敬的<span style="color: dodgerblue;" th:text="${toDqUser}"></span>：-->
+<!--</h3>-->
+<!--<br/>-->
+<!--<div th:text="${username}"></div>回复您：-->
+<!--<div th:text="${replyContent}"></div>-->
+<!--<div style="width: max-content;width: &#45;&#45;moz-max-content;margin: auto;margin-bottom:50px;">-->
+<!--    <a th:href="@{http://www.codeman.ink:8848/article/{articleId}(articleId=${articleId})}" style="color: #fff;background-color: #5e72e4;border-color: #5e72e4;box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);padding: 15px 25px;font-size: 18px;border-radius: 4px;text-decoration: none;">前往查看</a>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body .main {
+            width: 100%;
+            min-width: 300px;
+        }
+
+        .banner {
+            width: 80%;
+            /* background-color: pink; */
+            margin: 0 auto;
+            padding: 30px 60px;
+        }
+
+        .title {
+            text-align: center;
+            /* color: rgb(0, 121, 90); */
+            padding: 20px 0;
+            border-bottom: 3px solid rgb(0, 121, 90);
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        .content .first {
+            margin: 20px 0;
+        }
+
+        .content .con {
+            width: calc(100% - 120px);
+        }
+
+        .see {
+            margin-top: 20px;
+        }
+
+        .see button {
+            height: 40px;
+            width: 120px;
+            background-color: rgb(124, 188, 3);
+            border: none;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .addition {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body>
-<h3>
-    尊敬的<span style="color: dodgerblue;" th:text="${toDqUser}"></span>：
-</h3>
-<br/>
-<div th:text="${username}"></div>回复您：
-<div th:text="${replyContent}"></div>
-<div style="width: max-content;width: --moz-max-content;margin: auto;margin-bottom:50px;">
-    <a th:href="@{http://www.codeman.ink:8848/article/{articleId}(articleId=${articleId})}" style="color: #fff;background-color: #5e72e4;border-color: #5e72e4;box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);padding: 15px 25px;font-size: 18px;border-radius: 4px;text-decoration: none;">前往查看</a>
+<div class="main">
+    <div class="banner">
+        <h2 class="title">扶风社区</h2>
+        <div class="content">
+            <p class="first">尊敬的用户：</p>
+            <p class="con">
+                2021NAIC大赛即「2021全国人工智能大赛」已经火热开赛两周了，什么？你居然还不知道！别等了，抓紧时间浏览以下内容上车吧！
+                深圳市人民政府与鹏城实验室主办，深圳市科技创新委员会和新一代人工智能产业技术创新战略联盟（AITISA）联合承办。
+                点击下方链接查看。
+            </p>
+        </div>
+        <div class="see">
+            <a href="http://www.baidu.com" target="_blank"><button>前往察看</button></a>
+        </div>
+        <div class="addition">
+            注：这里写注意事项
+        </div>
+    </div>
 </div>
 </body>
+
 </html>

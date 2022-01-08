@@ -2,13 +2,102 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100%;
+            min-width: 500px;
+            max-width: 2000px;
+        }
+
+        .main {
+            margin: 20px 10%;
+            /* background-color: pink; */
+        }
+
+        .banner {
+            width: 90%;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+
+        .logo {
+            height: 20px;
+            line-height: 20px;
+        }
+
+        .logo img {
+            height: 40px;
+            width: 40px;
+        }
+
+        .logo i {
+            font-style: normal;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .logo i:last-child {
+            color: rgb(0, 121, 90);
+        }
+
+        /* 验证 */
+        .verif {
+            margin-top: 35px;
+            font-size: 20px;
+            color: rgb(0, 121, 90);
+            font-weight: 800;
+            background-color: #fff;
+        }
+
+        .msg1 {
+            font-size: 14px;
+            margin-top: 20px;
+            color: #555;
+        }
+
+        .ver-code {
+            height: 40px;
+            margin-top: 20px;
+            line-height: 40px;
+            text-align: center;
+            font-size: 20px;
+            color: rgb(37, 56, 88);
+            background-color: rgb(242, 242, 242);
+            border: 1px solid #ccc;
+        }
+
+        .company {
+            margin: 20px auto;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
 </head>
+
 <body>
-<h3>
-    尊敬的<span style="color: dodgerblue;" th:text="${toDqUser}"></span>,请点击下方链接激活您的帐号：
-</h3>
-<br/>
-<div th:text="${emailVerificationUrl}"></div>
+<div class="main">
+    <div class="banner">
+        <div class="logo">
+            <!-- <img src="./images/wind.png" alt=""> -->
+            <i>扶风</i><i>社区</i>
+        </div>
+        <div class="verif">验证您的邮箱地址</div>
+        <div class="msg1">以下是您的邮箱验证码，请将它输入到您的邮箱验证码输入框中：</div>
+        <div class="ver-code" th:text="${emailVerificationCode}"></div>
+        <div class="msg1">这一封邮件包括一些您的私密账号信息，请不要回复或转发它，以免带来不必要的信息泄露风险。</div>
+    </div>
+    <div class="company">扶风社区-大学生社区</div>
+</div>
 </body>
+
 </html>

@@ -29,6 +29,7 @@ public class RegisterVO implements Serializable {
   /**
    * 用户账户
    **/
+  private String verificationCode;
 
   @NonNull
   @ApiModelProperty(value = "用户名")

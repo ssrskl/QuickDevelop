@@ -133,6 +133,7 @@
             </if>
             <if test="true">
                 AND dq_comment.status = 1
+                AND dq_comment.delete_flag = 0
             </if>
         </where>
     </select>

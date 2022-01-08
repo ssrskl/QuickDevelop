@@ -4,5 +4,7 @@
     <file url="file://$PROJECT_DIR$/sql/InnerSql/查询收藏信息.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/sql/SQL-NEW.sql" dialect="MariaDB" />
     <file url="file://$PROJECT_DIR$/sql/SQL.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/mapper/DqCommentPostProcessorMapper.xml" dialect="GenericSQL" />
+    <file url="PROJECT" dialect="MySQL" />
   </component>
 </project>

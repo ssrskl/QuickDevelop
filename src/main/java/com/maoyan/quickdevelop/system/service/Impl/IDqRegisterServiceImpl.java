@@ -36,8 +36,6 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
   @Autowired
   private RedisTemplate redisTemplate;
   @Autowired
-  private IDqUserService iUserService;
-  @Autowired
   private DqUserMapper dqUserMapper;
   @Autowired
   private ProucerUtil proucerUtil;
@@ -46,8 +44,18 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
 
   @Override
   public int dqUserRegister(RegisterVO registerVO) {
-    // 生成验证码
-    String random = RandomUtil.randomString(20);
+    // 校验验证码
+    // 从Redis获取验证码,就是获取value，然后通过value获取key，key是用户的邮箱，再来激活邮箱
+    // 验证码空判断
+    String o = String.valueOf(redisTemplate.opsForValue().get(registerVO.getEmail()));
+    if (StringUtils.isNull(o)) {
+      throw new CustomException("验证码不存在，或已过时", HttpStatus.ERROR);
+    }
+    String emailVerificationCodeFromRedis = o;
+    if (!StringUtils.equals(registerVO.getVerificationCode(), emailVerificationCodeFromRedis)) {
+      // 邮箱验证失败
+      throw new CustomException("验证码错误", HttpStatus.ERROR);
+    }
     // 创建新的用户实例
     DqUser newDqUser = new DqUser();
     newDqUser.setUserName(registerVO.getUserName());
@@ -66,51 +74,64 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
     newDqUser.setSchoolId(0L);
     newDqUser.setCreateTime(DateUtils.getNowDate());
     newDqUser.setUpdateTime(DateUtils.getNowDate());
-    // 判断用户是否已经验证过
-    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
-    dqUserLambdaQueryWrapper
-        .eq(DqUser::getEmail, newDqUser.getEmail())
-        .eq(DqUser::getCheckStatus, "1");
-    DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
-    if (StringUtils.isNotNull((dqUser))) {
-      throw new CustomException("此用户已存在", HttpStatus.ERROR);
-    }
-    // 判断用户5min之内是否已经发送了验证码
-    /**
-     * key：用户邮箱
-     * value：验证码
-     */
-    if (redisTemplate.hasKey(newDqUser.getEmail())) {
-      // 已经发送过邮箱验证码了
-      throw new CustomException("操作频繁", HttpStatus.ERROR);
-    } else {
-      // 向Redis发送验证码，设置5min过期
-      redisTemplate.opsForValue().append(newDqUser.getEmail(), random);
-      redisTemplate.expire(newDqUser.getEmail(), 5, TimeUnit.MINUTES);
-    }
+    // 判断用户是否已经验证过，在发送验证码的时候其实已经验证过了
     //注册
-    int i = iUserService.insertDqUser(newDqUser);
+    int i = dqUserMapper.insert(newDqUser);
+    if (i <= 0) {
+      throw new CustomException("注册失败", HttpStatus.ERROR);
+    }
     // 给用户分配角色
     // 获取用户
-    DqUser dqUser1 = iUserService.selectDqUserByUserName(newDqUser.getUserName());
+    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqUserLambdaQueryWrapper.eq(DqUser::getUserName,newDqUser.getUserName());
+    DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
     DqUserRole dqUserRole = new DqUserRole();
     dqUserRole.setRoleName("普通用户");
-    dqUserRole.setUserId(dqUser1.getUserId());
+    dqUserRole.setUserId(dqUser.getUserId());
     dqUserRole.setRoleStatus("1");
     dqUserRole.setCreateTime(DateUtils.getNowDate());
     dqUserRole.setUpdateTime(DateUtils.getNowDate());
     int insert = dqUserRoleMapper.insert(dqUserRole);
-    if (i <= 0 && insert <= 0) {
+    if (insert <= 0) {
       throw new CustomException("注册失败", HttpStatus.ERROR);
     }
-    // 注册成功
-    // 发送到邮箱认证邮箱
-    // 发送消息
-    HashMap<String, String> emailMessage = new HashMap<>();
-    emailMessage.put("DqUserUsername", newDqUser.getUserName());
-    emailMessage.put("DqUserEmail", newDqUser.getEmail());
-    emailMessage.put("EmailVerificationCode", random);
-    proucerUtil.send(JSONUtil.toJsonStr(emailMessage));
     return i;
+  }
+
+  @Override
+  public int getEmailVerificationCode(String dqUserMail) {
+    // 生成验证码
+    String random = RandomUtil.randomString(6);
+    // 判定此用户是否已经注册
+    LambdaQueryWrapper<DqUser> dqUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    dqUserLambdaQueryWrapper.eq(DqUser::getEmail, dqUserMail);
+    DqUser dqUser = dqUserMapper.selectOne(dqUserLambdaQueryWrapper);
+    if (StringUtils.isNotNull(dqUser)) {
+      throw new CustomException("此用户已存在", HttpStatus.ERROR);
+    }
+    // 向Redis中存入验证码
+// 判断用户5min之内是否已经发送了验证码
+    /**
+     * key：用户邮箱
+     * value：验证码
+     */
+    if (redisTemplate.hasKey(dqUserMail)) {
+      // 已经发送过邮箱验证码了
+      throw new CustomException("操作频繁", HttpStatus.ERROR);
+    } else {
+      // 向Redis发送验证码，设置1min过期
+      redisTemplate.opsForValue().append(dqUserMail, random);
+      redisTemplate.expire(dqUserMail, 2, TimeUnit.MINUTES);
+      // 将邮箱通知放入消息队列
+      // 发送到邮箱认证邮箱
+      // 发送消息
+      HashMap<String, String> emailMessage = new HashMap<>();
+      // 用户还没注册成功，先无需获取用户名
+      // emailMessage.put("DqUserUsername", dqUser.getUserName());
+      emailMessage.put("DqUserEmail", dqUserMail);
+      emailMessage.put("EmailVerificationCode", random);
+      proucerUtil.send(JSONUtil.toJsonStr(emailMessage));
+    }
+    return HttpStatus.SUCCESS;
   }
 }

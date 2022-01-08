@@ -5,4 +5,5 @@ import com.maoyan.quickdevelop.system.domain.vo.RegisterVO;
 
 public interface IDqRegisterService {
   public int dqUserRegister(RegisterVO registerVO);
+  public int getEmailVerificationCode(String dqUserMail);
 }
