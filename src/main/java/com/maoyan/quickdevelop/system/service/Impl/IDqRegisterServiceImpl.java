@@ -15,7 +15,6 @@ import com.maoyan.quickdevelop.system.domain.vo.RegisterVO;
 import com.maoyan.quickdevelop.system.mapper.DqUserMapper;
 import com.maoyan.quickdevelop.system.mapper.DqUserRoleMapper;
 import com.maoyan.quickdevelop.system.service.IDqRegisterService;
-import com.maoyan.quickdevelop.system.service.IDqUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -110,7 +109,7 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
       throw new CustomException("此用户已存在", HttpStatus.ERROR);
     }
     // 向Redis中存入验证码
-// 判断用户5min之内是否已经发送了验证码
+// 判断用户2min之内是否已经发送了验证码
     /**
      * key：用户邮箱
      * value：验证码
@@ -119,7 +118,7 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
       // 已经发送过邮箱验证码了
       throw new CustomException("操作频繁", HttpStatus.ERROR);
     } else {
-      // 向Redis发送验证码，设置1min过期
+      // 向Redis发送验证码，设置2min过期
       redisTemplate.opsForValue().append(dqUserMail, random);
       redisTemplate.expire(dqUserMail, 2, TimeUnit.MINUTES);
       // 将邮箱通知放入消息队列
@@ -130,7 +129,8 @@ public class IDqRegisterServiceImpl implements IDqRegisterService {
       // emailMessage.put("DqUserUsername", dqUser.getUserName());
       emailMessage.put("DqUserEmail", dqUserMail);
       emailMessage.put("EmailVerificationCode", random);
-      proucerUtil.send(JSONUtil.toJsonStr(emailMessage));
+      // proucerUtil.send(JSONUtil.toJsonStr(emailMessage));
+      proucerUtil.send(emailMessage);
     }
     return HttpStatus.SUCCESS;
   }

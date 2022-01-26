@@ -1,5 +1,6 @@
 package com.maoyan.quickdevelop.common.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.maoyan.quickdevelop.common.utils.StringUtils;
 import com.maoyan.quickdevelop.common.constant.HttpStatus;
 

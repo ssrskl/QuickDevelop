@@ -18,6 +18,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import javax.mail.MessagingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 /**
  * @author 猫颜
@@ -32,13 +33,13 @@ public class EmailCheck {
   private SpringTemplateEngine templateEngine;
 
   @RabbitHandler
-  public void receiver(String emailMessage) {
-    System.out.println("接收到的数据:" + emailMessage);
+  public void receiver(HashMap<String,String> emailMessage) {
+    System.out.println("接收到的数据:" + emailMessage.toString());
     // 解析JSON内容
-    JSONObject jsonObject = JSONUtil.parseObj(emailMessage);
+    // JSONObject jsonObject = JSONUtil.parseObj(emailMessage);
     // String dqUserUsername = (String) jsonObject.get("DqUserUsername");
-    String dqUserEmail = (String) jsonObject.get("DqUserEmail");
-    String emailVerificationCode = (String) jsonObject.get("EmailVerificationCode");
+    String dqUserEmail = emailMessage.get("DqUserEmail");
+    String emailVerificationCode = emailMessage.get("EmailVerificationCode");
     // 邮件正文
     Context emailContext = new Context();
     emailContext.setVariable("dqUserEmail",dqUserEmail);

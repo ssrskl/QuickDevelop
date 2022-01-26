@@ -177,7 +177,7 @@ class QuickDevelopApplicationTests {
     private ProucerUtil proucerUtil;
     @Test
     void testRabbitMq() throws IOException, TimeoutException {
-        proucerUtil.send("发送消息");
+        // proucerUtil.send("发送消息");
         System.out.println("发送成功");
     }
 }

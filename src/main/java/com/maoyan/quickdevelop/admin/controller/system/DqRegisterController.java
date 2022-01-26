@@ -34,6 +34,7 @@ public class DqRegisterController {
   public AjaxResult getVerificationCode(String dqUserMail) {
     // 根据邮箱获取验证码，则注册中不需要发送邮箱验证了.
     int emailVerificationCode = iDqRegisterService.getEmailVerificationCode(dqUserMail);
-    return AjaxResult.success("验证码已发送",iDqRegisterService);
+    // 天啊，不能粗心啊
+    return AjaxResult.success("验证码已发送",emailVerificationCode);
   }
 }

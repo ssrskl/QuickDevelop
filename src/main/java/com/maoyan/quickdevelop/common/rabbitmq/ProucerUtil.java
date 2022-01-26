@@ -4,6 +4,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 /**
  * @author 猫颜
  * @date 2021 年 12 月 03 日 上午10:51
@@ -14,7 +16,7 @@ public class ProucerUtil {
   @Autowired
   private RabbitTemplate rabbitTemplate;
   private final static String QUEUE_NAME = "Email_Queue";
-  public void send(String message){
+  public void send(HashMap<String,String> message){
     this.rabbitTemplate.convertAndSend(QUEUE_NAME,message);
   }
 //  public static void publishMessage(String message) throws IOException, TimeoutException {
