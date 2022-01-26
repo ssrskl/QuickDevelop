@@ -232,18 +232,18 @@ sudo docker pull oimaoyanio/quickdevelop
 sudo docker run -d -p 8080:8080 \
 -e SERVER_PORT=8080 \
 -e MYSQL_USERNAME=root \
--e MYSQL_PASSWORD=ar352878987 \
+-e MYSQL_PASSWORD=your mysql password \
 -e MYSQL_ADDRESS=172.17.0.1 \
 -e MYSQL_PORT=3306 \
 -e REDIS_ADDRESS=172.17.0.1 \
 -e REDIS_PORT=6379 \
--e REDIS_PASSWORD=ar352878987 \
--e MAIL_USERNAME=1071352028@qq.com \
--e MAIL_PASSWORD=wxmvjoivirfebfcc \
+-e REDIS_PASSWORD=your redis password \
+-e MAIL_USERNAME=your email address \
+-e MAIL_PASSWORD=your email token(tips: Not email password) \
 -e RABBITMQ_ADDRESS=172.17.0.1 \
 -e RABBITMQ_PORT=5672 \
--e RABBITMQ_USERNAME=guest \
--e RABBITMQ_PASSWORD=guest \
+-e RABBITMQ_USERNAME=guest(your rabbitmq username, default: guest) \
+-e RABBITMQ_PASSWORD=guest(your rabbitmq password, default: guest) \
 --name quickdevelop quickdevelop:v1.0
 ```
 **参数解释**
@@ -264,3 +264,4 @@ ${SERVER_PORT}
 + RABBITMQ_PORT　：RabbitMQ端口 (default:5672)
 + RABBITMQ_USERNAME : RabbitMQ用户名(default:guest)
 + RABBITMQ_PASSWORD : RabbitMQ密码(default:guest)
+> 注意，MAIL_PASSWORD不是你的邮箱密码，而是邮箱的token，详情请百度

@@ -1,4 +1,4 @@
-FROM openjdk:18-jdk-slim
+FROM openjdk:8u312-jdk
 LABEL maintainer=oimaoyanio
 # 设置环境变量
 ENV SERVER_PORT 8080
