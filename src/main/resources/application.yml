@@ -1,5 +1,5 @@
 spring:
   profiles:
-    active: docker
+#    active: docker
 #    active: prod
-#    active: dev
+    active: dev

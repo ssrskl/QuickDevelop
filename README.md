@@ -56,7 +56,8 @@ QuickDevelop是一个面向全国大学生的在线社区，大学生可以选�
 添加Sentinel的限流熔断降级。
 
 ### 9. Start趋势
-[![Giteye chart](https://chart.giteye.net/gitee/maoyanscsvr/quick-develop/2Z5HA39H.png)](https://giteye.net/chart/2Z5HA39H)
+[![Star History Chart](https://api.star-history.com/svg?repos=ssrskl/QuickDevelop&type=Timeline)](https://star-history.com/#ssrskl/QuickDevelop&Timeline)
+
 
 ```
 ├─ sql

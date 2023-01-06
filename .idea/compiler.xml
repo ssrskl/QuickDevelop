@@ -13,7 +13,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="QuickDevelop" options="-bootclasspath $USER_HOME$/config/jdk1.8.0_311/jre/lib/rt.jar:$USER_HOME$/config/jdk1.8.0_311/jre/lib/jce.jar" />
+      <module name="QuickDevelop" options="-bootclasspath E:\software\jdk-17.0.3.1/jre/lib/rt.jar;E:\software\jdk-17.0.3.1/jre/lib/jce.jar" />
     </option>
   </component>
 </project>
